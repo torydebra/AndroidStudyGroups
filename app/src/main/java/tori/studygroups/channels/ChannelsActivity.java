@@ -22,7 +22,7 @@ public class ChannelsActivity extends AppCompatActivity{
 
         searchChannelsEditText = (EditText) findViewById(R.id.search_channel_editText);
 
-        // Load list of Open Channels
+        // Load list of Channels
         Fragment fragment = ChannelListFragment.newInstance();
 
         FragmentManager manager = getSupportFragmentManager();
@@ -43,6 +43,13 @@ public class ChannelsActivity extends AppCompatActivity{
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    //per il nome della chat in alto nel gruppo della chat
+    void setActionBarTitle(String title) {
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(title);
+        }
     }
 
 }

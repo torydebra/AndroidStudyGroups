@@ -3,7 +3,30 @@
     <string name="login_username">Username</string>
     <string name="login_password">Password</string>
     <string name="login_button">Login</string>
+
     <string name="search_channel_text">Cerca gruppi di studio...</string>
+    <string name="channel_list_participant_count">%1$d participanti</string>
+
+    <string name="chat_enter_message">Scrivi Messaggio</string>
+    <string name="chat_button_send">Invia</string>
+
+    <string name="download">Scarica</string>
+    <string name="cancel">Annulla</string>
+    <string name="upload">Carica</string>
+    <string name="info_permission_storage">"Permessi di scrittura sul dispositivo sono necessari per caricare/scaricare i file"</string>
+    <string name="delete_message_confirmation">"Cancella"</string>
+    <string name="delete_message_question">"Cancella messaggio?"</string>
+    <string name="delete_message_cancel">"Annulla"</string>
+
+    <string name="error_message_not_send">"Errore: messaggio non inviato"</string>
+    <string name="error_file_not_storage">"File deve essere presente in memoria"</string>
+    <string name="error_file_not_send">"Errore: file non inviato"</string>
+    <string name="error_deleting_message">"Errore: messaggio non cancellato"</string>
+
+    <string name="channel_chat_content_desc_profile">Immagine Profilo</string>
+    <string name="upload_file_text">ha caricato un file</string>
+
+
 
 
 </resources>

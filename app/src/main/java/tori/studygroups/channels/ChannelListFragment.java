@@ -22,12 +22,12 @@ import tori.studygroups.R;
 
 public class ChannelListFragment extends Fragment {
 
-    public static final String EXTRA_OPEN_CHANNEL_URL = "OPEN_CHANNEL_URL";
+    public static final String EXTRA_CHANNEL_URL = "CHANNEL_URL";
     private static final String LOG_TAG = ChannelListFragment.class.getSimpleName();
 
     private RecyclerView channelListRecyclerView;
     private LinearLayoutManager mLayoutManager;
-    private OpenChannelListAdapter mChannelListAdapter;
+    private ChannelListAdapter mChannelListAdapter;
 
     private OpenChannelListQuery channelListQuery;
 
@@ -48,7 +48,7 @@ public class ChannelListFragment extends Fragment {
         setHasOptionsMenu(true);
 
         channelListRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_channel_list);
-        mChannelListAdapter = new OpenChannelListAdapter(getContext());
+        mChannelListAdapter = new ChannelListAdapter(getContext());
 
 //        mCreateChannelFab = (FloatingActionButton) rootView.findViewById(R.id.fab_open_channel_list);
 //        mCreateChannelFab.setOnClickListener(new View.OnClickListener() {
@@ -93,11 +93,11 @@ public class ChannelListFragment extends Fragment {
 
     // Set touch listeners to RecyclerView items
     private void setUpAdapter() {
-        mChannelListAdapter.setOnItemClickListener(new OpenChannelListAdapter.OnItemClickListener() {
+        mChannelListAdapter.setOnItemClickListener(new ChannelListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(OpenChannel channel) {
                 String channelUrl = channel.getUrl();
-                OpenChatFragment fragment = OpenChatFragment.newInstance(channelUrl);
+                ChatFragment fragment = ChatFragment.newInstance(channelUrl);
                 getFragmentManager().beginTransaction()
                         .replace(R.id.container_channels_list, fragment)
                         .addToBackStack(null)
@@ -105,7 +105,7 @@ public class ChannelListFragment extends Fragment {
             }
         });
 
-        mChannelListAdapter.setOnItemLongClickListener(new OpenChannelListAdapter.OnItemLongClickListener() {
+        mChannelListAdapter.setOnItemLongClickListener(new ChannelListAdapter.OnItemLongClickListener() {
             @Override
             public void onItemLongPress(OpenChannel channel) {
             }
@@ -113,7 +113,7 @@ public class ChannelListFragment extends Fragment {
     }
 
     /**
-     * Creates a new query to get the list of the user's Open Channels,
+     * Creates a new query to get the list of the user's Channels,
      * then replaces the existing dataset.
      *
      * @param numChannels   The number of channels to load.
@@ -125,9 +125,10 @@ public class ChannelListFragment extends Fragment {
             @Override
             public void onResult(List<OpenChannel> list, SendBirdException e) {
                 if (e != null) {
-
+                    // Error!
+                    return;
                 }
-                mChannelListAdapter.setOpenChannelList(list);
+                mChannelListAdapter.setChannelList(list);
 
             }
         });
