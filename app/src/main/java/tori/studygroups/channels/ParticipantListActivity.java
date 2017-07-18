@@ -40,11 +40,11 @@ public class ParticipantListActivity extends AppCompatActivity {
         mChannelUrl = getIntent().getStringExtra(ChatFragment.EXTRA_CHANNEL_URL);
         mListAdapter = new UserListAdapter(this);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_participant_list);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_participant_list);
+//        setSupportActionBar(toolbar);
+//        if (getSupportActionBar() != null) {
+//            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        }
 
         setUpRecyclerView();
 

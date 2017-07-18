@@ -55,7 +55,7 @@ public class LoginActivity extends AppCompatActivity{
 
     //TODO onstart con cose login salvato in preferences
 
-    private void connectToSendBird(String username) {
+    private void connectToSendBird(final String username) {
 
         loginButton.setEnabled(false);
         usernameEditText.setEnabled(false);
@@ -76,6 +76,8 @@ public class LoginActivity extends AppCompatActivity{
                     return;
                 }
 
+                setCurrentUserInfo(username);
+
                 // Proceed to MainActivity
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(intent);
@@ -83,6 +85,33 @@ public class LoginActivity extends AppCompatActivity{
             }
         });
 
+    }
+
+    private void setCurrentUserInfo (String username){
+
+        //null è campo foto profilo
+        SendBird.updateCurrentUserInfo(username, null, new SendBird.UserInfoUpdateHandler(){
+
+            @Override
+            public void onUpdated(SendBirdException e) {
+                if (e != null) {
+                    // Error!
+//                    Toast.makeText(
+//                            LoginActivity.this, "" + e.getCode() + ":" + e.getMessage(),
+//                            Toast.LENGTH_SHORT)
+//                            .show();
+
+                    Toast.makeText(
+                            LoginActivity.this, "Error saving nickname",
+                            Toast.LENGTH_SHORT)
+                            .show();
+
+                    return;
+                }
+
+            }
+
+        });
     }
 
 }

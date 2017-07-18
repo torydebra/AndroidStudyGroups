@@ -78,6 +78,8 @@ public class ChatFragment extends Fragment {
         setRetainInstance(true);
 
         setHasOptionsMenu(true);
+//        LinearLayout findBar = (LinearLayout) rootView.findViewById(R.id.linearLayoutSearchBar);
+//        findBar.setVisibility(LinearLayout.GONE);
 
         mRootLayout = rootView.findViewById(R.id.layout_chat_root);
 

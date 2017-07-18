@@ -21,9 +21,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".mainActivities.MainActivity">
+        <activity android:name=".mainActivities.MainActivity" />
 
-        </activity>
+        <activity
+            android:name=".utils.MediaPlayerActivity"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".channels.ParticipantListActivity"
+            android:label="@string/participant_list" />
+        <activity android:name=".channels.ChannelsActivity" />
+
+
     </application>
 
 </manifest>
