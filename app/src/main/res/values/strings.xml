@@ -3,6 +3,9 @@
     <string name="login_username">Username</string>
     <string name="login_password">Password</string>
     <string name="login_button">Login</string>
+    <string name="create_account">Crea Account</string>
+    <string name="already_member_message">Già registrato? Login</string>
+    <string name="not_member_yet">Non ancora registrato? Registrati</string>
 
     <string name="search_channel_text">Cerca gruppi di studio...</string>
     <string name="channel_list_participant_count">%1$d participanti</string>

@@ -22,6 +22,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".mainActivities.MainActivity" />
+        <activity android:name=".mainActivities.SignupActivity" />
 
         <activity
             android:name=".utils.MediaPlayerActivity"

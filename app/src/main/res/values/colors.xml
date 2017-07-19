@@ -4,6 +4,10 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
+    <color name="primary">#E43F3F</color>
+    <color name="white">#FFFFFF</color>
+    <color name="iron">#CCCCCC</color>
+
     <!-- Chat -->
     <color name="ChatText">#47505d</color>
     <color name="ChatNicknameOther">#3a414d</color>
