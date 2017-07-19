@@ -7,9 +7,13 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 import com.sendbird.android.OpenChannel;
 import com.sendbird.android.OpenChannelListQuery;
@@ -28,6 +32,8 @@ public class ChannelListFragment extends Fragment {
     private RecyclerView channelListRecyclerView;
     private LinearLayoutManager mLayoutManager;
     private ChannelListAdapter mChannelListAdapter;
+
+    private EditText searchChannelEditText;
 
     private OpenChannelListQuery channelListQuery;
 
@@ -50,6 +56,8 @@ public class ChannelListFragment extends Fragment {
         channelListRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_channel_list);
         mChannelListAdapter = new ChannelListAdapter(getContext());
 
+        searchChannelEditText = (EditText) rootView.findViewById(R.id.search_channel_editText);
+
 //        mCreateChannelFab = (FloatingActionButton) rootView.findViewById(R.id.fab_open_channel_list);
 //        mCreateChannelFab.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -61,9 +69,11 @@ public class ChannelListFragment extends Fragment {
 
         setUpAdapter();
         setUpRecyclerView();
+        setUpSearchBar();
 
         return rootView;
     }
+
 
     @Override
     public void onResume() {
@@ -111,6 +121,43 @@ public class ChannelListFragment extends Fragment {
             }
         });
     }
+
+    private void setUpSearchBar() {
+        searchChannelEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                channelListQuery = OpenChannel.createOpenChannelListQuery();
+                channelListQuery.setLimit(15);
+                channelListQuery.setNameKeyword(s.toString());
+
+                channelListQuery.next(new OpenChannelListQuery.OpenChannelListQueryResultHandler() {
+                    @Override
+                    public void onResult(List<OpenChannel> channels, SendBirdException e) {
+                        if (e != null) {
+                            // Error!
+                            return;
+                        }
+                        mChannelListAdapter.setChannelList(channels);
+                    }
+                });
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+
+    }
+
 
     /**
      * Creates a new query to get the list of the user's Channels,
