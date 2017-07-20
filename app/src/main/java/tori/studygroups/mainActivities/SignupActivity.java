@@ -1,6 +1,7 @@
 package tori.studygroups.mainActivities;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -13,9 +14,11 @@ import android.widget.Toast;
 import butterknife.ButterKnife;
 import butterknife.Bind;
 import tori.studygroups.R;
+import tori.studygroups.mainActivities.LoginActivity;
 
 public class SignupActivity extends AppCompatActivity {
     private static final String TAG = "SignupActivity";
+    private static final int REQUEST_SIGNUP = 0;
 
     @Bind(R.id.input_username) EditText _nameText;
     @Bind(R.id.input_password) EditText _passwordText;
@@ -57,13 +60,19 @@ public class SignupActivity extends AppCompatActivity {
         final ProgressDialog progressDialog = new ProgressDialog(SignupActivity.this,
                 R.style.AppTheme_Dark_Dialog);
         progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Creating Account...");
+        progressDialog.setMessage("Creazione Account...");
         progressDialog.show();
 
-        String name = _nameText.getText().toString();
+        String username = _nameText.getText().toString();
         String password = _passwordText.getText().toString();
 
         // TODO: Implement your own signup logic here.
+        username = username.replaceAll("\\s", "");
+        Intent data = new Intent();
+        data.putExtra("username", username);
+        data.putExtra("password", password);
+        setResult(RESULT_OK, data);
+
 
         new android.os.Handler().postDelayed(
                 new Runnable() {
@@ -80,12 +89,12 @@ public class SignupActivity extends AppCompatActivity {
 
     public void onSignupSuccess() {
         _signupButton.setEnabled(true);
-        setResult(RESULT_OK, null);
+        //setResult(RESULT_OK, null);
         finish();
     }
 
     public void onSignupFailed() {
-        Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
+        Toast.makeText(getBaseContext(), "Registrazione fallita", Toast.LENGTH_LONG).show();
 
         _signupButton.setEnabled(true);
     }
@@ -97,14 +106,14 @@ public class SignupActivity extends AppCompatActivity {
         String password = _passwordText.getText().toString();
 
         if (name.isEmpty() || name.length() < 3) {
-            _nameText.setError("at least 3 characters");
+            _nameText.setError("almeno 3 caratteri");
             valid = false;
         } else {
             _nameText.setError(null);
         }
 
-        if (password.isEmpty() || password.length() < 4 || password.length() > 10) {
-            _passwordText.setError("between 4 and 10 alphanumeric characters");
+        if (password.isEmpty() || password.length() < 4) {
+            _passwordText.setError("almeno 4 caratteri");
             valid = false;
         } else {
             _passwordText.setError(null);

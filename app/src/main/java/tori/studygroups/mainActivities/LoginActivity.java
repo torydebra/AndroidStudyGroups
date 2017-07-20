@@ -1,142 +1,30 @@
-//package tori.studygroups.mainActivities;
-//
-//import android.content.Intent;
-//import android.graphics.Path;
-//import android.support.v7.app.AppCompatActivity;
-//import android.os.Bundle;
-//import android.util.Log;
-//import android.view.View;
-//import android.widget.Button;
-//import android.widget.EditText;
-//import android.view.View.OnClickListener;
-//import android.widget.Toast;
-//
-//import com.sendbird.android.SendBird;
-//import com.sendbird.android.SendBirdException;
-//import com.sendbird.android.SendBird.ConnectHandler;
-//import com.sendbird.android.User;
-//import com.sendbird.android.OpenChannel;
-//import com.sendbird.android.OpenChannelListQuery;
-//import com.sendbird.android.BaseChannel;
-//import com.sendbird.android.UserMessage;
-//
-//import tori.studygroups.R;
-//
-//
-//public class LoginActivity extends AppCompatActivity{
-//
-//    // TODO: password
-//
-//    private EditText usernameEditText;
-//    private Button loginButton;
-//
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.login_activity);
-//
-//        usernameEditText = (EditText) findViewById(R.id.username_edit_text);
-//        loginButton = (Button) findViewById(R.id.loginButton);
-//
-//        loginButton.setOnClickListener(new OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//                String username = usernameEditText.getText().toString();
-//                // Remove all spaces from userID
-//                username = username.replaceAll("\\s", "");
-//
-//                connectToSendBird(username);
-//
-//
-//            }
-//        });
-//    }
-//
-//    //TODO onstart con cose login salvato in preferences
-//
-//    private void connectToSendBird(final String username) {
-//
-//        loginButton.setEnabled(false);
-//        usernameEditText.setEnabled(false);
-//
-//        SendBird.connect(username, new SendBird.ConnectHandler() {
-//            @Override
-//            public void onConnected(User user, SendBirdException e) {
-//
-//                if (e != null) {
-//                    // Error!
-//                    Toast.makeText(
-//                            LoginActivity.this, "" + e.getCode() + ": " + e.getMessage(),
-//                            Toast.LENGTH_SHORT)
-//                            .show();
-//
-//                    // Show login failure snackbar
-//                    loginButton.setEnabled(true);
-//                    return;
-//                }
-//
-//                setCurrentUserInfo(username);
-//
-//                // Proceed to MainActivity
-//                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-//                startActivity(intent);
-//                finish();
-//            }
-//        });
-//
-//    }
-//
-//    private void setCurrentUserInfo (String username){
-//
-//        //null è campo foto profilo
-//        SendBird.updateCurrentUserInfo(username, null, new SendBird.UserInfoUpdateHandler(){
-//
-//            @Override
-//            public void onUpdated(SendBirdException e) {
-//                if (e != null) {
-//                    // Error!
-////                    Toast.makeText(
-////                            LoginActivity.this, "" + e.getCode() + ":" + e.getMessage(),
-////                            Toast.LENGTH_SHORT)
-////                            .show();
-//
-//                    Toast.makeText(
-//                            LoginActivity.this, "Error saving nickname",
-//                            Toast.LENGTH_SHORT)
-//                            .show();
-//
-//                    return;
-//                }
-//
-//            }
-//
-//        });
-//    }
-//
-//}
-//
-
-
-
-
 package tori.studygroups.mainActivities;
 
-        import android.app.ProgressDialog;
-        import android.os.Bundle;
-        import android.support.v7.app.AppCompatActivity;
-        import android.util.Log;
+import android.app.ProgressDialog;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
-        import android.content.Intent;
-        import android.view.View;
-        import android.widget.Button;
-        import android.widget.EditText;
-        import android.widget.TextView;
-        import android.widget.Toast;
+import android.content.Intent;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
-        import butterknife.ButterKnife;
-        import butterknife.Bind;
-        import tori.studygroups.R;
+import com.sendbird.android.SendBird;
+import com.sendbird.android.SendBirdException;
+import com.sendbird.android.SendBird.ConnectHandler;
+import com.sendbird.android.User;
+import com.sendbird.android.OpenChannel;
+import com.sendbird.android.OpenChannelListQuery;
+import com.sendbird.android.BaseChannel;
+import com.sendbird.android.UserMessage;
+
+
+import butterknife.ButterKnife;
+import butterknife.Bind;
+import tori.studygroups.R;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -182,24 +70,55 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         _loginButton.setEnabled(false);
+        _usernameText.setEnabled(false);
 
         final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this,
                 R.style.AppTheme_Dark_Dialog);
         progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Authenticating...");
+        progressDialog.setMessage("Autenticazione...");
         progressDialog.show();
 
-        String email = _usernameText.getText().toString();
+        String username = _usernameText.getText().toString();
         String password = _passwordText.getText().toString();
 
         // TODO: Implement your own authentication logic here.
+
+        // Remove all spaces from userID
+        username = username.replaceAll("\\s", "");
+        connectToSendBird(username);
 
         new android.os.Handler().postDelayed(
                 new Runnable() {
                     public void run() {
                         // On complete call either onLoginSuccess or onLoginFailed
                         onLoginSuccess();
-                        // onLoginFailed();
+                        progressDialog.dismiss();
+                    }
+                }, 3000);
+    }
+
+    public void login(String username, String password) {
+        _usernameText.setText(username);
+        _passwordText.setText(password);
+
+        Log.d(TAG, "Login");
+
+        _loginButton.setEnabled(false);
+        _usernameText.setEnabled(false);
+
+        final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this,
+                R.style.AppTheme_Dark_Dialog);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Autenticazione...");
+        progressDialog.show();
+
+        connectToSendBird(username);
+
+        new android.os.Handler().postDelayed(
+                new Runnable() {
+                    public void run() {
+                        // On complete call either onLoginSuccess or onLoginFailed
+                        onLoginSuccess();
                         progressDialog.dismiss();
                     }
                 }, 3000);
@@ -210,10 +129,10 @@ public class LoginActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_SIGNUP) {
             if (resultCode == RESULT_OK) {
-
                 // TODO: Implement successful signup logic here
-                // By default we just finish the Activity and log them in automatically
-                this.finish();
+
+                login(data.getStringExtra("username"), data.getStringExtra("password"));
+
             }
         }
     }
@@ -226,6 +145,8 @@ public class LoginActivity extends AppCompatActivity {
 
     public void onLoginSuccess() {
         _loginButton.setEnabled(true);
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        startActivity(intent);
         finish();
     }
 
@@ -242,14 +163,14 @@ public class LoginActivity extends AppCompatActivity {
         String password = _passwordText.getText().toString();
 
         if (email.isEmpty()) {
-            _usernameText.setError("enter a valid email address");
+            _usernameText.setError("inserisci un username valido");
             valid = false;
         } else {
             _usernameText.setError(null);
         }
 
-        if (password.isEmpty() || password.length() < 4 || password.length() > 10) {
-            _passwordText.setError("between 4 and 10 alphanumeric characters");
+        if (password.isEmpty() || password.length() < 4 ) {
+            _passwordText.setError("almeno 4 caratteri");
             valid = false;
         } else {
             _passwordText.setError(null);
@@ -257,4 +178,61 @@ public class LoginActivity extends AppCompatActivity {
 
         return valid;
     }
+
+    //    //TODO onstart con cose login salvato in preferences
+
+    private void connectToSendBird(final String username) {
+
+        SendBird.connect(username, new SendBird.ConnectHandler() {
+            @Override
+            public void onConnected(User user, SendBirdException e) {
+
+                if (e != null) {
+                    // Error!
+                    Toast.makeText(
+                            LoginActivity.this, "" + e.getCode() + ": " + e.getMessage(),
+                            Toast.LENGTH_SHORT)
+                            .show();
+
+                    _loginButton.setEnabled(true);
+                    _usernameText.setEnabled(true);
+                    return;
+                }
+
+                setCurrentUserInfo(username);
+
+                // Proceed to MainActivity
+
+            }
+        });
+
+    }
+
+    private void setCurrentUserInfo (String username){
+
+        //null è campo foto profilo
+        SendBird.updateCurrentUserInfo(username, null, new SendBird.UserInfoUpdateHandler(){
+
+            @Override
+            public void onUpdated(SendBirdException e) {
+                if (e != null) {
+                    // Error!
+//                    Toast.makeText(
+//                            LoginActivity.this, "" + e.getCode() + ":" + e.getMessage(),
+//                            Toast.LENGTH_SHORT)
+//                            .show();
+
+                    Toast.makeText(
+                            LoginActivity.this, "Error saving nickname",
+                            Toast.LENGTH_SHORT)
+                            .show();
+
+                    return;
+                }
+
+            }
+
+        });
+    }
+
 }
