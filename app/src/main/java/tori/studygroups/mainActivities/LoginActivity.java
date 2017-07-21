@@ -87,6 +87,8 @@ public class LoginActivity extends AppCompatActivity {
         }
         else if (PreferenceUtils.getConnected(this)) { //non loggato con firebase,
             Log.d("BOHMAH", "preferences salvate in locale");
+           // Log.d("BOHMAH", PreferenceUtils.getEmail(this));
+            Log.d("BOHMAH", PreferenceUtils.getPassword(this));
             connectToFirebase(PreferenceUtils.getEmail(this), PreferenceUtils.getPassword(this));
         }
     }
@@ -101,6 +103,7 @@ public class LoginActivity extends AppCompatActivity {
 
         _loginButton.setEnabled(false);
         _emailText.setEnabled(false);
+        _passwordText.setEnabled(false);
 
         String email = _emailText.getText().toString();
         String password = _passwordText.getText().toString();
@@ -137,7 +140,10 @@ public class LoginActivity extends AppCompatActivity {
 
     public void onLoginFailed() {
         Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
+        progressDialog.dismiss();
         _loginButton.setEnabled(true);
+        _passwordText.setEnabled(true);
+        _emailText.setEnabled(true);
     }
 
 
@@ -184,6 +190,7 @@ public class LoginActivity extends AppCompatActivity {
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
+                            _emailText.setError("combinazione email password errata");
                             _passwordText.setError("combinazione email password errata");
                             onLoginFailed();
                         }
@@ -212,11 +219,11 @@ public class LoginActivity extends AppCompatActivity {
 
                     _loginButton.setEnabled(true);
                     _emailText.setEnabled(true);
-                    //PreferenceUtils.setConnected(LoginActivity.this, false);
+                    PreferenceUtils.setConnected(LoginActivity.this, false);
                     return;
                 }
 
-                //PreferenceUtils.setConnected(LoginActivity.this, true);
+                PreferenceUtils.setConnected(LoginActivity.this, true);
                 setCurrentUserInfo(username);
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(intent);

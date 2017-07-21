@@ -8,6 +8,8 @@
     <string name="create_account">Crea Account</string>
     <string name="already_member_message">Già registrato? Login</string>
     <string name="not_member_yet">Non ancora registrato? Registrati</string>
+    <string name="disconnect">Disconnetti</string>
+    <string name="personalPage">Pagina Personale</string>
 
     <string name="search_channel_text">Cerca gruppi di studio...</string>
     <string name="channel_list_participant_count">%1$d participanti</string>
@@ -32,6 +34,7 @@
     <string name="upload_file_text">ha caricato un file</string>
 
     <string name="participant_list">Participanti</string>
+    <string name="participant_menu">Vedi participanti</string>
 
     <string name="no_channel_find">Nessun gruppo con questo nome, creane uno</string>
     <string name="create_channel">Crea Gruppo</string>

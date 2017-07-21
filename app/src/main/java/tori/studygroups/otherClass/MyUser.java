@@ -1,4 +1,4 @@
-package tori.studygroups.mainActivities;
+package tori.studygroups.otherClass;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 

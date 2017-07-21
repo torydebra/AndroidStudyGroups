@@ -2,7 +2,6 @@ package tori.studygroups.mainActivities;
 
 import android.support.annotation.NonNull;
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -25,7 +24,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import butterknife.ButterKnife;
 import butterknife.Bind;
 import tori.studygroups.R;
-import tori.studygroups.mainActivities.LoginActivity;
+import tori.studygroups.otherClass.MyUser;
 
 public class SignupActivity extends AppCompatActivity {
     private static final String TAG = "BOHMAH";

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item android:id="@+id/action_chat_view_participants"
-        android:title="View participants"
+        android:title="@string/participant_menu"
         android:orderInCategory="10"
         app:showAsAction="never" />
 

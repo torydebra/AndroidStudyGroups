@@ -6,10 +6,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.EditText;
 
 import tori.studygroups.R;
+import tori.studygroups.otherClass.Disconnection;
 
 public class ChannelsActivity extends AppCompatActivity{
 
@@ -34,15 +37,28 @@ public class ChannelsActivity extends AppCompatActivity{
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_general, menu);
+        return true;
+    }
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
 
-        if (id == android.R.id.home) {
-            onBackPressed();
-            return true;
+        int id = item.getItemId();
+        switch (id){
+            case R.id.menu_general_personal_page:
+
+                return true;
+
+            case R.id.menu_general_item_disconnect:
+                Disconnection.disconnect(this);
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+
         }
 
-        return super.onOptionsItemSelected(item);
     }
 
     //per il nome della chat in alto nel gruppo della chat
