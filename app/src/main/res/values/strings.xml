@@ -1,7 +1,9 @@
 <resources>
     <string name="app_name">StudyGroups</string>
     <string name="login_username">Username</string>
+    <string name="login_email">Email</string>
     <string name="login_password">Password</string>
+    <string name="login_password2">Ripeti Password</string>
     <string name="login_button">Login</string>
     <string name="create_account">Crea Account</string>
     <string name="already_member_message">Già registrato? Login</string>
@@ -30,6 +32,12 @@
     <string name="upload_file_text">ha caricato un file</string>
 
     <string name="participant_list">Participanti</string>
+
+    <string name="no_channel_find">Nessun gruppo con questo nome, creane uno</string>
+    <string name="create_channel">Crea Gruppo</string>
+    <string name="loading">Caricamento</string>
+
+
 
 
 

@@ -1,5 +1,6 @@
 package tori.studygroups.mainActivities;
 
+import android.support.annotation.NonNull;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -12,26 +13,29 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
-import com.sendbird.android.SendBird.ConnectHandler;
-import com.sendbird.android.User;
-import com.sendbird.android.OpenChannel;
-import com.sendbird.android.OpenChannelListQuery;
-import com.sendbird.android.BaseChannel;
-import com.sendbird.android.UserMessage;
 
+import com.google.firebase.auth.AuthResult;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseUser;
+import com.sendbird.android.User;
 
 import butterknife.ButterKnife;
 import butterknife.Bind;
 import tori.studygroups.R;
+import tori.studygroups.utils.PreferenceUtils;
 
 
 public class LoginActivity extends AppCompatActivity {
-    private static final String TAG = "LoginActivity";
+    private static final String TAG = "BOHMAH";
     private static final int REQUEST_SIGNUP = 0;
+    private FirebaseAuth mAuth;
+    private ProgressDialog progressDialog;
 
-    @Bind(R.id.input_username) EditText _usernameText;
+    @Bind(R.id.input_email) EditText _emailText;
     @Bind(R.id.input_password) EditText _passwordText;
     @Bind(R.id.btn_login) Button _loginButton;
     @Bind(R.id.link_signup) TextView _signupLink;
@@ -40,7 +44,18 @@ public class LoginActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        progressDialog = new ProgressDialog(LoginActivity.this,
+                R.style.AppTheme_Dark_Dialog);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Autenticazione...");
+
+
         ButterKnife.bind(this);
+        mAuth = FirebaseAuth.getInstance();
+
+        _emailText.setText(PreferenceUtils.getEmail(this));
+        _passwordText.setText(PreferenceUtils.getPassword(this));
 
         _loginButton.setOnClickListener(new View.OnClickListener() {
 
@@ -61,6 +76,21 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        // Check if user is signed in (non-null) and update UI accordingly.
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) { //già loggato con firebase, basta connetersi a sendibird
+            Log.d("BOHMAH", "già loggato");
+            connectToSendBird(currentUser.getUid(), currentUser.getDisplayName());
+        }
+        else if (PreferenceUtils.getConnected(this)) { //non loggato con firebase,
+            Log.d("BOHMAH", "preferences salvate in locale");
+            connectToFirebase(PreferenceUtils.getEmail(this), PreferenceUtils.getPassword(this));
+        }
+    }
+
     public void login() {
         Log.d(TAG, "Login");
 
@@ -70,68 +100,29 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         _loginButton.setEnabled(false);
-        _usernameText.setEnabled(false);
+        _emailText.setEnabled(false);
 
-        final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this,
-                R.style.AppTheme_Dark_Dialog);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Autenticazione...");
-        progressDialog.show();
-
-        String username = _usernameText.getText().toString();
+        String email = _emailText.getText().toString();
         String password = _passwordText.getText().toString();
 
-        // TODO: Implement your own authentication logic here.
+        //TODO un checkbox con remember me?
+        PreferenceUtils.setEmail(LoginActivity.this, email);
+        PreferenceUtils.setPassword(LoginActivity.this, password);
 
-        // Remove all spaces from userID
-        username = username.replaceAll("\\s", "");
-        connectToSendBird(username);
+        connectToFirebase(email, password);
 
-        new android.os.Handler().postDelayed(
-                new Runnable() {
-                    public void run() {
-                        // On complete call either onLoginSuccess or onLoginFailed
-                        onLoginSuccess();
-                        progressDialog.dismiss();
-                    }
-                }, 3000);
-    }
-
-    public void login(String username, String password) {
-        _usernameText.setText(username);
-        _passwordText.setText(password);
-
-        Log.d(TAG, "Login");
-
-        _loginButton.setEnabled(false);
-        _usernameText.setEnabled(false);
-
-        final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this,
-                R.style.AppTheme_Dark_Dialog);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Autenticazione...");
-        progressDialog.show();
-
-        connectToSendBird(username);
-
-        new android.os.Handler().postDelayed(
-                new Runnable() {
-                    public void run() {
-                        // On complete call either onLoginSuccess or onLoginFailed
-                        onLoginSuccess();
-                        progressDialog.dismiss();
-                    }
-                }, 3000);
     }
 
 
+    /**
+     * in ritorno dal register activity
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_SIGNUP) {
             if (resultCode == RESULT_OK) {
-                // TODO: Implement successful signup logic here
-
-                login(data.getStringExtra("username"), data.getStringExtra("password"));
+                FirebaseUser user = mAuth.getCurrentUser();
+                connectToSendBird(user.getUid(), user.getDisplayName());
 
             }
         }
@@ -143,30 +134,24 @@ public class LoginActivity extends AppCompatActivity {
         moveTaskToBack(true);
     }
 
-    public void onLoginSuccess() {
-        _loginButton.setEnabled(true);
-        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-        startActivity(intent);
-        finish();
-    }
 
     public void onLoginFailed() {
         Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
-
         _loginButton.setEnabled(true);
     }
+
 
     public boolean validate() {
         boolean valid = true;
 
-        String email = _usernameText.getText().toString();
+        String email = _emailText.getText().toString();
         String password = _passwordText.getText().toString();
 
         if (email.isEmpty()) {
-            _usernameText.setError("inserisci un username valido");
+            _emailText.setError("inserisci un username valido");
             valid = false;
         } else {
-            _usernameText.setError(null);
+            _emailText.setError(null);
         }
 
         if (password.isEmpty() || password.length() < 4 ) {
@@ -179,11 +164,42 @@ public class LoginActivity extends AppCompatActivity {
         return valid;
     }
 
-    //    //TODO onstart con cose login salvato in preferences
 
-    private void connectToSendBird(final String username) {
+    private void connectToFirebase(final String email, String password){
 
-        SendBird.connect(username, new SendBird.ConnectHandler() {
+        progressDialog.show();
+
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            _passwordText.setError(null);
+                            Log.d(TAG, "signInWithEmail:success");
+
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            Log.d(TAG, user.getDisplayName());
+                            connectToSendBird(user.getUid(), user.getDisplayName());
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "signInWithEmail:failure", task.getException());
+                            _passwordText.setError("combinazione email password errata");
+                            onLoginFailed();
+                        }
+                    }
+                });
+
+    }
+
+    private void connectToSendBird(final String userId, final String username) {
+
+        if(!progressDialog.isShowing()){
+            progressDialog.show();
+        }
+
+
+        SendBird.connect(userId, new SendBird.ConnectHandler() {
             @Override
             public void onConnected(User user, SendBirdException e) {
 
@@ -195,13 +211,18 @@ public class LoginActivity extends AppCompatActivity {
                             .show();
 
                     _loginButton.setEnabled(true);
-                    _usernameText.setEnabled(true);
+                    _emailText.setEnabled(true);
+                    //PreferenceUtils.setConnected(LoginActivity.this, false);
                     return;
                 }
 
+                //PreferenceUtils.setConnected(LoginActivity.this, true);
                 setCurrentUserInfo(username);
-
-                // Proceed to MainActivity
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(intent);
+                progressDialog.dismiss();
+                _loginButton.setEnabled(true);
+                finish();
 
             }
         });

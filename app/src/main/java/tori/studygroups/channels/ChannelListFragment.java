@@ -13,7 +13,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.sendbird.android.OpenChannel;
 import com.sendbird.android.OpenChannelListQuery;
@@ -30,8 +33,15 @@ public class ChannelListFragment extends Fragment {
     private static final String LOG_TAG = ChannelListFragment.class.getSimpleName();
 
     private RecyclerView channelListRecyclerView;
+    private LinearLayout linearLayoutNoChannel;
+    private Button createGroupButton;
+    private LinearLayout loadBar;
     private LinearLayoutManager mLayoutManager;
     private ChannelListAdapter mChannelListAdapter;
+
+
+    private String groupNameSearched;
+
 
     private EditText searchChannelEditText;
 
@@ -39,7 +49,6 @@ public class ChannelListFragment extends Fragment {
 
     public static ChannelListFragment newInstance() {
         ChannelListFragment fragment = new ChannelListFragment();
-
         return fragment;
     }
 
@@ -50,11 +59,14 @@ public class ChannelListFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_channel_list, container, false);
 
         setRetainInstance(true);
-
         setHasOptionsMenu(true);
 
         channelListRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_channel_list);
         mChannelListAdapter = new ChannelListAdapter(getContext());
+        linearLayoutNoChannel = (LinearLayout) rootView.findViewById(R.id.no_channel_find_container);
+        createGroupButton = (Button) rootView.findViewById(R.id.btn_create_group);
+        loadBar = (LinearLayout) rootView.findViewById(R.id.linlaHeaderProgress);
+        linearLayoutNoChannel.setVisibility(View.GONE);
 
         searchChannelEditText = (EditText) rootView.findViewById(R.id.search_channel_editText);
 
@@ -70,9 +82,11 @@ public class ChannelListFragment extends Fragment {
         setUpAdapter();
         setUpRecyclerView();
         setUpSearchBar();
+        setUpCreateButton();
 
         return rootView;
     }
+
 
 
     @Override
@@ -80,7 +94,7 @@ public class ChannelListFragment extends Fragment {
         super.onResume();
 
         // Refresh once
-        refreshChannelList(15);
+         refreshChannelList(15);
 
     }
 
@@ -132,9 +146,13 @@ public class ChannelListFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
+                groupNameSearched = s.toString();
+
                 channelListQuery = OpenChannel.createOpenChannelListQuery();
                 channelListQuery.setLimit(15);
                 channelListQuery.setNameKeyword(s.toString());
+
+                loadBar.setVisibility(View.VISIBLE);
 
                 channelListQuery.next(new OpenChannelListQuery.OpenChannelListQueryResultHandler() {
                     @Override
@@ -143,7 +161,19 @@ public class ChannelListFragment extends Fragment {
                             // Error!
                             return;
                         }
+
                         mChannelListAdapter.setChannelList(channels);
+                        loadBar.setVisibility(View.GONE);
+
+                        if(channels.size() == 0){
+                            channelListRecyclerView.setVisibility(View.GONE);
+                            linearLayoutNoChannel.setVisibility(View.VISIBLE);
+
+                        } else {
+                            linearLayoutNoChannel.setVisibility(View.GONE);
+                            channelListRecyclerView.setVisibility(View.VISIBLE);
+                        }
+
                     }
                 });
 
@@ -158,6 +188,18 @@ public class ChannelListFragment extends Fragment {
 
     }
 
+    private void setUpCreateButton() {
+        createGroupButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intentCreateChannel = new Intent(getActivity(), CreateChannelActivity.class);
+                intentCreateChannel.putExtra("groupName", groupNameSearched);
+                startActivity(intentCreateChannel);
+            }
+        });
+
+    }
+
 
     /**
      * Creates a new query to get the list of the user's Channels,
@@ -168,6 +210,7 @@ public class ChannelListFragment extends Fragment {
     void refreshChannelList(int numChannels) {
         channelListQuery= OpenChannel.createOpenChannelListQuery();
         channelListQuery.setLimit(numChannels);
+        loadBar.setVisibility(View.VISIBLE);
         channelListQuery.next(new OpenChannelListQuery.OpenChannelListQueryResultHandler() {
             @Override
             public void onResult(List<OpenChannel> list, SendBirdException e) {
@@ -175,6 +218,7 @@ public class ChannelListFragment extends Fragment {
                     // Error!
                     return;
                 }
+                loadBar.setVisibility(View.GONE);
                 mChannelListAdapter.setChannelList(list);
 
             }
@@ -185,6 +229,7 @@ public class ChannelListFragment extends Fragment {
      * Loads the next channels from the current query instance.
      */
     void loadNextChannelList() {
+        loadBar.setVisibility(View.VISIBLE);
         channelListQuery.next(new OpenChannelListQuery.OpenChannelListQueryResultHandler() {
             @Override
             public void onResult(List<OpenChannel> list, SendBirdException e) {
@@ -193,6 +238,7 @@ public class ChannelListFragment extends Fragment {
                     return;
                 }
 
+                loadBar.setVisibility(View.GONE);
                 for (OpenChannel channel : list) {
                     mChannelListAdapter.addLast(channel);
                 }

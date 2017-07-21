@@ -67,7 +67,6 @@ public class ChatFragment extends Fragment {
         args.putString(ChannelListFragment.EXTRA_CHANNEL_URL, channelUrl);
         fragment.setArguments(args);
 
-
         return fragment;
     }
 
