@@ -234,8 +234,10 @@ public class ChatFragment extends Fragment {
                 return true;
 
             case R.id.action_chat_add_event:
+                Log.d("BOHMAH", "cliccato");
                 intent = new Intent(getActivity(), AddEventActivity.class);
                 intent.putExtra(EXTRA_CHANNEL_URL, mChannel.getUrl());
+                startActivity(intent);
                 return true;
 
             default:

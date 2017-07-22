@@ -32,6 +32,7 @@
             android:label="@string/participant_list" />
         <activity android:name=".channels.ChannelsActivity" />
         <activity android:name=".channels.CreateChannelActivity" />
+        <activity android:name=".channels.AddEventActivity" />
 
 
     </application>

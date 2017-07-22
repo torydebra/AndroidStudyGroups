@@ -22,7 +22,7 @@
                 android:id="@+id/edittext_create_channel_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Channel Name" />
+                android:hint="@string/create_channel_name" />
 
 
         </android.support.design.widget.TextInputLayout>
