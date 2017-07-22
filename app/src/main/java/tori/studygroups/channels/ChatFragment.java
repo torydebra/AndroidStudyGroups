@@ -21,6 +21,7 @@ import android.view.*;
 import android.widget.*;
 import com.sendbird.android.*;
 import tori.studygroups.R;
+import tori.studygroups.otherClass.Disconnection;
 import tori.studygroups.utils.FileUtils;
 import tori.studygroups.utils.PhotoViewerActivity;
 import tori.studygroups.utils.MediaPlayerActivity;
@@ -78,7 +79,6 @@ public class ChatFragment extends Fragment {
         setRetainInstance(true);
 
         setHasOptionsMenu(true);
-
 
         mRootLayout = rootView.findViewById(R.id.layout_chat_root);
 
@@ -224,16 +224,25 @@ public class ChatFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+        Intent intent;
+        switch (id){
+            case R.id.action_chat_view_participants:
+                intent = new Intent(getActivity(), ParticipantListActivity.class);
+                intent.putExtra(EXTRA_CHANNEL_URL, mChannel.getUrl());
+                startActivity(intent);
 
-        if (id == R.id.action_chat_view_participants) {
-            Intent intent = new Intent(getActivity(), ParticipantListActivity.class);
-            intent.putExtra(EXTRA_CHANNEL_URL, mChannel.getUrl());
-            startActivity(intent);
+                return true;
 
-            return true;
+            case R.id.action_chat_add_event:
+                intent = new Intent(getActivity(), AddEventActivity.class);
+                intent.putExtra(EXTRA_CHANNEL_URL, mChannel.getUrl());
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+
         }
 
-        return super.onOptionsItemSelected(item);
     }
 
     private void setUpChatAdapter() {

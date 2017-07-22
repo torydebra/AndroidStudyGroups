@@ -3,10 +3,13 @@
 
     <item
         android:id="@+id/menu_general_personal_page"
-        android:title="@string/personalPage" />
+        android:title="@string/personalPage"
+        android:orderInCategory="5"/>
 
-        <item
-            android:id="@+id/menu_general_item_disconnect"
-            android:title="@string/disconnect" />
+    <item
+        android:id="@+id/menu_general_item_disconnect"
+        android:title="@string/disconnect"
+        android:orderInCategory="10"
+        />
 
 </menu>

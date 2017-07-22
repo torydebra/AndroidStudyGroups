@@ -35,6 +35,7 @@
 
     <string name="participant_list">Participanti</string>
     <string name="participant_menu">Vedi participanti</string>
+    <string name="add_event">Crea evento</string>
 
     <string name="no_channel_find">Nessun gruppo con questo nome, creane uno</string>
     <string name="create_channel">Crea Gruppo</string>

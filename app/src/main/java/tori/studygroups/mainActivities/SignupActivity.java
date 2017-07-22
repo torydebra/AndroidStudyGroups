@@ -118,13 +118,14 @@ public class SignupActivity extends AppCompatActivity {
                                         public void onComplete(@NonNull Task<Void> task) {
                                             if (task.isSuccessful()) {
                                                 Log.d(TAG, "User profile updated.");
+
+                                                progressDialog.dismiss();
+                                                onSignupSuccess();
                                             }
                                         }
                                     });
 
-                            progressDialog.dismiss();
 
-                            onSignupSuccess();
 
                         } else {
                             // If sign in fails, display a message to the user.

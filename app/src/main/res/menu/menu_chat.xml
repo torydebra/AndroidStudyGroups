@@ -2,9 +2,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <item
+        android:id="@+id/action_chat_add_event"
+        android:orderInCategory="1"
+        android:title="@string/add_event"
+        app:showAsAction="ifRoom" />
+
     <item android:id="@+id/action_chat_view_participants"
         android:title="@string/participant_menu"
-        android:orderInCategory="10"
+        android:orderInCategory="9"
         app:showAsAction="never" />
 
 </menu>
