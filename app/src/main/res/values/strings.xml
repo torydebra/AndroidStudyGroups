@@ -37,7 +37,7 @@
     <string name="participant_menu">Vedi participanti</string>
     <string name="add_event">Crea evento</string>
 
-    <string name="add_event_title">Crea Evento</string>
+    <string name="add_event_title">Crea Evento per </string>
     <string name="add_event_name">Nome Evento</string>
     <string name="add_event_location">Luogo</string>
     <string name="add_event_date">Giorno</string>

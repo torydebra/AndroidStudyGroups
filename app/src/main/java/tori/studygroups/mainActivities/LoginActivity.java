@@ -83,6 +83,7 @@ public class LoginActivity extends AppCompatActivity {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) { //già loggato con firebase, basta connetersi a sendibird
             Log.d("BOHMAH", "già loggato");
+            _emailText.setText(currentUser.getEmail());
             connectToSendBird(currentUser.getUid(), currentUser.getDisplayName());
         }
         else if (PreferenceUtils.getConnected(this)) { //non loggato con firebase,
