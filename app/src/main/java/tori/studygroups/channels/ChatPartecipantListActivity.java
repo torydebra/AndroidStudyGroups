@@ -7,6 +7,8 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.LinearLayout;
 
 import com.sendbird.android.OpenChannel;
 import com.sendbird.android.SendBirdException;
@@ -22,8 +24,9 @@ import java.util.List;
 
 public class ChatPartecipantListActivity extends AppCompatActivity {
 
-    private UserListChatAdapter mListAdapter;
+    private UserListAdapter mListAdapter;
     private RecyclerView mRecyclerView;
+    private LinearLayout loadBar;
     private LinearLayoutManager mLayoutManager;
     private String mChannelUrl;
     private OpenChannel mChannel;
@@ -35,20 +38,17 @@ public class ChatPartecipantListActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_participant_list);
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_participant_list);
+        loadBar = (LinearLayout) findViewById(R.id.linlaHeaderProgressPartecipant);
 
         mChannelUrl = getIntent().getStringExtra(ChatFragment.EXTRA_CHANNEL_URL);
-        mListAdapter = new UserListChatAdapter(this);
+        mListAdapter = new UserListAdapter(this);
 
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_participant_list);
-//        setSupportActionBar(toolbar);
-//        if (getSupportActionBar() != null) {
-//            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        }
-
+        loadBar.setVisibility(View.VISIBLE);
         setUpRecyclerView();
 
         getChannelFromUrl();
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -62,12 +62,14 @@ public class ChatPartecipantListActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
     private void setUpRecyclerView() {
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mListAdapter);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
     }
+
 
     /**
      * Gets the channel instance with the channel URL.
@@ -83,6 +85,7 @@ public class ChatPartecipantListActivity extends AppCompatActivity {
         });
     }
 
+
     private void getUserList() {
         UserListQuery userListQuery = mChannel.createParticipantListQuery();
         userListQuery.next(new UserListQuery.UserListQueryResultHandler() {
@@ -94,9 +97,8 @@ public class ChatPartecipantListActivity extends AppCompatActivity {
                 }
 
                 mListAdapter.setUserList(list);
+                loadBar.setVisibility(View.GONE);
             }
         });
     }
-
-
 }

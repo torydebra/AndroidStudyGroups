@@ -17,14 +17,15 @@ import java.util.List;
 
 /**
  * A simple adapter that displays a list of Users.
+ * usato sia per veder lista partecipanti chat e per lista partecipanti evento
  */
-public class UserListChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class UserListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context mContext;
     private List<User> mUsers;
 
 
-    public UserListChatAdapter(Context context) {
+    public UserListAdapter(Context context) {
         mContext = context;
         mUsers = new ArrayList<>();
     }

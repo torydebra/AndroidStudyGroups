@@ -8,6 +8,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -19,13 +22,9 @@ import com.sendbird.android.SendBirdException;
 import com.sendbird.android.User;
 import com.sendbird.android.UserListQuery;
 import tori.studygroups.R;
-import tori.studygroups.otherClass.MyEvent;
-import tori.studygroups.otherClass.MyUser;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static com.sendbird.android.SendBird.createUserListQuery;
 
@@ -37,8 +36,9 @@ public class EventPartecipantListActivity extends AppCompatActivity {
 
     public static final String EVENT_ID = "eventId";
 
-    private UserListChatAdapter mListAdapter;
+    private UserListAdapter mListAdapter;
     private RecyclerView mRecyclerView;
+    private LinearLayout loadBar;
     private LinearLayoutManager mLayoutManager;
     private String mChannelUrl;
     private OpenChannel mChannel;
@@ -54,12 +54,13 @@ public class EventPartecipantListActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_participant_list);
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_participant_list);
+        loadBar = (LinearLayout) findViewById(R.id.linlaHeaderProgressPartecipant);
         eventId = getIntent().getStringExtra("eventId");
-        mListAdapter = new UserListChatAdapter(this);
+        mListAdapter = new UserListAdapter(this);
 
+        loadBar.setVisibility(View.VISIBLE);
         setUpRecyclerView();
         getUserListFromFirebase();
-        getUserListFromSendBird();
 
     }
 
@@ -124,6 +125,7 @@ public class EventPartecipantListActivity extends AppCompatActivity {
                 }
 
                 mListAdapter.setUserList(list);
+                loadBar.setVisibility(View.GONE);
             }
         });
     }
