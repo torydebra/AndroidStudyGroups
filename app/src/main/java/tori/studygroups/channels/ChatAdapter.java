@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +17,12 @@ import com.sendbird.android.FileMessage;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.User;
 import com.sendbird.android.UserMessage;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import tori.studygroups.R;
+import tori.studygroups.otherClass.MyEvent;
 import tori.studygroups.utils.DateUtils;
 import tori.studygroups.utils.ImageUtils;
 import tori.studygroups.utils.FileUtils;
@@ -31,8 +37,11 @@ import java.util.List;
 class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final int VIEW_TYPE_USER_MESSAGE = 10;
+    private static final int VIEW_TYPE_EVENT_MESSAGE = 15;
     private static final int VIEW_TYPE_FILE_MESSAGE = 20;
     private static final int VIEW_TYPE_ADMIN_MESSAGE = 30;
+    private static final String CUSTOM_TYPE_MESSAGE_TEXT_NORMAL = "normal";
+    private static final String CUSTOM_TYPE_MESSAGE_TEXT_EVENT = "event";
 
     private Context mContext;
     private List<BaseMessage> mMessageList;
@@ -102,6 +111,11 @@ class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     .inflate(R.layout.list_item_chat_message_file, parent, false);
             return new FileMessageHolder(view);
         }
+        else if (viewType == VIEW_TYPE_EVENT_MESSAGE) {
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.list_item_chat_message_event_created, parent, false);
+            return new EventMessageHolder(view);
+        }
 
         // Theoretically shouldn't happen.
         return null;
@@ -110,7 +124,15 @@ class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public int getItemViewType(int position) {
         if (mMessageList.get(position) instanceof UserMessage) {
-            return VIEW_TYPE_USER_MESSAGE;
+
+            //primo per caricare messaggi versione vecchia che sono senza customType
+            if ( ((UserMessage)mMessageList.get(position)).getCustomType().equals(CUSTOM_TYPE_MESSAGE_TEXT_NORMAL)) {
+                    return VIEW_TYPE_USER_MESSAGE;
+
+            } else if( ((UserMessage)mMessageList.get(position)).getCustomType().equals(CUSTOM_TYPE_MESSAGE_TEXT_EVENT)) {
+                return VIEW_TYPE_EVENT_MESSAGE;
+            }
+
         } else if (mMessageList.get(position) instanceof AdminMessage) {
             return VIEW_TYPE_ADMIN_MESSAGE;
         } else if (mMessageList.get(position) instanceof FileMessage) {
@@ -155,6 +177,9 @@ class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 ((FileMessageHolder) holder).bind(mContext, (FileMessage) message, isNewDay,
                         mItemClickListener, mItemLongClickListener);
                 break;
+            case VIEW_TYPE_EVENT_MESSAGE:
+                ((EventMessageHolder) holder).bind(mContext, (UserMessage) message, isNewDay,
+                        mItemClickListener, mItemLongClickListener);
             default:
                 break;
         }
@@ -359,6 +384,90 @@ class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 });
             }
 
+        }
+    }
+
+    private static class EventMessageHolder extends RecyclerView.ViewHolder {
+        TextView nicknameText, messageText, timeText, dateText, nameEventText, locationEventText,
+                dayEventText, timeEventText;
+        ImageView profileImage;
+
+        EventMessageHolder(View itemView) {
+            super(itemView);
+
+            nicknameText = (TextView) itemView.findViewById(R.id.text_chat_nickname);
+            timeText = (TextView) itemView.findViewById(R.id.text_chat_time);
+            profileImage = (ImageView) itemView.findViewById(R.id.image_chat_profile);
+            dateText = (TextView) itemView.findViewById(R.id.text_chat_date);
+            nameEventText = (TextView) itemView.findViewById(R.id.text_chat_event_name);
+            locationEventText = (TextView) itemView.findViewById(R.id.text_chat_event_location);
+            dayEventText = (TextView) itemView.findViewById(R.id.text_chat_event_day);
+            timeEventText = (TextView) itemView.findViewById(R.id.text_chat_event_time);
+        }
+
+        // Binds message details to ViewHolder item
+        void bind(Context context, final UserMessage message, boolean isNewDay,
+                  @Nullable final OnItemClickListener clickListener,
+                  @Nullable final OnItemLongClickListener longClickListener) {
+
+            User sender = message.getSender();
+
+            JSONObject jsonDataEvent = null;
+            try {
+                jsonDataEvent = new JSONObject(message.getData()).getJSONObject("event");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            // If current user sent the message, display name in different color
+            if (sender.getUserId().equals(SendBird.getCurrentUser().getUserId())) {
+                nicknameText.setTextColor(ContextCompat.getColor(context, R.color.ChatNicknameMe));
+            } else {
+                nicknameText.setTextColor(ContextCompat.getColor(context, R.color.ChatNicknameOther));
+            }
+
+            // Show the date if the message was sent on a different date than the previous one.
+            if (isNewDay) {
+                dateText.setVisibility(View.VISIBLE);
+                dateText.setText(DateUtils.formatDate(message.getCreatedAt()));
+            } else {
+                dateText.setVisibility(View.GONE);
+            }
+
+            nicknameText.setText(message.getSender().getNickname());
+            timeText.setText(DateUtils.formatTime(message.getCreatedAt()));
+
+            try {
+                nameEventText.setText(jsonDataEvent.getString("name"));
+                locationEventText.setText(jsonDataEvent.getString("location"));
+                dayEventText.setText(jsonDataEvent.getString("day"));
+                timeEventText.setText(jsonDataEvent.getString("time"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+            // Get profile image and display it
+            ImageUtils.displayRoundImageFromUrl(context, message.getSender().getProfileUrl(), profileImage);
+
+            if (clickListener != null) {
+                itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        clickListener.onUserMessageItemClick(message);
+                    }
+                });
+            }
+
+            if (longClickListener != null) {
+                itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        longClickListener.onBaseMessageLongClick(message);
+                        return true;
+                    }
+                });
+            }
         }
     }
 

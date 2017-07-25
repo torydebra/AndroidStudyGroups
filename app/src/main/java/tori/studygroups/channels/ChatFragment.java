@@ -22,6 +22,7 @@ import android.widget.*;
 import com.sendbird.android.*;
 import tori.studygroups.R;
 import tori.studygroups.otherClass.Disconnection;
+import tori.studygroups.otherClass.MyEvent;
 import tori.studygroups.utils.FileUtils;
 import tori.studygroups.utils.PhotoViewerActivity;
 import tori.studygroups.utils.MediaPlayerActivity;
@@ -40,7 +41,10 @@ public class ChatFragment extends Fragment {
     private static final String CONNECTION_HANDLER_ID = "CONNECTION_HANDLER_CHAT";
 
     private static final int INTENT_REQUEST_CHOOSE_IMAGE = 300;
+    private static final int INTENT_REQUEST_ADD_EVENT = 500;
     private static final int PERMISSION_WRITE_EXTERNAL_STORAGE = 13;
+    private static final String CUSTOM_TYPE_MESSAGE_TEXT_NORMAL = "normal";
+    private static final String CUSTOM_TYPE_MESSAGE_TEXT_EVENT = "event";
 
     static final String EXTRA_CHANNEL_URL = "CHANNEL_URL";
 
@@ -87,6 +91,7 @@ public class ChatFragment extends Fragment {
         mCurrentEventLayout = rootView.findViewById(R.id.layout_chat_current_event);
         mCurrentEventText = (TextView) rootView.findViewById(R.id.text_chat_current_event);
 
+
         setUpChatAdapter();
         setUpRecyclerView();
 
@@ -97,7 +102,7 @@ public class ChatFragment extends Fragment {
         mMessageSendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendUserMessage(mMessageEditText.getText().toString());
+                sendUserMessage(mMessageEditText.getText().toString(), null, CUSTOM_TYPE_MESSAGE_TEXT_NORMAL);
                 mMessageEditText.setText("");
             }
         });
@@ -151,6 +156,18 @@ public class ChatFragment extends Fragment {
                 return;
             }
             showUploadConfirmDialog(data.getData());
+
+        } else if (requestCode == INTENT_REQUEST_ADD_EVENT){
+            Log.d("MAHBOH", "entrato");
+            if (data != null && resultCode == Activity.RESULT_OK){
+                Log.d("MAHBOH", "not null");
+                MyEvent eventCreated = (MyEvent) data.getParcelableExtra("eventAdded");
+
+                //TODO
+                Log.d("MAHBOH", eventCreated.toJsonString());
+               // sendUserMessage(null, eventCreated.toJsonString(), CUSTOM_TYPE_MESSAGE_TEXT_EVENT);
+                sendUserMessage("event", eventCreated.toJsonString(), CUSTOM_TYPE_MESSAGE_TEXT_EVENT);
+            }
         }
     }
 
@@ -237,7 +254,7 @@ public class ChatFragment extends Fragment {
                 intent = new Intent(getActivity(), AddEventActivity.class);
                 intent.putExtra(EXTRA_CHANNEL_URL, mChannel.getUrl());
                 intent.putExtra("channelName", mChannel.getName());
-                startActivity(intent);
+                startActivityForResult(intent, INTENT_REQUEST_ADD_EVENT);
                 return true;
 
             default:
@@ -248,10 +265,15 @@ public class ChatFragment extends Fragment {
     }
 
     private void setUpChatAdapter() {
+        //TODO ONCLICK LISTENER
         mChatAdapter = new ChatAdapter(getActivity());
         mChatAdapter.setOnItemClickListener(new ChatAdapter.OnItemClickListener() {
+
             @Override
             public void onUserMessageItemClick(UserMessage message) {
+                if (message.getCustomType().equals(CUSTOM_TYPE_MESSAGE_TEXT_EVENT)){
+                    onEventMessageClicked(message);
+                }
             }
 
             @Override
@@ -267,6 +289,7 @@ public class ChatFragment extends Fragment {
         mChatAdapter.setOnItemLongClickListener(new ChatAdapter.OnItemLongClickListener() {
             @Override
             public void onBaseMessageLongClick(final BaseMessage message) {
+
                 new AlertDialog.Builder(getActivity())
                         .setTitle(R.string.delete_message_question)
                         .setNegativeButton(R.string.delete_message_cancel, null)
@@ -279,8 +302,11 @@ public class ChatFragment extends Fragment {
                         .create()
                         .show();
             }
+
         });
     }
+
+
 
     private void setUpRecyclerView() {
         mLayoutManager = new LinearLayoutManager(getActivity());
@@ -300,6 +326,17 @@ public class ChatFragment extends Fragment {
             }
         });
     }
+
+    private void onEventMessageClicked(UserMessage message) {
+
+        EventFragment fragment = EventFragment.newInstance(message.getData());
+        getFragmentManager().beginTransaction()
+                .replace(R.id.container_channels_list, fragment)
+                .addToBackStack(null)
+                .commit();
+
+    }
+
 
     private void onFileMessageClicked(FileMessage message) {
         String type = message.getType().toLowerCase();
@@ -442,8 +479,9 @@ public class ChatFragment extends Fragment {
         });
     }
 
-    private void sendUserMessage(String text) {
-        mChannel.sendUserMessage(text, new BaseChannel.SendUserMessageHandler() {
+    private void sendUserMessage(String text, String data, String custom_type) {
+
+        mChannel.sendUserMessage(text, data, custom_type, new BaseChannel.SendUserMessageHandler() {
             @Override
             public void onSent(UserMessage userMessage, SendBirdException e) {
                 if (e != null) {

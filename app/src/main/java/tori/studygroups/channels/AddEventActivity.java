@@ -1,5 +1,6 @@
 package tori.studygroups.channels;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
 import android.app.ProgressDialog;
@@ -21,11 +22,15 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.sendbird.android.BaseChannel;
+import com.sendbird.android.SendBirdException;
+import com.sendbird.android.UserMessage;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -91,6 +96,7 @@ public class AddEventActivity extends AppCompatActivity {
         setDialogTime();
 
         setCreateButton();
+
 
     }
 
@@ -184,15 +190,26 @@ public class AddEventActivity extends AppCompatActivity {
                 timeEventText.setEnabled(false);
 
                 progressDialog.show();
-                createEvent();
+                MyEvent eventCreated = createEvent();
                 progressDialog.dismiss();
+
+                if (eventCreated != null) {
+                    Intent resultIntent = new Intent();
+                    resultIntent.putExtra("eventAdded", eventCreated);
+                    setResult(Activity.RESULT_OK, resultIntent);
+                } else{
+                    setResult(Activity.RESULT_CANCELED);
+                }
+                finish();
 
             }
         });
 
     }
 
-    public boolean validate() {
+
+
+    private boolean validate() {
         boolean valid = true;
 
         if (nameEventText.getText().toString().isEmpty()) {
@@ -233,7 +250,7 @@ public class AddEventActivity extends AppCompatActivity {
         return valid;
     }
 
-    private void createEvent() {
+    private MyEvent createEvent() {
 
         FirebaseAuth mAuth;
         mAuth = FirebaseAuth.getInstance();
@@ -249,6 +266,8 @@ public class AddEventActivity extends AppCompatActivity {
 
         DatabaseReference dbRefEvents = FirebaseDatabase.getInstance().getReference("events").push();
         dbRefEvents.setValue(event);
+
+        return event;
 
     }
 
