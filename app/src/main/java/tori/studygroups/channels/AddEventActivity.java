@@ -262,10 +262,16 @@ public class AddEventActivity extends AppCompatActivity {
 
         MyEvent event = new MyEvent(nameEventText.getText().toString(), locationEventText.getText().toString(),
                 dateEventText.getText().toString(), timeEventText.getText().toString(),
-                user.getUid(), channelUrl, now);
+                user.getUid(), user.getDisplayName(), channelUrl, channelName, now, null);
 
         DatabaseReference dbRefEvents = FirebaseDatabase.getInstance().getReference("events").push();
         dbRefEvents.setValue(event);
+        String eventId = dbRefEvents.getKey();
+        event.setEventId(eventId);
+
+        DatabaseReference dbRefEventPartecipants = FirebaseDatabase.getInstance().getReference("eventPartecipant");
+        dbRefEventPartecipants.child(eventId);
+        dbRefEventPartecipants.child(eventId).child(user.getUid()).setValue("true");
 
         return event;
 

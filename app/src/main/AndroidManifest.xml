@@ -28,11 +28,12 @@
             android:name=".utils.MediaPlayerActivity"
             android:screenOrientation="landscape" />
         <activity
-            android:name=".channels.ParticipantListActivity"
+            android:name=".channels.ChatPartecipantListActivity"
             android:label="@string/participant_list" />
         <activity android:name=".channels.ChannelsActivity" />
         <activity android:name=".channels.CreateChannelActivity" />
         <activity android:name=".channels.AddEventActivity" />
+        <activity android:name=".channels.EventPartecipantListActivity" />
 
 
     </application>

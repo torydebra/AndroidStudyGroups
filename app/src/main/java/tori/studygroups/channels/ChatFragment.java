@@ -21,7 +21,6 @@ import android.view.*;
 import android.widget.*;
 import com.sendbird.android.*;
 import tori.studygroups.R;
-import tori.studygroups.otherClass.Disconnection;
 import tori.studygroups.otherClass.MyEvent;
 import tori.studygroups.utils.FileUtils;
 import tori.studygroups.utils.PhotoViewerActivity;
@@ -158,9 +157,9 @@ public class ChatFragment extends Fragment {
             showUploadConfirmDialog(data.getData());
 
         } else if (requestCode == INTENT_REQUEST_ADD_EVENT){
-            Log.d("MAHBOH", "entrato");
+            //Log.d("MAHBOH", "entrato");
             if (data != null && resultCode == Activity.RESULT_OK){
-                Log.d("MAHBOH", "not null");
+                //Log.d("MAHBOH", "not null");
                 MyEvent eventCreated = (MyEvent) data.getParcelableExtra("eventAdded");
 
                 //TODO
@@ -244,7 +243,7 @@ public class ChatFragment extends Fragment {
         Intent intent;
         switch (id){
             case R.id.action_chat_view_participants:
-                intent = new Intent(getActivity(), ParticipantListActivity.class);
+                intent = new Intent(getActivity(), ChatPartecipantListActivity.class);
                 intent.putExtra(EXTRA_CHANNEL_URL, mChannel.getUrl());
                 startActivity(intent);
 
