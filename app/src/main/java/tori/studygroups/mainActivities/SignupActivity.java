@@ -19,6 +19,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 
 import butterknife.ButterKnife;
@@ -106,6 +107,10 @@ public class SignupActivity extends AppCompatActivity {
 
                             DatabaseReference dbRefUsers = FirebaseDatabase.getInstance().getReference("users");
                             dbRefUsers.child(user.getUid()).setValue(myUser);
+
+                            String token = FirebaseInstanceId.getInstance().getToken();
+                            dbRefUsers.child(user.getUid()).child("devices").child(token).setValue("true");
+
 
                             UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                                     .setDisplayName(username)

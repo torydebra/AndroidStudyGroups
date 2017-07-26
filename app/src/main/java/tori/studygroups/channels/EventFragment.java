@@ -56,9 +56,12 @@ public class EventFragment extends Fragment{
     private TextView eventLocationText;
     private Button eventViewPartecipantsButton;
     private Button eventPartecipaConfirmButton;
+    private Button eventPartecipaDeleteButton;
 
     private String creatorName;
     private String eventId;
+    private FirebaseUser user;
+    private DatabaseReference dbRefEventPartecipants;
 
     public static EventFragment newInstance(@NonNull String eventDataJson) {
         EventFragment fragment = new EventFragment();
@@ -78,6 +81,11 @@ public class EventFragment extends Fragment{
         setRetainInstance(true);
         setHasOptionsMenu(true);
 
+        FirebaseAuth mAuth;
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+        dbRefEventPartecipants = FirebaseDatabase.getInstance().getReference("eventPartecipant");
+
         eventDataString = getArguments().getString(JSONDATAEVENT);
         Log.d("MAH", eventDataString);
         eventDataJson = null;
@@ -94,6 +102,7 @@ public class EventFragment extends Fragment{
         eventLocationText = (TextView) rootView.findViewById(R.id.event_location_text);
         eventViewPartecipantsButton = (Button) rootView.findViewById(R.id.btn_event_view_partecipants);
         eventPartecipaConfirmButton = (Button) rootView.findViewById(R.id.btn_event_partecipa_confirm);
+        eventPartecipaDeleteButton = (Button) rootView.findViewById(R.id.btn_event_partecipa_delete);
 
         try {
             eventId = eventDataJson.getString("eventId");
@@ -101,9 +110,9 @@ public class EventFragment extends Fragment{
             e.printStackTrace();
         }
 
+
+        checkPartecipationFirebase();
         setUpPage();
-
-
         return rootView;
     }
 
@@ -111,6 +120,30 @@ public class EventFragment extends Fragment{
     @Override
     public void onResume() {
         super.onResume();
+    }
+
+
+    private void checkPartecipationFirebase() {
+
+        dbRefEventPartecipants.child(eventId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChild(user.getUid())){
+                    eventPartecipaDeleteButton.setEnabled(true);
+                    eventPartecipaConfirmButton.setEnabled(false);
+                } else {
+                    eventPartecipaDeleteButton.setEnabled(false);
+                    eventPartecipaConfirmButton.setEnabled(true);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
     }
 
 
@@ -153,21 +186,55 @@ public class EventFragment extends Fragment{
             }
         });
 
+        eventPartecipaDeleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AlertDialog.Builder(getContext())
+                        .setTitle("Annulla partecipazione")
+                        .setMessage("Sei sicuro di non voler più partecipare all'evento?")
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                cancelPartecipazione();
+                            }})
+
+                        .setNegativeButton(android.R.string.no, null).show();
+
+            }
+        });
+
 
     }
+
 
     private void partecipa() {
 
-        FirebaseAuth mAuth;
-        mAuth = FirebaseAuth.getInstance();
-        FirebaseUser user = mAuth.getCurrentUser();
-
-        DatabaseReference dbRefEventPartecipants = FirebaseDatabase.getInstance().getReference("eventPartecipant");
-        dbRefEventPartecipants.child(eventId);
         dbRefEventPartecipants.child(eventId).child(user.getUid()).setValue("true");
+
+        Toast t = Toast.makeText(getContext(), "Ora partecipi all'evento", Toast.LENGTH_LONG);
+        t.show();
+
+        eventPartecipaDeleteButton.setEnabled(true);
+        eventPartecipaConfirmButton.setEnabled(false);
 
 
     }
+
+    private void cancelPartecipazione() {
+
+        dbRefEventPartecipants.child(eventId).child(user.getUid()).getRef().removeValue();
+
+        Toast t = Toast.makeText(getContext(), "Non partecipi più all'evento", Toast.LENGTH_LONG);
+        t.show();
+
+        eventPartecipaDeleteButton.setEnabled(false);
+        eventPartecipaConfirmButton.setEnabled(true);
+
+
+
+    }
+
 
 
 }

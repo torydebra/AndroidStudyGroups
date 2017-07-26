@@ -46,6 +46,7 @@
     <string name="created_event_text">ha creato un evento</string>
     <string name="view_partecipants">Vedi Partecipanti </string>
     <string name="partecipa_confirmation">Partecipa</string>
+    <string name="partecipa_delete">Cancella Partecipazione</string>
 
     <string name="no_channel_find">Nessun gruppo con questo nome, creane uno</string>
     <string name="create_channel">Crea Gruppo</string>

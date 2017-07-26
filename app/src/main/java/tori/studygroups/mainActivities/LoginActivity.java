@@ -14,6 +14,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 
@@ -84,6 +87,12 @@ public class LoginActivity extends AppCompatActivity {
         if (currentUser != null) { //già loggato con firebase, basta connetersi a sendibird
             Log.d("BOHMAH", "già loggato");
             _emailText.setText(currentUser.getEmail());
+
+            //save device token sul server
+            DatabaseReference dbRefUsers = FirebaseDatabase.getInstance().getReference("users");
+            String token = FirebaseInstanceId.getInstance().getToken();
+            dbRefUsers.child(currentUser.getUid()).child("devices").child(token).setValue("true");
+
             connectToSendBird(currentUser.getUid(), currentUser.getDisplayName());
         }
         else if (PreferenceUtils.getConnected(this)) { //non loggato con firebase,
@@ -187,6 +196,13 @@ public class LoginActivity extends AppCompatActivity {
 
                             FirebaseUser user = mAuth.getCurrentUser();
                             Log.d(TAG, user.getDisplayName());
+
+                            //save device token sul server
+                            DatabaseReference dbRefUsers = FirebaseDatabase.getInstance().getReference("users");
+                            String token = FirebaseInstanceId.getInstance().getToken();
+                            dbRefUsers.child(user.getUid()).child("devices").child(token).setValue("true");
+
+
                             connectToSendBird(user.getUid(), user.getDisplayName());
                         } else {
                             // If sign in fails, display a message to the user.
