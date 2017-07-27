@@ -10,6 +10,11 @@ import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.sendbird.android.OpenChannel;
 import com.sendbird.android.SendBirdException;
 import tori.studygroups.R;
@@ -91,6 +96,18 @@ public class CreateChannelActivity extends AppCompatActivity {
                 }
 
                 // Open Channel created
+
+                //add created channel to favourite
+                FirebaseAuth mAuth;
+                mAuth = FirebaseAuth.getInstance();
+                FirebaseUser user = mAuth.getCurrentUser();
+
+                DatabaseReference dbRefUserPrefChannels = FirebaseDatabase.getInstance().getReference("userPrefChannels");
+                dbRefUserPrefChannels.child(user.getUid()).child(openChannel.getUrl()).setValue("true");
+
+                DatabaseReference dbRefChannelPrefUser = FirebaseDatabase.getInstance().getReference("channelPrefUser");
+                dbRefChannelPrefUser.child(openChannel.getUrl()).child(user.getUid()).setValue("true");
+
                 finish();
             }
         });

@@ -2,6 +2,7 @@ package tori.studygroups.channels;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ClipData;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -14,11 +15,20 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.*;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.*;
 import android.widget.*;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceIdService;
 import com.sendbird.android.*;
 import tori.studygroups.R;
 import tori.studygroups.otherClass.MyEvent;
@@ -57,6 +67,15 @@ public class ChatFragment extends Fragment {
     private View mCurrentEventLayout;
     private TextView mCurrentEventText;
 
+    private boolean favouriteGroup;
+
+    private FirebaseUser user;
+    DatabaseReference dbRefUserPrefChannels;
+    DatabaseReference dbRefChannelPrefUser;
+    DatabaseReference dbRefUser;
+    DatabaseReference dbRefChannelToDevice;
+    List <String> userDeviceList;
+
     private OpenChannel mChannel;
     private String mChannelUrl;
     private PreviousMessageListQuery mPrevMessageListQuery;
@@ -80,7 +99,6 @@ public class ChatFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_chat, container, false);
 
         setRetainInstance(true);
-
         setHasOptionsMenu(true);
 
         mRootLayout = rootView.findViewById(R.id.layout_chat_root);
@@ -90,7 +108,18 @@ public class ChatFragment extends Fragment {
         mCurrentEventLayout = rootView.findViewById(R.id.layout_chat_current_event);
         mCurrentEventText = (TextView) rootView.findViewById(R.id.text_chat_current_event);
 
+        FirebaseAuth mAuth;
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
 
+
+
+        dbRefUserPrefChannels = FirebaseDatabase.getInstance().getReference("userPrefChannels");
+        dbRefChannelPrefUser = FirebaseDatabase.getInstance().getReference("channelPrefUser");
+        dbRefUser = FirebaseDatabase.getInstance().getReference("users");
+        dbRefChannelToDevice = FirebaseDatabase.getInstance().getReference("channelToDevice");
+
+        checkFavouriteGroup();
         setUpChatAdapter();
         setUpRecyclerView();
 
@@ -121,6 +150,7 @@ public class ChatFragment extends Fragment {
 
         return rootView;
     }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -226,15 +256,21 @@ public class ChatFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-
         SendBird.removeChannelHandler(CHANNEL_HANDLER_ID);
     }
 
     //menu per vedere partecipanti e altro? TODO
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_chat, menu);
-        super.onCreateOptionsMenu(menu, inflater);
+        if (favouriteGroup) {
+            inflater.inflate(R.menu.menu_chat_fav, menu);
+            super.onCreateOptionsMenu(menu, inflater);
+
+        } else {
+            inflater.inflate(R.menu.menu_chat, menu);
+            super.onCreateOptionsMenu(menu, inflater);
+        }
+        Log.d("MAH", "menu created");
     }
 
     @Override
@@ -246,7 +282,6 @@ public class ChatFragment extends Fragment {
                 intent = new Intent(getActivity(), ChatPartecipantListActivity.class);
                 intent.putExtra(EXTRA_CHANNEL_URL, mChannel.getUrl());
                 startActivity(intent);
-
                 return true;
 
             case R.id.action_chat_add_event:
@@ -256,12 +291,128 @@ public class ChatFragment extends Fragment {
                 startActivityForResult(intent, INTENT_REQUEST_ADD_EVENT);
                 return true;
 
+            case R.id.favourite_star:
+
+                if (favouriteGroup){
+                    item.setIcon(R.drawable.ic_star_empty);
+                    removeFromFavourite();
+                } else {
+                    item.setIcon(R.drawable.ic_star_full);
+                    addToFavourite();
+                }
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
 
         }
 
     }
+
+    private void addToFavourite() {
+
+        new AlertDialog.Builder(getContext())
+                .setTitle("Aggiungi preferito")
+                .setMessage("Aggiungere questo gruppo ai preferiti?")
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                        dbRefUser.child(user.getUid()).child("devices").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                for (DataSnapshot snapshot: dataSnapshot.getChildren()){
+
+                                    Log.d("MAH", snapshot.getKey());
+                                    dbRefChannelToDevice.child(mChannelUrl).child(snapshot.getKey()).setValue("true");
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+
+                        dbRefUserPrefChannels.child(user.getUid()).child(mChannelUrl).setValue("true");
+                        dbRefChannelPrefUser.child(mChannelUrl).child(user.getUid()).setValue("true");
+
+                        favouriteGroup = true;
+                        Toast t = Toast.makeText(getContext(), "Aggiunto ai preferiti", Toast.LENGTH_LONG);
+                        t.show();
+                    }
+                })
+
+                .setNegativeButton(android.R.string.no, null).show();
+
+    }
+
+    private void removeFromFavourite() {
+
+        new AlertDialog.Builder(getContext())
+                .setTitle("Rimuovi preferito")
+                .setMessage("Rimuovere questo gruppo dai preferiti?")
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                        dbRefUser.child(user.getUid()).child("devices").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                for (DataSnapshot snapshot: dataSnapshot.getChildren()){
+                                    Log.d("MAHcancellando", snapshot.getKey());
+                                    dbRefChannelToDevice.child(mChannelUrl).child(snapshot.getKey()).getRef().removeValue();
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+
+                        dbRefUserPrefChannels.child(user.getUid()).child(mChannelUrl).getRef().removeValue();
+                        dbRefChannelPrefUser.child(mChannelUrl).child(user.getUid()).getRef().removeValue();
+                        favouriteGroup = false;
+                        Toast t = Toast.makeText(getContext(), "Rimosso dai preferiti", Toast.LENGTH_LONG);
+                        t.show();
+                    }
+                })
+
+                .setNegativeButton(android.R.string.no, null).show();
+
+
+    }
+
+    private void checkFavouriteGroup() {
+
+        dbRefUserPrefChannels.child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChild(mChannelUrl)) {
+                    Log.d("MAH", "preferito");
+                    favouriteGroup = true;
+                } else {
+                    Log.d("MAH", "NONpreferito");
+                    favouriteGroup = false;
+                }
+
+                Log.d("MAH", "favourite Checked");
+                ActivityCompat.invalidateOptionsMenu(getActivity());
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
 
     private void setUpChatAdapter() {
         //TODO ONCLICK LISTENER

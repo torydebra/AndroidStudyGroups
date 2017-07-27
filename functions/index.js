@@ -33,27 +33,26 @@ admin.initializeApp(functions.config().firebase);
  * Followers add a flag to `/followers/{followedUid}/{followerUid}`.
  * Users save their device notification tokens to `/users/{followedUid}/notificationTokens/{notificationToken}`.
  */
-exports.sendNewEventNotification2 = functions.database.ref('/events/{newEventId}').onWrite(event => {
+exports.sendNewEventNotification = functions.database.ref('/events/{newEventId}').onWrite(event => {
   const newEventId = event.params.newEventId;
-  
   const newEvent = event.data.val();
+  const channelName = event.data.val().channelUrl;
  
   // If event delete??
   if (!event.data.val()) {
-    return console.log("evento cancellato");
+    return console.log("evento non esiste");
   }
   console.log('Nuovo evento creato:', newEventId);
   console.log('myiooo', newEvent);
 
   // Get the list of device notification tokens.
-  const getDeviceTokensPromise = admin.database().ref(`/users/G6n9EswU06ccXXx4U0Ai27RekvV2/devices`).once('value');
+  const getDeviceTokensPromise = admin.database().ref(`/channelToDevice/${channelName}`).once('value');
 
   // Get event detail
   //const getEventDetail = admin.database().ref(`/events/${newEventId}`);
 
   return Promise.all([getDeviceTokensPromise]).then(results => {
     const tokensSnapshot = results[0];
-    //const eventDetail = result[1];
 
     // Check if there are any device tokens.
     if (!tokensSnapshot.hasChildren()) {
@@ -64,11 +63,16 @@ exports.sendNewEventNotification2 = functions.database.ref('/events/{newEventId}
 
     // Notification details.
     const payload = {
+
       notification: {
         title: 'Nuovo Evento creato',
         body: `${newEvent.name} per il gruppo ${newEvent.channelName}`,
        // icon: follower.photoURL,
         sound : 'default'
+      },
+
+      data: {
+				channelUrl: `${newEvent.channelUrl}`
       }
     };
 
