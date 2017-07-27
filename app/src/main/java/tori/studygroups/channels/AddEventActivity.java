@@ -8,6 +8,7 @@ import android.app.TimePickerDialog;
 import android.app.TimePickerDialog.OnTimeSetListener;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -264,13 +265,14 @@ public class AddEventActivity extends AppCompatActivity {
                 dateEventText.getText().toString(), timeEventText.getText().toString(),
                 user.getUid(), user.getDisplayName(), channelUrl, channelName, now, null);
 
-        DatabaseReference dbRefEvents = FirebaseDatabase.getInstance().getReference("events").push();
+        //DatabaseReference dbRefEvents = FirebaseDatabase.getInstance().getReference("events").push();
+        DatabaseReference dbRefEvents = FirebaseDatabase.getInstance().getReference("channelEvents")
+                .child(channelUrl).push();
         dbRefEvents.setValue(event);
         String eventId = dbRefEvents.getKey();
         event.setEventId(eventId);
 
         DatabaseReference dbRefEventPartecipants = FirebaseDatabase.getInstance().getReference("eventPartecipant");
-        dbRefEventPartecipants.child(eventId);
         dbRefEventPartecipants.child(eventId).child(user.getUid()).setValue("true");
 
         return event;

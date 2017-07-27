@@ -115,7 +115,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
      */
     private void sendNotification(RemoteMessage remoteMessage) {
         Intent intent = new Intent(this, ChannelsActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         intent.putExtra("eventNotification", remoteMessage.getData().get("channelUrl"));
         Log.d("MAHHHH", remoteMessage.getData().get("channelUrl"));

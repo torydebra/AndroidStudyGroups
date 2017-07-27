@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/favourite_star"
-        android:orderInCategory="2"
+        android:orderInCategory="1"
         android:title="@string/add_favourite"
         android:icon="@drawable/ic_star_empty"
         app:showAsAction="always" />
@@ -14,6 +14,12 @@
         android:orderInCategory="2"
         android:title="@string/add_event"
         app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_chat_view_events"
+        android:orderInCategory="3"
+        android:title="@string/view_events"
+        app:showAsAction="never" />
 
     <item android:id="@+id/action_chat_view_participants"
         android:title="@string/participant_menu"

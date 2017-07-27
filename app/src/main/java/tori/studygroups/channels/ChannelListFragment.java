@@ -70,15 +70,6 @@ public class ChannelListFragment extends Fragment {
 
         searchChannelEditText = (EditText) rootView.findViewById(R.id.search_channel_editText);
 
-//        mCreateChannelFab = (FloatingActionButton) rootView.findViewById(R.id.fab_open_channel_list);
-//        mCreateChannelFab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(getActivity(), CreateOpenChannelActivity.class);
-//                startActivity(intent);
-//            }
-//        });
-
         setUpAdapter();
         setUpRecyclerView();
         setUpSearchBar();

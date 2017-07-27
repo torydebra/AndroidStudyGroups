@@ -44,7 +44,8 @@
     <string name="add_event_time">Ora</string>
     <string name="create_event">Crea Evento</string>
     <string name="created_event_text">ha creato un evento</string>
-    <string name="view_partecipants">Vedi Partecipanti </string>
+    <string name="view_partecipants">Vedi Partecipanti</string>
+    <string name="view_events">Vedi Eventi</string>
     <string name="partecipa_confirmation">Partecipa</string>
     <string name="partecipa_delete">Cancella Partecipazione</string>
 

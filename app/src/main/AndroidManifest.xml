@@ -34,6 +34,7 @@
         <activity android:name=".channels.CreateChannelActivity" />
         <activity android:name=".channels.AddEventActivity" />
         <activity android:name=".channels.EventPartecipantListActivity" />
+        <activity android:name=".channels.EventsChannelListActivity" />
 
         <service
             android:name=".services.MyFirebaseMessagingService">

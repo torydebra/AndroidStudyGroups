@@ -1,11 +1,13 @@
 package tori.studygroups.channels;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -22,18 +24,34 @@ public class ChannelsActivity extends AppCompatActivity{
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.channels_activity);
-
         searchChannelsEditText = (EditText) findViewById(R.id.search_channel_editText);
 
-        // Load list of Channels
-        Fragment fragment = ChannelListFragment.newInstance();
+        String eventData = null;
+        Intent intent = getIntent();
+        Log.d("MAHHHH", "channlActivity created");
+        eventData = intent.getStringExtra("eventNotification");
 
-        FragmentManager manager = getSupportFragmentManager();
-        manager.popBackStack();
+        if(eventData != null){
+            Log.d("MAHHHH", "channlActivity eventData");
+            Fragment fragment = EventFragment.newInstance(eventData);
 
-        manager.beginTransaction()
-                .replace(R.id.container_channels_list, fragment)
-                .commit();
+            FragmentManager manager = getSupportFragmentManager();
+            manager.popBackStack();
+            manager.beginTransaction()
+                    .replace(R.id.container_channels_list, fragment)
+                    .commit();
+        } else {
+
+            // Load list of Channels
+            Fragment fragment = ChannelListFragment.newInstance();
+
+            FragmentManager manager = getSupportFragmentManager();
+            manager.popBackStack();
+
+            manager.beginTransaction()
+                    .replace(R.id.container_channels_list, fragment)
+                    .commit();
+        }
     }
 
     @Override
