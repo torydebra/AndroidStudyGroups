@@ -163,7 +163,7 @@ public class EventFragment extends Fragment{
             eventCreatorText.setText("Creato da: " + eventDataJson.getString("userName"));
             eventDayText.setText("data: " + eventDataJson.getString("day") +
                     " alle ore: " + eventDataJson.getString("time"));
-            eventLocationText.setText("Luogo: " + eventDataJson.getString("location"));
+            eventLocationText.setText(eventDataJson.getString("location"));
         } catch (JSONException e) {
             e.printStackTrace();
         }
