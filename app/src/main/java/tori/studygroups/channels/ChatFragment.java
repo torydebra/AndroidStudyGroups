@@ -282,7 +282,7 @@ public class ChatFragment extends Fragment {
                 return true;
 
             case R.id.action_chat_add_event:
-                intent = new Intent(getActivity(), AddEventActivity.class);
+                intent = new Intent(getActivity(), CreateEventActivity.class);
                 intent.putExtra(EXTRA_CHANNEL_URL, mChannel.getUrl());
                 intent.putExtra("channelName", mChannel.getName());
                 startActivityForResult(intent, INTENT_REQUEST_ADD_EVENT);

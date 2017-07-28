@@ -32,7 +32,7 @@
             android:label="@string/participant_list" />
         <activity android:name=".channels.ChannelsActivity" />
         <activity android:name=".channels.CreateChannelActivity" />
-        <activity android:name=".channels.AddEventActivity" />
+        <activity android:name=".channels.CreateEventActivity" />
         <activity android:name=".channels.EventPartecipantListActivity" />
         <activity android:name=".channels.EventsChannelListActivity" />
 
@@ -49,6 +49,10 @@
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
             </intent-filter>
         </service>
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyA3nyWvMBfpPB1WQctLcP6lw86TAyDCnBw"/>
 
 
     </application>
