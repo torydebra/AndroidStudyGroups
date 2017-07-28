@@ -6,7 +6,8 @@
     android:id="@+id/layout_chat_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior" >
+    android:background="@drawable/ic_imageedit_1_8224648896"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <LinearLayout
         android:id="@+id/layout_chat_chatbox"
