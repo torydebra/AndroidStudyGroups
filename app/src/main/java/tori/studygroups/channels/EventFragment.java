@@ -14,33 +14,26 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.sendbird.android.BaseChannel;
-import com.sendbird.android.BaseMessage;
-import com.sendbird.android.SendBird;
+
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
-import java.util.Map;
+
+import java.util.Calendar;
+
 
 import tori.studygroups.R;
-import tori.studygroups.mainActivities.LoginActivity;
-import tori.studygroups.otherClass.MyEvent;
-import tori.studygroups.otherClass.MyUser;
 
 public class EventFragment extends Fragment{
 
@@ -87,7 +80,7 @@ public class EventFragment extends Fragment{
         dbRefEventPartecipants = FirebaseDatabase.getInstance().getReference("eventPartecipant");
 
         eventDataString = getArguments().getString(JSONDATAEVENT);
-        Log.d("MAH", eventDataString);
+        //Log.d("MAH", eventDataString);
         eventDataJson = null;
         try {
             eventDataJson = new JSONObject(eventDataString).getJSONObject("event");
@@ -111,7 +104,22 @@ public class EventFragment extends Fragment{
         }
 
 
-        checkPartecipationFirebase();
+        String date = null;
+        try {
+            date = eventDataJson.getString("timestampDateEvent");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        //evento passato
+        if ((Calendar.getInstance().getTimeInMillis()) >= Long.parseLong(date)){
+            eventPartecipaDeleteButton.setEnabled(false);
+            eventPartecipaConfirmButton.setEnabled(false);
+
+        } else {
+            checkPartecipationFirebase();
+        }
+
         setUpPage();
         return rootView;
     }
@@ -220,6 +228,7 @@ public class EventFragment extends Fragment{
 
 
     }
+
 
     private void cancelPartecipazione() {
 

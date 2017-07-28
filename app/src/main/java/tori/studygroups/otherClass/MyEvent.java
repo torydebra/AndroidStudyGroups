@@ -10,6 +10,7 @@ import java.util.HashMap;
 public class MyEvent implements Parcelable{
 
     public String name;
+    public long timestampDateEvent;
     public String day;
     public String hour;
     public String location;
@@ -17,19 +18,20 @@ public class MyEvent implements Parcelable{
     public String userName;
     public String channelUrl;
     public String channelName;
-    public String creationDate;
+    public long timestampCreated;
 
     public String eventId;
 
     // Default constructor required for calls to
-    // DataSnapshot.getValue(User.class)
+    // DataSnapshot.getValue(MyEvent.class)
     public MyEvent() {
     }
 
-    public MyEvent(String name, String location, String day, String hour, String userId, String userName,
-                   String channelUrl, String channelName, String creationDate, @Nullable String eventId) {
+    public MyEvent(String name, String location, long timestampDateEvent, String day, String hour, String userId, String userName,
+                   String channelUrl, String channelName, long timestampCreated, @Nullable String eventId) {
 
         this.name = name;
+        this.timestampDateEvent = timestampDateEvent;
         this.location = location;
         this.day = day;
         this.hour = hour;
@@ -37,7 +39,7 @@ public class MyEvent implements Parcelable{
         this.userName = userName;
         this. channelUrl = channelUrl;
         this.channelName = channelName;
-        this.creationDate = creationDate;
+        this.timestampCreated = timestampCreated;
         this.eventId = eventId;
     }
     public void setEventId (String eventId) {
@@ -50,13 +52,14 @@ public class MyEvent implements Parcelable{
                         "{" +
                             "\"name\":\"" + name +"\"," +
                             "\"location\":\"" + location +"\"," +
+                            "\"timestampDateEvent\":\"" + timestampDateEvent +"\"," +
                             "\"day\":\"" + day +"\"," +
                             "\"time\":\"" + hour +"\"," +
                             "\"userId\":\"" + userId +"\"," +
                             "\"userName\":\"" + userName +"\"," +
                             "\"channelUrl\":\"" + channelUrl +"\"," +
                             "\"channelName\":\"" + channelName +"\"," +
-                            "\"creationDate\":\"" + creationDate +"\"," +
+                            "\"timestampCreated\":\"" + timestampCreated +"\"," +
                             "\"eventId\":\"" + eventId +"\"" +
                         "}" +
                 "}";
@@ -73,13 +76,14 @@ public class MyEvent implements Parcelable{
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
         dest.writeString(location);
+        dest.writeLong(timestampDateEvent);
         dest.writeString(day);
         dest.writeString(hour);
         dest.writeString(userId);
         dest.writeString(userName);
         dest.writeString(channelUrl);
         dest.writeString(channelName);
-        dest.writeString(creationDate);
+        dest.writeLong(timestampCreated);
         dest.writeString(eventId);
     }
 
@@ -96,13 +100,14 @@ public class MyEvent implements Parcelable{
     private MyEvent(Parcel in) {
         name = in.readString();
         location = in.readString();
+        timestampDateEvent = in.readLong();
         day = in.readString();
         hour = in.readString();
         userId = in.readString();
         userName = in.readString();
         channelUrl = in.readString();
         channelName = in.readString();
-        creationDate = in.readString();
+        timestampCreated = in.readLong();
         eventId = in.readString();
     }
 

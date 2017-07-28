@@ -87,7 +87,10 @@ public class ChannelListAdapter extends RecyclerView.Adapter<ChannelListAdapter.
             coloredDecorator = (ImageView) itemView.findViewById(R.id.image_open_channel_list_decorator);
         }
 
-        void bind(final Context context, final OpenChannel channel, int position, @Nullable final OnItemClickListener clickListener, @Nullable final OnItemLongClickListener longClickListener) {
+        void bind(final Context context, final OpenChannel channel, int position,
+                  @Nullable final OnItemClickListener clickListener,
+                  @Nullable final OnItemLongClickListener longClickListener) {
+
             nameText.setText(channel.getName());
 
             String participantCount = String.format(context.getResources()

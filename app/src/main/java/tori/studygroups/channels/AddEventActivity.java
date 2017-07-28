@@ -63,7 +63,6 @@ public class AddEventActivity extends AppCompatActivity {
     private SimpleDateFormat dateFormatter;
     private SimpleDateFormat timeFormatter;
 
-
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -105,19 +104,11 @@ public class AddEventActivity extends AppCompatActivity {
 
     private void setDialogDate() {
 
-//        dateEventText.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                datePickerDialog.show();
-//            }
-//        });
-        dateEventText.setOnTouchListener(new View.OnTouchListener() {
+        dateEventText.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
+            public void onClick(View v) {
                 datePickerDialog.show();
-                return false;
             }
-
         });
 
 
@@ -125,10 +116,8 @@ public class AddEventActivity extends AppCompatActivity {
 
         OnDateSetListener dateSetListener = new OnDateSetListener() {
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                //Calendar newDate = Calendar.getInstance();
-                //newDate.set(year, monthOfYear, dayOfMonth);
+
                 calendarDateEvent.set(year, monthOfYear, dayOfMonth);
-                //dateEventText.setText(dateFormatter.format(newDate.getTime()));
                 dateEventText.setText(dateFormatter.format(calendarDateEvent.getTime()));
             }
 
@@ -154,13 +143,11 @@ public class AddEventActivity extends AppCompatActivity {
 
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay , int minute) {
-//                Calendar newTime = Calendar.getInstance();
-//                newTime.set(Calendar.HOUR_OF_DAY, hourOfDay);
-//                newTime.set(Calendar.MINUTE, minute);
-//                timeEventText.setText(timeFormatter.format(newTime.getTime()));
+
                 calendarDateEvent.set(Calendar.HOUR_OF_DAY, hourOfDay);
                 calendarDateEvent.set(Calendar.MINUTE, minute);
                 timeEventText.setText(timeFormatter.format(calendarDateEvent.getTime()));
+
             }
         };
 
@@ -175,6 +162,7 @@ public class AddEventActivity extends AppCompatActivity {
         createEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 if (! validate()){
                     createEventButton.setEnabled(true);
                     nameEventText.setEnabled(true);
@@ -183,6 +171,7 @@ public class AddEventActivity extends AppCompatActivity {
                     timeEventText.setEnabled(true);
                     return;
                 }
+
 
                 createEventButton.setEnabled(false);
                 nameEventText.setEnabled(false);
@@ -257,15 +246,14 @@ public class AddEventActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
 
-        dateFormatter = new SimpleDateFormat("dd-M-yyyy--HH-mm-ss", Locale.ITALY);
         Calendar cal = Calendar.getInstance();
-        String now = dateFormatter.format(cal.getTime());
+        long now = cal.getTimeInMillis();
+        long timestampDateEvent = calendarDateEvent.getTimeInMillis();
 
         MyEvent event = new MyEvent(nameEventText.getText().toString(), locationEventText.getText().toString(),
-                dateEventText.getText().toString(), timeEventText.getText().toString(),
+                timestampDateEvent, dateEventText.getText().toString(), timeEventText.getText().toString(),
                 user.getUid(), user.getDisplayName(), channelUrl, channelName, now, null);
 
-        //DatabaseReference dbRefEvents = FirebaseDatabase.getInstance().getReference("events").push();
         DatabaseReference dbRefEvents = FirebaseDatabase.getInstance().getReference("channelEvents")
                 .child(channelUrl).push();
         dbRefEvents.setValue(event);
