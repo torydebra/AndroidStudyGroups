@@ -23,7 +23,7 @@
 
     <item android:id="@+id/action_chat_view_participants"
         android:title="@string/participant_menu"
-        android:orderInCategory="9"
+        android:orderInCategory="4"
         app:showAsAction="never" />
 
 </menu>

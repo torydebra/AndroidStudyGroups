@@ -2,8 +2,10 @@ package tori.studygroups.channels;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -32,11 +34,14 @@ import tori.studygroups.otherClass.MyEvent;
 import tori.studygroups.utils.FileUtils;
 import tori.studygroups.utils.PhotoViewerActivity;
 import tori.studygroups.utils.MediaPlayerActivity;
+import tori.studygroups.utils.PreferenceUtils;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+
+import static tori.studygroups.channels.ChannelListFragment.EXTRA_CHANNEL_NAME;
 
 
 public class ChatFragment extends Fragment {
@@ -53,6 +58,7 @@ public class ChatFragment extends Fragment {
     private static final String CUSTOM_TYPE_MESSAGE_TEXT_EVENT = "event";
 
     static final String EXTRA_CHANNEL_URL = "CHANNEL_URL";
+    private static final String CHAT_OPEN = "chat_open";
 
     private RecyclerView mRecyclerView;
     private ChatAdapter mChatAdapter;
@@ -75,28 +81,51 @@ public class ChatFragment extends Fragment {
 
     private OpenChannel mChannel;
     private String mChannelUrl;
+    private String mChannelName;
     private PreviousMessageListQuery mPrevMessageListQuery;
 
     /**
      * To create an instance of this fragment, a Channel URL should be passed.
      */
-    public static ChatFragment newInstance(@NonNull String channelUrl) {
+    public static ChatFragment newInstance(@NonNull String channelUrl, String channelName) {
         ChatFragment fragment = new ChatFragment();
 
         Bundle args = new Bundle();
         args.putString(ChannelListFragment.EXTRA_CHANNEL_URL, channelUrl);
+        args.putString(EXTRA_CHANNEL_NAME, channelName);
         fragment.setArguments(args);
 
         return fragment;
     }
 
+    @Override
+    public void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+        Log.d("MAHHH", "chatFrag created");
+
+        mChannelUrl = getArguments().getString(ChannelListFragment.EXTRA_CHANNEL_URL);
+        mChannelName = getArguments().getString(EXTRA_CHANNEL_NAME);
+
+
+        FirebaseAuth mAuth;
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+
+        dbRefUserPrefChannels = FirebaseDatabase.getInstance().getReference("userPrefChannels");
+        dbRefChannelPrefUser = FirebaseDatabase.getInstance().getReference("channelPrefUser");
+        dbRefUser = FirebaseDatabase.getInstance().getReference("users");
+        dbRefChannelToDevice = FirebaseDatabase.getInstance().getReference("channelToDevice");
+
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Log.d("MAHHH", "chatFrag oncreateView");
         View rootView = inflater.inflate(R.layout.fragment_chat, container, false);
 
-        setRetainInstance(true);
         setHasOptionsMenu(true);
+        setRetainInstance(true);
 
         mRootLayout = rootView.findViewById(R.id.layout_chat_root);
 
@@ -104,17 +133,6 @@ public class ChatFragment extends Fragment {
 
         mCurrentEventLayout = rootView.findViewById(R.id.layout_chat_current_event);
         mCurrentEventText = (TextView) rootView.findViewById(R.id.text_chat_current_event);
-
-        FirebaseAuth mAuth;
-        mAuth = FirebaseAuth.getInstance();
-        user = mAuth.getCurrentUser();
-
-
-
-        dbRefUserPrefChannels = FirebaseDatabase.getInstance().getReference("userPrefChannels");
-        dbRefChannelPrefUser = FirebaseDatabase.getInstance().getReference("channelPrefUser");
-        dbRefUser = FirebaseDatabase.getInstance().getReference("users");
-        dbRefChannelToDevice = FirebaseDatabase.getInstance().getReference("channelToDevice");
 
         checkFavouriteGroup();
         setUpChatAdapter();
@@ -140,12 +158,62 @@ public class ChatFragment extends Fragment {
             }
         });
 
-
-        // Gets channel from URL user requested
-        mChannelUrl = getArguments().getString(ChannelListFragment.EXTRA_CHANNEL_URL);
         enterChannel(mChannelUrl);
 
         return rootView;
+    }
+
+    @Override
+    public void onActivityCreated (Bundle savedInstanceState){
+        super.onActivityCreated(savedInstanceState);
+        Log.d("MAHHH", "chatFrag onactivitycreated");
+
+    }
+
+    @Override
+    public void onStart(){
+        super.onStart();
+        Log.d("MAH", "chatFrag started");
+
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("MAHHH", "chatFrag resumed");
+
+        // Set this as true to restart auto-background detection.
+        // This means that you will be automatically disconnected from SendBird when your
+        // app enters the background.
+        SendBird.setAutoBackgroundDetection(true);
+
+        SendBird.addConnectionHandler(CONNECTION_HANDLER_ID, new SendBird.ConnectionHandler() {
+            @Override
+            public void onReconnectStarted() {
+                Log.d("MAHHH", "OpenChatFragment onReconnectStarted()");
+            }
+
+            @Override
+            public void onReconnectSucceeded() {
+                Log.d("MAHHH", "OpenChatFragment onReconnectSucceeded()");
+            }
+
+            @Override
+            public void onReconnectFailed() {
+                Log.d("MAHHH", "OpenChatFragment onReconnectFailed()");
+            }
+        });
+
+        SendBird.addChannelHandler(CHANNEL_HANDLER_ID, new SendBird.ChannelHandler() {
+            @Override
+            public void onMessageReceived(BaseChannel baseChannel, BaseMessage baseMessage) {
+                // Add new message to view
+                if (baseChannel.getUrl().equals(mChannelUrl)) {
+                    mChatAdapter.addFirst(baseMessage);
+                }
+            }
+        });
     }
 
 
@@ -189,54 +257,37 @@ public class ChatFragment extends Fragment {
                 //Log.d("MAHBOH", "not null");
                 MyEvent eventCreated = (MyEvent) data.getParcelableExtra("eventAdded");
 
-                //TODO
                 Log.d("MAHBOH", eventCreated.toJsonString());
-               // sendUserMessage(null, eventCreated.toJsonString(), CUSTOM_TYPE_MESSAGE_TEXT_EVENT);
                 sendUserMessage("event", eventCreated.toJsonString(), CUSTOM_TYPE_MESSAGE_TEXT_EVENT);
             }
         }
     }
 
+
+
+
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onPause() {
+        super.onPause();
+        Log.d("MAHHH", "chatFrag paused");
+        SendBird.removeChannelHandler(CHANNEL_HANDLER_ID);
 
-        // Set this as true to restart auto-background detection.
-        // This means that you will be automatically disconnected from SendBird when your
-        // app enters the background.
-        SendBird.setAutoBackgroundDetection(true);
+        SharedPreferences pref = getActivity().getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString(CHAT_OPEN, "true");
+        editor.putString(EXTRA_CHANNEL_URL, mChannelName);
+        editor.commit();
 
-        SendBird.addConnectionHandler(CONNECTION_HANDLER_ID, new SendBird.ConnectionHandler() {
-            @Override
-            public void onReconnectStarted() {
-                Log.d("CONNECTION", "OpenChatFragment onReconnectStarted()");
-            }
-
-            @Override
-            public void onReconnectSucceeded() {
-                Log.d("CONNECTION", "OpenChatFragment onReconnectSucceeded()");
-            }
-
-            @Override
-            public void onReconnectFailed() {
-                Log.d("CONNECTION", "OpenChatFragment onReconnectFailed()");
-            }
-        });
-
-        SendBird.addChannelHandler(CHANNEL_HANDLER_ID, new SendBird.ChannelHandler() {
-            @Override
-            public void onMessageReceived(BaseChannel baseChannel, BaseMessage baseMessage) {
-                // Add new message to view
-                if (baseChannel.getUrl().equals(mChannelUrl)) {
-                    mChatAdapter.addFirst(baseMessage);
-                }
-            }
-        });
     }
+
+
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        Log.d("MAHHH", "chatFrag ondestroyedView");
+
+
 
         mChannel.exit(new OpenChannel.OpenChannelExitHandler() {
             @Override
@@ -250,15 +301,12 @@ public class ChatFragment extends Fragment {
         });
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        SendBird.removeChannelHandler(CHANNEL_HANDLER_ID);
-    }
 
     //menu per vedere partecipanti e altro? TODO
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        Log.d("MAH", "menu created");
+
         if (favouriteGroup) {
             inflater.inflate(R.menu.menu_chat_fav, menu);
             super.onCreateOptionsMenu(menu, inflater);
@@ -267,7 +315,10 @@ public class ChatFragment extends Fragment {
             inflater.inflate(R.menu.menu_chat, menu);
             super.onCreateOptionsMenu(menu, inflater);
         }
-        Log.d("MAH", "menu created");
+
+        // Set action bar title to name of channel
+        ((ChannelsActivity) getActivity()).setActionBarTitle(mChannelName);
+
     }
 
     @Override
@@ -397,16 +448,12 @@ public class ChatFragment extends Fragment {
         dbRefUserPrefChannels.child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.hasChild(mChannelUrl)) {
-                    Log.d("MAH", "preferito");
-                    favouriteGroup = true;
-                } else {
-                    Log.d("MAH", "NONpreferito");
-                    favouriteGroup = false;
+                favouriteGroup = dataSnapshot.hasChild(mChannelUrl);
+
+                if (getActivity() != null){
+                    ActivityCompat.invalidateOptionsMenu(getActivity());
                 }
 
-                Log.d("MAH", "favourite Checked");
-                ActivityCompat.invalidateOptionsMenu(getActivity());
 
             }
 
@@ -419,7 +466,6 @@ public class ChatFragment extends Fragment {
 
 
     private void setUpChatAdapter() {
-        //TODO ONCLICK LISTENER
         mChatAdapter = new ChatAdapter(getActivity());
         mChatAdapter.setOnItemClickListener(new ChatAdapter.OnItemClickListener() {
 
@@ -533,7 +579,7 @@ public class ChatFragment extends Fragment {
 
     private void showUploadConfirmDialog(final Uri uri) {
         new AlertDialog.Builder(getActivity())
-                .setMessage("Upload file?")
+                .setMessage("Carica file?")
                 .setPositiveButton(R.string.upload, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -625,8 +671,7 @@ public class ChatFragment extends Fragment {
                         mChannel = openChannel;
                         loadInitialMessageList(30);
 
-                        // Set action bar title to name of channel
-                        ((ChannelsActivity) getActivity()).setActionBarTitle(mChannel.getName());
+
                     }
                 });
             }

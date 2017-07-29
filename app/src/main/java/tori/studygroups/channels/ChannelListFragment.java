@@ -30,6 +30,7 @@ import tori.studygroups.R;
 public class ChannelListFragment extends Fragment {
 
     public static final String EXTRA_CHANNEL_URL = "CHANNEL_URL";
+    public static final String EXTRA_CHANNEL_NAME = "CHANNEL_NAME";
     private static final String LOG_TAG = ChannelListFragment.class.getSimpleName();
 
     private RecyclerView channelListRecyclerView;
@@ -52,10 +53,17 @@ public class ChannelListFragment extends Fragment {
         return fragment;
     }
 
+    @Override
+    public void onCreate (Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+        Log.d("MAHHHH", "channllistFrag created");
+
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
+        Log.d("MAHHHH", "channllistFrag createdView");
         View rootView = inflater.inflate(R.layout.fragment_channel_list, container, false);
 
         setRetainInstance(true);
@@ -83,11 +91,13 @@ public class ChannelListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        Log.d("MAHHHH", "channllistFrag resumed");
 
         // Refresh once
-         refreshChannelList(15);
+        refreshChannelList(15);
 
     }
+
 
     void setUpRecyclerView() {
         mLayoutManager = new LinearLayoutManager(getContext());
@@ -112,7 +122,8 @@ public class ChannelListFragment extends Fragment {
             @Override
             public void onItemClick(OpenChannel channel) {
                 String channelUrl = channel.getUrl();
-                ChatFragment fragment = ChatFragment.newInstance(channelUrl);
+                String channelName = channel.getName();
+                ChatFragment fragment = ChatFragment.newInstance(channelUrl, channelName);
                 getFragmentManager().beginTransaction()
                         .replace(R.id.container_channels_list, fragment)
                         .addToBackStack(null)

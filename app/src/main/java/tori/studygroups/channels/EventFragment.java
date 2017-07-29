@@ -115,6 +115,8 @@ public class EventFragment extends Fragment{
         if ((Calendar.getInstance().getTimeInMillis()) >= Long.parseLong(date)){
             eventPartecipaDeleteButton.setEnabled(false);
             eventPartecipaConfirmButton.setEnabled(false);
+            eventPartecipaDeleteButton.setVisibility(View.GONE);
+            eventPartecipaConfirmButton.setVisibility(View.GONE);
 
         } else {
             checkPartecipationFirebase();
@@ -139,9 +141,13 @@ public class EventFragment extends Fragment{
                 if (dataSnapshot.hasChild(user.getUid())){
                     eventPartecipaDeleteButton.setEnabled(true);
                     eventPartecipaConfirmButton.setEnabled(false);
+                    eventPartecipaDeleteButton.setVisibility(View.VISIBLE);
+                    eventPartecipaConfirmButton.setVisibility(View.GONE);
                 } else {
                     eventPartecipaDeleteButton.setEnabled(false);
                     eventPartecipaConfirmButton.setEnabled(true);
+                    eventPartecipaDeleteButton.setVisibility(View.GONE);
+                    eventPartecipaConfirmButton.setVisibility(View.VISIBLE);
                 }
             }
 
@@ -161,7 +167,7 @@ public class EventFragment extends Fragment{
             eventNameText.setText(eventDataJson.getString("name"));
             eventGroupText.setText("Evento del gruppo " + eventDataJson.getString("channelName"));
             eventCreatorText.setText("Creato da: " + eventDataJson.getString("userName"));
-            eventDayText.setText("data: " + eventDataJson.getString("day") +
+            eventDayText.setText(eventDataJson.getString("day") +
                     " alle ore: " + eventDataJson.getString("time"));
             eventLocationText.setText(eventDataJson.getString("location"));
         } catch (JSONException e) {
@@ -225,6 +231,8 @@ public class EventFragment extends Fragment{
 
         eventPartecipaDeleteButton.setEnabled(true);
         eventPartecipaConfirmButton.setEnabled(false);
+        eventPartecipaDeleteButton.setVisibility(View.VISIBLE);
+        eventPartecipaConfirmButton.setVisibility(View.GONE);
 
 
     }
@@ -239,6 +247,8 @@ public class EventFragment extends Fragment{
 
         eventPartecipaDeleteButton.setEnabled(false);
         eventPartecipaConfirmButton.setEnabled(true);
+        eventPartecipaDeleteButton.setVisibility(View.GONE);
+        eventPartecipaConfirmButton.setVisibility(View.VISIBLE);
 
 
 

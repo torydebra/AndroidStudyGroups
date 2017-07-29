@@ -14,27 +14,35 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".mainActivities.LoginActivity">
+        <activity android:name=".mainActivities.LoginActivity"
+            android:windowSoftInputMode="stateUnchanged">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".mainActivities.MainActivity" />
-        <activity android:name=".mainActivities.SignupActivity" />
-
+        <activity android:name=".mainActivities.MainActivity"
+            android:windowSoftInputMode="stateUnchanged"/>
+        <activity android:name=".mainActivities.SignupActivity"
+            android:windowSoftInputMode="stateUnchanged"/>
+        <activity android:name=".utils.PhotoViewerActivity"/>
         <activity
             android:name=".utils.MediaPlayerActivity"
             android:screenOrientation="landscape" />
         <activity
             android:name=".channels.ChatPartecipantListActivity"
             android:label="@string/participant_list" />
-        <activity android:name=".channels.ChannelsActivity" />
-        <activity android:name=".channels.CreateChannelActivity" />
-        <activity android:name=".channels.CreateEventActivity" />
-        <activity android:name=".channels.EventPartecipantListActivity" />
-        <activity android:name=".channels.EventsChannelListActivity" />
+        <activity android:name=".channels.ChannelsActivity"
+            android:windowSoftInputMode="stateUnchanged"/>
+        <activity android:name=".channels.CreateChannelActivity"
+            android:windowSoftInputMode="stateUnchanged"/>
+        <activity android:name=".channels.CreateEventActivity"
+            android:windowSoftInputMode="stateUnchanged"/>
+        <activity android:name=".channels.EventPartecipantListActivity"
+            android:windowSoftInputMode="stateUnchanged"/>
+        <activity android:name=".channels.EventsChannelListActivity"
+            android:windowSoftInputMode="stateUnchanged"/>
 
         <service
             android:name=".services.MyFirebaseMessagingService">

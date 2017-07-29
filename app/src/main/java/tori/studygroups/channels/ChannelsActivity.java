@@ -21,35 +21,69 @@ public class ChannelsActivity extends AppCompatActivity{
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("MAHHHH", "channlActivity created");
+
         setContentView(R.layout.activity_channels);
         searchChannelsEditText = (EditText) findViewById(R.id.search_channel_editText);
 
         String eventData = null;
         Intent intent = getIntent();
-        Log.d("MAHHHH", "channlActivity created");
+
         eventData = intent.getStringExtra("eventNotification");
 
-        if(eventData != null){
-            Log.d("MAHHHH", "channlActivity eventData");
-            Fragment fragment = EventFragment.newInstance(eventData);
+        // Load list of Channels
+        Fragment fragment;
 
-            FragmentManager manager = getSupportFragmentManager();
-            manager.popBackStack();
-            manager.beginTransaction()
-                    .replace(R.id.container_channels_list, fragment)
-                    .commit();
-        } else {
 
-            // Load list of Channels
-            Fragment fragment = ChannelListFragment.newInstance();
+            if (savedInstanceState == null) {
+                fragment = ChannelListFragment.newInstance();
+                FragmentManager manager = getSupportFragmentManager();
+                manager.popBackStack();
 
-            FragmentManager manager = getSupportFragmentManager();
-            manager.popBackStack();
+                manager.beginTransaction()
+                        .replace(R.id.container_channels_list, fragment, "FRAGMENT_CHANNEL_LIST")
+                        .commit();
 
-            manager.beginTransaction()
-                    .replace(R.id.container_channels_list, fragment)
-                    .commit();
-        }
+            } else { //fragment esiste già (es orientation change)
+                fragment = getSupportFragmentManager().findFragmentByTag("FRAGMENT_CHANNEL_LIST");
+            }
+
+
+    }
+
+
+    @Override
+    protected void onStart(){
+        super.onStart();
+        Log.d("MAHHHH", "channlActivity started");
+
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        //Log.d("MAHHHH", "channlActivity resumed");
+
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+       // Log.d("MAHHHH", "channlActivity paused");
+
+    }
+
+    @Override
+    protected void onStop(){
+        super.onStop();
+       // Log.d("MAHHHH", "channlActivity stopped");
+
+    }
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        Log.d("MAHHHH", "channlActivity destroyed");
+
     }
 
     @Override

@@ -33,7 +33,7 @@ import tori.studygroups.R;
 public class MediaPlayerActivity extends Activity implements
         OnBufferingUpdateListener, OnCompletionListener,
         OnPreparedListener, OnVideoSizeChangedListener, SurfaceHolder.Callback {
-    private static final String TAG = "MediaPlayerActivity";
+    private static final String TAG = "MediaPlayerActivityMAH";
     private int mVideoWidth;
     private int mVideoHeight;
     private MediaPlayer mMediaPlayer;
@@ -59,7 +59,7 @@ public class MediaPlayerActivity extends Activity implements
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
         holder = mPreview.getHolder();
         holder.addCallback(this);
-        holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+        //holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
         extras = getIntent().getExtras();
         path = extras.getString("url");
 
