@@ -33,9 +33,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import tori.studygroups.R;
+import tori.studygroups.otherClass.EventDB;
+import tori.studygroups.otherClass.MyEvent;
+
 import android.R.color;
 
 public class EventFragment extends Fragment{
@@ -59,6 +63,8 @@ public class EventFragment extends Fragment{
     private String eventId;
     private FirebaseUser user;
     private DatabaseReference dbRefEventPartecipants;
+
+    private MyEvent event;
 
     public static EventFragment newInstance(@NonNull String eventDataJson) {
         EventFragment fragment = new EventFragment();
@@ -91,6 +97,26 @@ public class EventFragment extends Fragment{
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+        try {
+            event = new MyEvent(
+                    eventDataJson.getString("name"),
+                    eventDataJson.getString("location"),
+                    eventDataJson.getLong("timestampDateEvent"),
+                    eventDataJson.getString("day"),
+                    eventDataJson.getString("time"),
+                    eventDataJson.getString("userId"),
+                    eventDataJson.getString("userName"),
+                    eventDataJson.getString("channelUrl"),
+                    eventDataJson.getString("channelName"),
+                    eventDataJson.getLong("timestampCreated"),
+                    eventDataJson.getString("eventId")
+                    );
+        } catch (JSONException e){
+            e.printStackTrace();
+        }
+
+        Log.d("MAHHHisneritot", event.toJsonString());
 
         eventNameText = (TextView) rootView.findViewById(R.id.event_name_text);
         eventGroupText = (TextView) rootView.findViewById(R.id.event_group_text);
@@ -251,6 +277,19 @@ public class EventFragment extends Fragment{
         eventPartecipaButton.setBackgroundColor(ResourcesCompat.getColor(getResources(), color.holo_red_light, null));
         eventPartecipaBool = true;
 
+        EventDB localDB = new EventDB(getContext());
+        String insertId = localDB.insertEvent(event);
+        if (insertId != null){
+           // Log.d("MAHHHH", "riga inserita in locale");
+        }
+
+        ArrayList<MyEvent> events = localDB.getEvents();
+        for(MyEvent ev : events) {
+            Log.d("MAHHEVETN", ev.toJsonString());
+        }
+
+
+
 
     }
 
@@ -265,6 +304,12 @@ public class EventFragment extends Fragment{
         eventPartecipaButton.setText(R.string.partecipa_confirmation);
         eventPartecipaButton.setBackgroundColor(ResourcesCompat.getColor(getResources(), color.holo_green_light, null));
         eventPartecipaBool = false;
+
+        EventDB localDB = new EventDB(getContext());
+        int deleteCount = localDB.deleteEvent(event.eventId);
+        if (deleteCount == 1) {
+            //Log.d("MAHDELEt", "cancellato");
+        }
 
     }
 }

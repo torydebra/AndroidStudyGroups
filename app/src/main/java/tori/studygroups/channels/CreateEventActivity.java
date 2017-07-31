@@ -37,6 +37,7 @@ import java.util.Calendar;
 import java.util.Locale;
 
 import tori.studygroups.R;
+import tori.studygroups.otherClass.EventDB;
 import tori.studygroups.otherClass.MyEvent;
 
 import static tori.studygroups.channels.ChatFragment.EXTRA_CHANNEL_URL;
@@ -128,8 +129,8 @@ public class CreateEventActivity extends AppCompatActivity {
         locationEventText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent =
-                        null;
+                locationEventText.setEnabled(false);
+                Intent intent = null;
                 try {
                     intent = new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY)
                             .build(thisActivity);
@@ -139,6 +140,7 @@ public class CreateEventActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE);
+                locationEventText.setEnabled(true);
             }
 
         });
@@ -307,6 +309,14 @@ public class CreateEventActivity extends AppCompatActivity {
 
         DatabaseReference dbRefEventPartecipants = FirebaseDatabase.getInstance().getReference("eventPartecipant");
         dbRefEventPartecipants.child(eventId).child(user.getUid()).setValue("true");
+
+
+        //local db
+        EventDB localDB = new EventDB(this);
+        String insertId = localDB.insertEvent(event);
+        if (insertId != null){
+             Log.d("MAHHHH", "riga inserita in locale");
+        }
 
         return event;
 
