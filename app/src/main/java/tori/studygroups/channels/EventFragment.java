@@ -3,10 +3,13 @@ package tori.studygroups.channels;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -32,8 +35,8 @@ import org.json.JSONObject;
 
 import java.util.Calendar;
 
-
 import tori.studygroups.R;
+import android.R.color;
 
 public class EventFragment extends Fragment{
 
@@ -48,8 +51,9 @@ public class EventFragment extends Fragment{
     private TextView eventDayText;
     private TextView eventLocationText;
     private Button eventViewPartecipantsButton;
-    private Button eventPartecipaConfirmButton;
-    private Button eventPartecipaDeleteButton;
+    private Button eventPartecipaButton;
+    private boolean eventPartecipaBool;
+    private Button eventViewMaps;
 
     private String creatorName;
     private String eventId;
@@ -94,8 +98,9 @@ public class EventFragment extends Fragment{
         eventDayText = (TextView) rootView.findViewById(R.id.event_day_text);
         eventLocationText = (TextView) rootView.findViewById(R.id.event_location_text);
         eventViewPartecipantsButton = (Button) rootView.findViewById(R.id.btn_event_view_partecipants);
-        eventPartecipaConfirmButton = (Button) rootView.findViewById(R.id.btn_event_partecipa_confirm);
-        eventPartecipaDeleteButton = (Button) rootView.findViewById(R.id.btn_event_partecipa_delete);
+        eventViewMaps = (Button) rootView.findViewById(R.id.btn_event_view_maps);
+        eventPartecipaButton = (Button) rootView.findViewById(R.id.btn_event_partecipa);
+
 
         try {
             eventId = eventDataJson.getString("eventId");
@@ -113,10 +118,8 @@ public class EventFragment extends Fragment{
 
         //evento passato
         if ((Calendar.getInstance().getTimeInMillis()) >= Long.parseLong(date)){
-            eventPartecipaDeleteButton.setEnabled(false);
-            eventPartecipaConfirmButton.setEnabled(false);
-            eventPartecipaDeleteButton.setVisibility(View.GONE);
-            eventPartecipaConfirmButton.setVisibility(View.GONE);
+            eventPartecipaButton.setEnabled(false);
+            eventPartecipaButton.setVisibility(View.GONE);
 
         } else {
             checkPartecipationFirebase();
@@ -139,15 +142,13 @@ public class EventFragment extends Fragment{
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.hasChild(user.getUid())){
-                    eventPartecipaDeleteButton.setEnabled(true);
-                    eventPartecipaConfirmButton.setEnabled(false);
-                    eventPartecipaDeleteButton.setVisibility(View.VISIBLE);
-                    eventPartecipaConfirmButton.setVisibility(View.GONE);
+                    eventPartecipaButton.setText(R.string.partecipa_delete);
+                    eventPartecipaButton.setBackgroundColor(ResourcesCompat.getColor(getResources(), color.holo_red_light, null));
+                    eventPartecipaBool = true;
                 } else {
-                    eventPartecipaDeleteButton.setEnabled(false);
-                    eventPartecipaConfirmButton.setEnabled(true);
-                    eventPartecipaDeleteButton.setVisibility(View.GONE);
-                    eventPartecipaConfirmButton.setVisibility(View.VISIBLE);
+                    eventPartecipaButton.setText(R.string.partecipa_confirmation);
+                    eventPartecipaButton.setBackgroundColor(ResourcesCompat.getColor(getResources(), color.holo_green_light, null));
+                    eventPartecipaBool = false;
                 }
             }
 
@@ -183,37 +184,54 @@ public class EventFragment extends Fragment{
             }
         });
 
-        eventPartecipaConfirmButton.setOnClickListener(new View.OnClickListener() {
+        eventPartecipaButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new AlertDialog.Builder(getContext())
-                        .setTitle("Conferma")
-                        .setMessage("Vuoi partecipare all'evento?")
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                partecipa();
-                            }})
+                if(eventPartecipaBool){
+                    new AlertDialog.Builder(getContext())
+                            .setTitle("Annulla partecipazione")
+                            .setMessage("Sei sicuro di non voler più partecipare all'evento?")
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
-                        .setNegativeButton(android.R.string.no, null).show();
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    cancelPartecipazione();
+                                }})
+
+                            .setNegativeButton(android.R.string.no, null).show();
+                } else {
+                    new AlertDialog.Builder(getContext())
+                            .setTitle("Conferma")
+                            .setMessage("Vuoi partecipare all'evento?")
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    partecipa();
+                                }
+                            })
+
+                            .setNegativeButton(android.R.string.no, null).show();
+                }
             }
         });
 
-        eventPartecipaDeleteButton.setOnClickListener(new View.OnClickListener() {
+        eventViewMaps.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new AlertDialog.Builder(getContext())
-                        .setTitle("Annulla partecipazione")
-                        .setMessage("Sei sicuro di non voler più partecipare all'evento?")
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                cancelPartecipazione();
-                            }})
+                Uri gmmIntentUri = null;
+                try {
+                    gmmIntentUri = Uri.parse("geo:0,0?q=" +  Uri.encode(eventDataJson.getString("location"))  );
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                mapIntent.setPackage("com.google.android.apps.maps");
+                startActivity(mapIntent);
 
-                        .setNegativeButton(android.R.string.no, null).show();
+
 
             }
         });
@@ -229,10 +247,9 @@ public class EventFragment extends Fragment{
         Toast t = Toast.makeText(getContext(), "Ora partecipi all'evento", Toast.LENGTH_LONG);
         t.show();
 
-        eventPartecipaDeleteButton.setEnabled(true);
-        eventPartecipaConfirmButton.setEnabled(false);
-        eventPartecipaDeleteButton.setVisibility(View.VISIBLE);
-        eventPartecipaConfirmButton.setVisibility(View.GONE);
+        eventPartecipaButton.setText(R.string.partecipa_delete);
+        eventPartecipaButton.setBackgroundColor(ResourcesCompat.getColor(getResources(), color.holo_red_light, null));
+        eventPartecipaBool = true;
 
 
     }
@@ -245,15 +262,9 @@ public class EventFragment extends Fragment{
         Toast t = Toast.makeText(getContext(), "Non partecipi più all'evento", Toast.LENGTH_LONG);
         t.show();
 
-        eventPartecipaDeleteButton.setEnabled(false);
-        eventPartecipaConfirmButton.setEnabled(true);
-        eventPartecipaDeleteButton.setVisibility(View.GONE);
-        eventPartecipaConfirmButton.setVisibility(View.VISIBLE);
-
-
+        eventPartecipaButton.setText(R.string.partecipa_confirmation);
+        eventPartecipaButton.setBackgroundColor(ResourcesCompat.getColor(getResources(), color.holo_green_light, null));
+        eventPartecipaBool = false;
 
     }
-
-
-
 }

@@ -61,33 +61,35 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="25dp"
-        android:padding="12dp"
         android:background="@android:color/holo_blue_light"
         android:fontFamily="casual"
+        android:padding="12dp"
         android:text="@string/view_partecipants"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
     <android.support.v7.widget.AppCompatButton
-        android:id="@+id/btn_event_partecipa_confirm"
+        android:id="@+id/btn_event_view_maps"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="25dp"
+        android:background="@android:color/holo_blue_light"
+        android:fontFamily="casual"
+        android:padding="12dp"
+        android:text="@string/view_maps"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/btn_event_partecipa"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="55dp"
-        android:padding="12dp"
-        android:background="@android:color/holo_green_light"
-        android:fontFamily="casual"
-        android:text="@string/partecipa_confirmation"
-        android:textSize="24sp" />
-
-    <android.support.v7.widget.AppCompatButton
-        android:id="@+id/btn_event_partecipa_delete"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="55dp"
-        android:background="@android:color/holo_red_light"
         android:fontFamily="casual"
         android:padding="12dp"
-        android:text="@string/partecipa_delete"
-        android:textSize="24sp" />
+        android:text="Partecipa/Cancella Partecipazione"
+        android:textSize="24sp"
+        android:textStyle="bold" />
 </LinearLayout>
