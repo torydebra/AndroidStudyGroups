@@ -26,14 +26,25 @@ public class ChannelsActivity extends AppCompatActivity{
         setContentView(R.layout.activity_channels);
         searchChannelsEditText = (EditText) findViewById(R.id.search_channel_editText);
 
-        String eventData = null;
+        String channelUrl = null;
+        String channelName = null;
         Intent intent = getIntent();
 
-        eventData = intent.getStringExtra("eventNotification");
+        channelUrl = intent.getStringExtra("eventNotificationChannelUrl");
+        channelName = intent.getStringExtra("eventNotificationChannelName");
 
-        // Load list of Channels
-        Fragment fragment;
+        if(channelUrl != null && channelName != null){
+            Fragment fragment = ChatFragment.newInstance(channelUrl, channelName);
 
+            FragmentManager manager = getSupportFragmentManager();
+            manager.popBackStack();
+            manager.beginTransaction()
+                    .replace(R.id.container_channels_list, fragment)
+                    .commit();
+
+        } else {
+            // Load list of Channels
+            Fragment fragment;
 
             if (savedInstanceState == null) {
                 fragment = ChannelListFragment.newInstance();
@@ -47,8 +58,7 @@ public class ChannelsActivity extends AppCompatActivity{
             } else { //fragment esiste già (es orientation change)
                 fragment = getSupportFragmentManager().findFragmentByTag("FRAGMENT_CHANNEL_LIST");
             }
-
-
+        }
     }
 
 
