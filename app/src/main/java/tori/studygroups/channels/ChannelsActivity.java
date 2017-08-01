@@ -9,9 +9,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 
+import java.util.ArrayList;
+
 import tori.studygroups.R;
+import tori.studygroups.mainActivities.MainActivity;
 import tori.studygroups.otherClass.Disconnection;
 
 public class ChannelsActivity extends AppCompatActivity{
@@ -33,6 +37,8 @@ public class ChannelsActivity extends AppCompatActivity{
         channelUrl = intent.getStringExtra("eventNotificationChannelUrl");
         channelName = intent.getStringExtra("eventNotificationChannelName");
 
+        ArrayList<String> userPrefChannelList = intent.getStringArrayListExtra(MainActivity.USER_PREF_CHANNEL_LIST);
+
         if(channelUrl != null && channelName != null){
             Fragment fragment = ChatFragment.newInstance(channelUrl, channelName);
 
@@ -42,24 +48,42 @@ public class ChannelsActivity extends AppCompatActivity{
                     .replace(R.id.container_channels_list, fragment)
                     .commit();
 
-        } else {
-            // Load list of Channels
+        } else if (userPrefChannelList != null) {
+
+            Log.d("MAHCHAN", "chanActivity legge la lista");
             Fragment fragment;
 
-            if (savedInstanceState == null) {
-                fragment = ChannelListFragment.newInstance();
-                FragmentManager manager = getSupportFragmentManager();
-                manager.popBackStack();
+            fragment = ChannelListFragment.newInstance(userPrefChannelList);
 
-                manager.beginTransaction()
-                        .replace(R.id.container_channels_list, fragment, "FRAGMENT_CHANNEL_LIST")
-                        .commit();
+            FragmentManager manager = getSupportFragmentManager();
+            manager.popBackStack();
 
-            } else { //fragment esiste già (es orientation change)
-                fragment = getSupportFragmentManager().findFragmentByTag("FRAGMENT_CHANNEL_LIST");
-            }
+            manager.beginTransaction()
+                    .replace(R.id.container_channels_list, fragment, "FRAGMENT_CHANNEL_LIST")
+                    .commit();
+
+
+
+        } else {
+
+                // Load list of Channels
+                Fragment fragment;
+
+                if (savedInstanceState == null) {
+                    fragment = ChannelListFragment.newInstance();
+                    FragmentManager manager = getSupportFragmentManager();
+                    manager.popBackStack();
+
+                    manager.beginTransaction()
+                            .replace(R.id.container_channels_list, fragment, "FRAGMENT_CHANNEL_LIST")
+                            .commit();
+
+                } else { //fragment esiste già (es orientation change)
+                    fragment = getSupportFragmentManager().findFragmentByTag("FRAGMENT_CHANNEL_LIST");
+                }
         }
     }
+
 
 
     @Override

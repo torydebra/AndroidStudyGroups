@@ -22,9 +22,11 @@ import com.sendbird.android.OpenChannel;
 import com.sendbird.android.OpenChannelListQuery;
 import com.sendbird.android.SendBirdException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import tori.studygroups.R;
+import tori.studygroups.mainActivities.MainActivity;
 
 
 public class ChannelListFragment extends Fragment {
@@ -39,7 +41,9 @@ public class ChannelListFragment extends Fragment {
     private LinearLayout loadBar;
     private LinearLayoutManager mLayoutManager;
     private ChannelListAdapter mChannelListAdapter;
+    private TextView noChannelFind;
 
+    private ArrayList<String> userPrefChannelList;
 
     private String groupNameSearched;
 
@@ -53,9 +57,27 @@ public class ChannelListFragment extends Fragment {
         return fragment;
     }
 
+    //chiamata se devo vedere solo i channel preferiti
+    public static ChannelListFragment newInstance(ArrayList<String> userPrefChannelList) {
+        ChannelListFragment fragment = new ChannelListFragment();
+
+        Bundle args = new Bundle();
+        args.putStringArrayList(MainActivity.USER_PREF_CHANNEL_LIST, userPrefChannelList);
+        fragment.setArguments(args);
+
+        return fragment;
+    }
+
     @Override
     public void onCreate (Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+
+        try {
+            userPrefChannelList = getArguments().getStringArrayList(MainActivity.USER_PREF_CHANNEL_LIST);
+        } catch (Exception e){
+            userPrefChannelList = null;
+        }
+
         Log.d("MAHHHH", "channllistFrag created");
 
     }
@@ -75,12 +97,19 @@ public class ChannelListFragment extends Fragment {
         createGroupButton = (Button) rootView.findViewById(R.id.btn_create_group);
         loadBar = (LinearLayout) rootView.findViewById(R.id.linlaHeaderProgress);
         linearLayoutNoChannel.setVisibility(View.GONE);
+        noChannelFind = (TextView) rootView.findViewById(R.id.text_view_no_channel_find);
 
         searchChannelEditText = (EditText) rootView.findViewById(R.id.search_channel_editText);
 
         setUpAdapter();
         setUpRecyclerView();
-        setUpSearchBar();
+
+        if (userPrefChannelList != null){
+            searchChannelEditText.setVisibility(View.GONE);
+        } else {
+            setUpSearchBar();
+        }
+
         setUpCreateButton();
 
         return rootView;
@@ -152,6 +181,7 @@ public class ChannelListFragment extends Fragment {
 
                 channelListQuery = OpenChannel.createOpenChannelListQuery();
                 channelListQuery.setLimit(15);
+
                 channelListQuery.setNameKeyword(s.toString());
 
                 loadBar.setVisibility(View.VISIBLE);
@@ -178,17 +208,16 @@ public class ChannelListFragment extends Fragment {
 
                     }
                 });
-
             }
+
 
             @Override
             public void afterTextChanged(Editable s) {
 
             }
         });
-
-
     }
+
 
     private void setUpCreateButton() {
         createGroupButton.setOnClickListener(new View.OnClickListener() {
@@ -210,28 +239,64 @@ public class ChannelListFragment extends Fragment {
      * @param numChannels   The number of channels to load.
      */
     void refreshChannelList(int numChannels) {
-        channelListQuery= OpenChannel.createOpenChannelListQuery();
+        channelListQuery = OpenChannel.createOpenChannelListQuery();
         channelListQuery.setLimit(numChannels);
         loadBar.setVisibility(View.VISIBLE);
-        channelListQuery.next(new OpenChannelListQuery.OpenChannelListQueryResultHandler() {
-            @Override
-            public void onResult(List<OpenChannel> list, SendBirdException e) {
-                if (e != null) {
-                    // Error!
-                    return;
-                }
-                loadBar.setVisibility(View.GONE);
-                mChannelListAdapter.setChannelList(list);
+
+        if (userPrefChannelList != null) {
+            for (String prefChannel : userPrefChannelList) {
+                channelListQuery.setUrlKeyword(prefChannel);
+                channelListQuery.next(new OpenChannelListQuery.OpenChannelListQueryResultHandler() {
+                    @Override
+                    public void onResult(List<OpenChannel> channels, SendBirdException e) {
+                        if (e != null) {
+                            return;
+                        }
+
+                        mChannelListAdapter.addLast(channels.get(0));
+                    }
+                });
+            }
+
+            if (userPrefChannelList.size() == 0){
+
+                noChannelFind.setText("Nessun gruppo tra i preferiti. Puoi aggiungerne cercando tra i gruppi e cliccando sulla stella in alto");
+                channelListRecyclerView.setVisibility(View.GONE);
+                linearLayoutNoChannel.setVisibility(View.VISIBLE);
+                createGroupButton.setVisibility(View.GONE);
+            } else {
+                channelListRecyclerView.setVisibility(View.VISIBLE);
+                linearLayoutNoChannel.setVisibility(View.GONE);
+                createGroupButton.setVisibility(View.VISIBLE);
 
             }
-        });
+
+            loadBar.setVisibility(View.GONE);
+
+        } else {
+
+            channelListQuery.next(new OpenChannelListQuery.OpenChannelListQueryResultHandler() {
+                @Override
+                public void onResult(List<OpenChannel> list, SendBirdException e) {
+                    if (e != null) {
+                        // Error!
+                        return;
+                    }
+                    loadBar.setVisibility(View.GONE);
+                    mChannelListAdapter.setChannelList(list);
+
+                }
+            });
+        }
     }
+
 
     /**
      * Loads the next channels from the current query instance.
      */
     void loadNextChannelList() {
         loadBar.setVisibility(View.VISIBLE);
+
         channelListQuery.next(new OpenChannelListQuery.OpenChannelListQueryResultHandler() {
             @Override
             public void onResult(List<OpenChannel> list, SendBirdException e) {

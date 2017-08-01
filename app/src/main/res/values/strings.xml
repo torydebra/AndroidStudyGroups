@@ -49,6 +49,7 @@
     <string name="view_events">Vedi Eventi</string>
     <string name="partecipa_confirmation">Partecipa</string>
     <string name="partecipa_delete">Cancella Partecipazione</string>
+    <string name="no_partecipant_find">Nessun partecipante</string>
 
     <string name="no_channel_find">Nessun gruppo con questo nome, creane uno</string>
     <string name="create_channel">Crea Gruppo</string>
@@ -59,5 +60,9 @@
     <string name="no">no</string>
     <string name="add_favourite">Aggiungi gruppo ai preferiti</string>
 
+    <string name="welcome_back_message">Bentornato su StudyGroups</string>
+    <string name="find_groups">Cerca Gruppi</string>
+    <string name="view_pref_groups">Vedi i tuoi gruppi preferiti</string>
+    <string name="view_event_partecipation">Vedi eventi ai quali parteciperai</string>
 
 </resources>

@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -38,6 +39,7 @@ public class EventPartecipantListActivity extends AppCompatActivity {
 
     private UserListAdapter mListAdapter;
     private RecyclerView mRecyclerView;
+    private TextView noPartecipantFind;
     private LinearLayout loadBar;
     private LinearLayoutManager mLayoutManager;
     private String mChannelUrl;
@@ -54,6 +56,7 @@ public class EventPartecipantListActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_participant_list);
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_participant_list);
+        noPartecipantFind = (TextView) findViewById(R.id.no_Partecipant_Text);
         loadBar = (LinearLayout) findViewById(R.id.linlaHeaderProgressPartecipant);
         eventId = getIntent().getStringExtra("eventId");
         mListAdapter = new UserListAdapter(this);
@@ -102,7 +105,14 @@ public class EventPartecipantListActivity extends AppCompatActivity {
                     usersIdList.add(snapshot.getKey());
                 }
 
-                getUserListFromSendBird();
+                if (usersIdList.size() != 0){
+                    noPartecipantFind.setVisibility(View.GONE);
+                    getUserListFromSendBird();
+
+                } else {
+                    noPartecipantFind.setVisibility(View.VISIBLE);
+                    loadBar.setVisibility(View.GONE);
+                }
 
             }
 

@@ -7,9 +7,12 @@ import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.app.TimePickerDialog.OnTimeSetListener;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.CalendarContract;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.util.Log;
@@ -297,7 +300,7 @@ public class CreateEventActivity extends AppCompatActivity {
         long now = cal.getTimeInMillis();
         long timestampDateEvent = calendarDateEvent.getTimeInMillis();
 
-        MyEvent event = new MyEvent(nameEventText.getText().toString(), locationEventText.getText().toString(),
+        final MyEvent event = new MyEvent(nameEventText.getText().toString(), locationEventText.getText().toString(),
                 timestampDateEvent, dateEventText.getText().toString(), timeEventText.getText().toString(),
                 user.getUid(), user.getDisplayName(), channelUrl, channelName, now, null);
 
@@ -317,6 +320,31 @@ public class CreateEventActivity extends AppCompatActivity {
         if (insertId != null){
              Log.d("MAHHHH", "riga inserita in locale");
         }
+
+        new AlertDialog.Builder(this)
+                .setTitle("Calendario")
+                .setMessage("Vuoi inserire l'evento nel calendario?")
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                        Intent intent = new Intent(Intent.ACTION_INSERT)
+                                .setData(CalendarContract.Events.CONTENT_URI)
+                                .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, event.timestampDateEvent)
+                                .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, event.timestampDateEvent + 3*60*60*1000)
+                                .putExtra(CalendarContract.Events.TITLE, event.name)
+                                .putExtra(CalendarContract.Events.DESCRIPTION, "evento creato con l'app StudyGroups")
+                                .putExtra(CalendarContract.Events.ORGANIZER, event.userName)
+                                .putExtra(CalendarContract.Attendees.EVENT_ID, event.timestampDateEvent)
+                                .putExtra(CalendarContract.Events.EVENT_LOCATION, event.location);
+                        startActivity(intent);
+
+                    }
+                })
+
+                .setNegativeButton(R.string.no, null).show();
+
 
         return event;
 
