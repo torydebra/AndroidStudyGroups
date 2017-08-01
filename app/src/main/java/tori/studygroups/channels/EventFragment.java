@@ -1,11 +1,18 @@
 package tori.studygroups.channels;
 
+import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.provider.CalendarContract;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -35,6 +42,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.TimeZone;
 
 import tori.studygroups.R;
 import tori.studygroups.otherClass.EventDB;
@@ -42,10 +50,11 @@ import tori.studygroups.otherClass.MyEvent;
 
 import android.R.color;
 
-public class EventFragment extends Fragment{
+public class EventFragment extends Fragment {
 
     public static final String JSONDATAEVENT = "jsonDataEvent";
     public static final String EVENT_ID = "eventId";
+    private static final long CALENDAR_ID = 1;
 
     private String eventDataString;
     private JSONObject eventDataJson;
@@ -111,8 +120,8 @@ public class EventFragment extends Fragment{
                     eventDataJson.getString("channelName"),
                     eventDataJson.getLong("timestampCreated"),
                     eventDataJson.getString("eventId")
-                    );
-        } catch (JSONException e){
+            );
+        } catch (JSONException e) {
             e.printStackTrace();
         }
 
@@ -143,7 +152,7 @@ public class EventFragment extends Fragment{
         }
 
         //evento passato
-        if ((Calendar.getInstance().getTimeInMillis()) >= Long.parseLong(date)){
+        if ((Calendar.getInstance().getTimeInMillis()) >= Long.parseLong(date)) {
             eventPartecipaButton.setEnabled(false);
             eventPartecipaButton.setVisibility(View.GONE);
 
@@ -167,7 +176,7 @@ public class EventFragment extends Fragment{
         dbRefEventPartecipants.child(eventId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.hasChild(user.getUid())){
+                if (dataSnapshot.hasChild(user.getUid())) {
                     eventPartecipaButton.setText(R.string.partecipa_delete);
                     eventPartecipaButton.setBackgroundColor(ResourcesCompat.getColor(getResources(), color.holo_red_light, null));
                     eventPartecipaBool = true;
@@ -214,7 +223,7 @@ public class EventFragment extends Fragment{
             @Override
             public void onClick(View v) {
 
-                if(eventPartecipaBool){
+                if (eventPartecipaBool) {
                     new AlertDialog.Builder(getContext())
                             .setTitle("Annulla partecipazione")
                             .setMessage("Sei sicuro di non voler più partecipare all'evento?")
@@ -223,7 +232,8 @@ public class EventFragment extends Fragment{
 
                                 public void onClick(DialogInterface dialog, int whichButton) {
                                     cancelPartecipazione();
-                                }})
+                                }
+                            })
 
                             .setNegativeButton(android.R.string.no, null).show();
                 } else {
@@ -239,6 +249,8 @@ public class EventFragment extends Fragment{
                             })
 
                             .setNegativeButton(android.R.string.no, null).show();
+
+
                 }
             }
         });
@@ -249,14 +261,13 @@ public class EventFragment extends Fragment{
 
                 Uri gmmIntentUri = null;
                 try {
-                    gmmIntentUri = Uri.parse("geo:0,0?q=" +  Uri.encode(eventDataJson.getString("location"))  );
+                    gmmIntentUri = Uri.parse("geo:0,0?q=" + Uri.encode(eventDataJson.getString("location")));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
                 mapIntent.setPackage("com.google.android.apps.maps");
                 startActivity(mapIntent);
-
 
 
             }
@@ -279,17 +290,38 @@ public class EventFragment extends Fragment{
 
         EventDB localDB = new EventDB(getContext());
         String insertId = localDB.insertEvent(event);
-        if (insertId != null){
-           // Log.d("MAHHHH", "riga inserita in locale");
+        if (insertId != null) {
+            // Log.d("MAHHHH", "riga inserita in locale");
         }
 
         ArrayList<MyEvent> events = localDB.getEvents();
-        for(MyEvent ev : events) {
+        for (MyEvent ev : events) {
             Log.d("MAHHEVETN", ev.toJsonString());
         }
 
+        new AlertDialog.Builder(getContext())
+                .setTitle("Calendario")
+                .setMessage("Vuoi inserire l'evento nel calendario?")
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 
+                    public void onClick(DialogInterface dialog, int whichButton) {
 
+                        Intent intent = new Intent(Intent.ACTION_INSERT)
+                                .setData(CalendarContract.Events.CONTENT_URI)
+                                .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, event.timestampDateEvent)
+                                .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, event.timestampDateEvent + 3*60*60*1000)
+                                .putExtra(CalendarContract.Events.TITLE, event.name)
+                                .putExtra(CalendarContract.Events.DESCRIPTION, "evento creato con l'app StudyGroups")
+                                .putExtra(CalendarContract.Events.ORGANIZER, event.userName)
+                                .putExtra(CalendarContract.Attendees.EVENT_ID, event.timestampDateEvent)
+                                .putExtra(CalendarContract.Events.EVENT_LOCATION, event.location);
+                        startActivity(intent);
+
+                    }
+                })
+
+                .setNegativeButton(R.string.no, null).show();
 
     }
 
@@ -298,7 +330,7 @@ public class EventFragment extends Fragment{
 
         dbRefEventPartecipants.child(eventId).child(user.getUid()).getRef().removeValue();
 
-        Toast t = Toast.makeText(getContext(), "Non partecipi più all'evento", Toast.LENGTH_LONG);
+        Toast t = Toast.makeText(getContext(), "Non partecipi più all'evento, ricordati di cancellare l'evento dal tuo calendario", Toast.LENGTH_LONG);
         t.show();
 
         eventPartecipaButton.setText(R.string.partecipa_confirmation);
@@ -310,6 +342,8 @@ public class EventFragment extends Fragment{
         if (deleteCount == 1) {
             //Log.d("MAHDELEt", "cancellato");
         }
+
+
 
     }
 }
