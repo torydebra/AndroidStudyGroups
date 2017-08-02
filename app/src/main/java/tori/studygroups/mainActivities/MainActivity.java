@@ -2,10 +2,12 @@ package tori.studygroups.mainActivities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -22,13 +24,18 @@ import com.sendbird.android.OpenChannel;
 import java.util.ArrayList;
 import java.util.List;
 
+import tori.studygroups.channels.ChannelListFragment;
 import tori.studygroups.channels.ChannelsActivity;
 import tori.studygroups.R;
+import tori.studygroups.channels.EventPartecipantListActivity;
+import tori.studygroups.channels.EventsChannelListActivity;
+import tori.studygroups.otherClass.Disconnection;
 
 public class MainActivity extends AppCompatActivity {
 
 
     public static final String USER_PREF_CHANNEL_LIST = "userPrefChannelList";
+    public static final String USER_EVENT_PARTECIPATION = "userEventPartecipation";
 
     private TextView helloMessage;
     private Button findGroupsButton;
@@ -43,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         helloMessage = (TextView) findViewById(R.id.hello_Username_Message);
         findGroupsButton = (Button) findViewById(R.id.main_button_find_groups);
@@ -64,6 +72,26 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_general, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+        switch (id){
+            case R.id.menu_home:
+
+                return true;
+
+            case R.id.menu_general_item_disconnect:
+                Disconnection.disconnect(this);
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
+
     }
 
     private void setupButtons() {
@@ -109,6 +137,10 @@ public class MainActivity extends AppCompatActivity {
         viewEventPartecipation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                Intent intent = new Intent(MainActivity.this, EventsChannelListActivity.class);
+                intent.putExtra(USER_EVENT_PARTECIPATION, true);
+                startActivity(intent);
 
             }
         });

@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.CalendarContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -256,9 +257,24 @@ public class ChatFragment extends Fragment {
             if (data != null && resultCode == Activity.RESULT_OK){
                 //Log.d("MAHBOH", "not null");
                 MyEvent eventCreated = (MyEvent) data.getParcelableExtra("eventAdded");
-
                 Log.d("MAHBOH", eventCreated.toJsonString());
                 sendUserMessage("event", eventCreated.toJsonString(), CUSTOM_TYPE_MESSAGE_TEXT_EVENT);
+
+                if ( data.getBooleanExtra("calendar", false) ){
+
+                    Intent intent = new Intent(Intent.ACTION_INSERT)
+                            .setData(CalendarContract.Events.CONTENT_URI)
+                            .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, eventCreated.timestampDateEvent)
+                            .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, eventCreated.timestampDateEvent + 3*60*60*1000)
+                            .putExtra(CalendarContract.Events.TITLE, eventCreated.name)
+                            .putExtra(CalendarContract.Events.DESCRIPTION, "evento creato con l'app StudyGroups")
+                            .putExtra(CalendarContract.Events.ORGANIZER, eventCreated.userName)
+                            .putExtra(CalendarContract.Attendees.EVENT_ID, eventCreated.timestampDateEvent)
+                            .putExtra(CalendarContract.Events.EVENT_LOCATION, eventCreated.location);
+                    startActivity(intent);
+
+                }
+
             }
         }
     }
@@ -302,7 +318,7 @@ public class ChatFragment extends Fragment {
     }
 
 
-    //menu per vedere partecipanti e altro? TODO
+    //menu per vedere partecipanti e altro?
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         Log.d("MAH", "menu created");
@@ -342,11 +358,9 @@ public class ChatFragment extends Fragment {
             case R.id.favourite_star:
 
                 if (favouriteGroup){
-                    item.setIcon(R.drawable.ic_star_empty);
-                    removeFromFavourite();
+                    removeFromFavourite(item);
                 } else {
-                    item.setIcon(R.drawable.ic_star_full);
-                    addToFavourite();
+                    addToFavourite(item);
                 }
                 return true;
 
@@ -364,7 +378,7 @@ public class ChatFragment extends Fragment {
 
     }
 
-    private void addToFavourite() {
+    private void addToFavourite(final MenuItem item) {
 
         new AlertDialog.Builder(getContext())
                 .setTitle("Aggiungi preferito")
@@ -380,7 +394,7 @@ public class ChatFragment extends Fragment {
 
                                 for (DataSnapshot snapshot: dataSnapshot.getChildren()){
 
-                                    Log.d("MAH", snapshot.getKey());
+                                    //Log.d("MAH", snapshot.getKey());
                                     dbRefChannelToDevice.child(mChannelUrl).child(snapshot.getKey()).setValue("true");
                                 }
                             }
@@ -393,7 +407,7 @@ public class ChatFragment extends Fragment {
 
                         dbRefUserPrefChannels.child(user.getUid()).child(mChannelUrl).setValue("true");
                         dbRefChannelPrefUser.child(mChannelUrl).child(user.getUid()).setValue("true");
-
+                        item.setIcon(R.drawable.ic_star_full);
                         favouriteGroup = true;
                         Toast t = Toast.makeText(getContext(), "Aggiunto ai preferiti", Toast.LENGTH_LONG);
                         t.show();
@@ -404,7 +418,7 @@ public class ChatFragment extends Fragment {
 
     }
 
-    private void removeFromFavourite() {
+    private void removeFromFavourite(final MenuItem item) {
 
         new AlertDialog.Builder(getContext())
                 .setTitle("Rimuovi preferito")
@@ -419,7 +433,7 @@ public class ChatFragment extends Fragment {
                             public void onDataChange(DataSnapshot dataSnapshot) {
 
                                 for (DataSnapshot snapshot: dataSnapshot.getChildren()){
-                                    Log.d("MAHcancellando", snapshot.getKey());
+                                    //Log.d("MAHcancellando", snapshot.getKey());
                                     dbRefChannelToDevice.child(mChannelUrl).child(snapshot.getKey()).getRef().removeValue();
                                 }
                             }
@@ -432,6 +446,7 @@ public class ChatFragment extends Fragment {
 
                         dbRefUserPrefChannels.child(user.getUid()).child(mChannelUrl).getRef().removeValue();
                         dbRefChannelPrefUser.child(mChannelUrl).child(user.getUid()).getRef().removeValue();
+                        item.setIcon(R.drawable.ic_star_empty);
                         favouriteGroup = false;
                         Toast t = Toast.makeText(getContext(), "Rimosso dai preferiti", Toast.LENGTH_LONG);
                         t.show();

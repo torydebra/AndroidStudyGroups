@@ -130,7 +130,10 @@ public class ChannelsActivity extends AppCompatActivity{
 
         int id = item.getItemId();
         switch (id){
-            case R.id.menu_general_personal_page:
+            case R.id.menu_home:
+
+                Intent intent = new Intent (this, MainActivity.class);
+                startActivity(intent);
 
                 return true;
 

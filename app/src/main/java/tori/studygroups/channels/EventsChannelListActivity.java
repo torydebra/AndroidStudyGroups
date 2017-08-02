@@ -1,5 +1,7 @@
 package tori.studygroups.channels;
 
+import android.app.IntentService;
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -24,7 +26,9 @@ import com.sendbird.android.SendBirdException;
 import com.sendbird.android.User;
 import com.sendbird.android.UserListQuery;
 import tori.studygroups.R;
+import tori.studygroups.mainActivities.MainActivity;
 import tori.studygroups.otherClass.Disconnection;
+import tori.studygroups.otherClass.EventDB;
 import tori.studygroups.otherClass.MyEvent;
 import tori.studygroups.otherClass.MyUser;
 
@@ -44,7 +48,19 @@ public class EventsChannelListActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_event_list);
 
-        Fragment fragment = EventListFragment.newInstance();
+        boolean userEventPartecipation = getIntent().getBooleanExtra(MainActivity.USER_EVENT_PARTECIPATION, false);
+
+        Fragment fragment;
+
+        if (userEventPartecipation){
+
+            EventDB localDB = new EventDB(this);
+            fragment = EventListFragment.newInstance(localDB.getEvents());
+
+        } else {
+            fragment = EventListFragment.newInstance();
+        }
+
 
         FragmentManager manager = getSupportFragmentManager();
         manager.popBackStack();
@@ -67,7 +83,10 @@ public class EventsChannelListActivity extends AppCompatActivity {
 
         int id = item.getItemId();
         switch (id){
-            case R.id.menu_general_personal_page:
+            case R.id.menu_home:
+
+                Intent intent = new Intent (this, MainActivity.class);
+                startActivity(intent);
 
                 return true;
 

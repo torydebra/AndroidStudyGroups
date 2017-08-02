@@ -10,21 +10,21 @@
 
     <ImageView
         android:id="@+id/event_image_list_item"
-        android:layout_width="5dp"
+        android:layout_width="8dp"
         android:layout_height="match_parent"
         android:background="@color/colorAccent" />
 
 
     <LinearLayout
-        android:layout_width="50dp"
+        android:layout_width="400dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginLeft="40dp"
         android:orientation="vertical"
-        android:layout_weight="0.98">
+        android:layout_weight="0.80">
 
         <TextView
             android:id="@+id/event_name_list_item"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Nome Evento"
             android:textColor="#000000"
@@ -32,7 +32,7 @@
 
         <TextView
             android:id="@+id/event_location_list_item"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Location"
             android:textColor="#8e8e8e"
@@ -41,14 +41,15 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="275dp"
+        android:layout_width="280dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:orientation="vertical">
+        android:layout_marginLeft="50dp"
+        android:orientation="vertical"
+        android:layout_weight="0.17">
 
         <TextView
             android:id="@+id/event_date_list_item"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Mercoledì, 15-settembre-2018"
             android:textColor="#000000"
@@ -56,7 +57,7 @@
 
         <TextView
             android:id="@+id/event_time_list_item"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="15:20"
             android:textColor="#8e8e8e"

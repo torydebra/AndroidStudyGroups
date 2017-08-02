@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -24,11 +25,16 @@ import com.sendbird.android.OpenChannel;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.User;
 import com.sendbird.android.UserListQuery;
+
+import org.w3c.dom.Text;
+
 import tori.studygroups.R;
+import tori.studygroups.mainActivities.MainActivity;
 import tori.studygroups.otherClass.MyEvent;
 import tori.studygroups.otherClass.MyUser;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class EventListFragment extends Fragment {
@@ -36,6 +42,7 @@ public class EventListFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private LinearLayout loadBar;
     private LinearLayoutManager mLayoutManager;
+    private TextView noEventsFindText;
     private String mChannelUrl;
     private OpenChannel mChannel;
     private EventListAdapter eventListAdapter;
@@ -44,6 +51,16 @@ public class EventListFragment extends Fragment {
 
     public static EventListFragment newInstance() {
         EventListFragment fragment = new EventListFragment();
+        return fragment;
+    }
+
+    public static EventListFragment newInstance(ArrayList<MyEvent> userPartecipationEventList) {
+        EventListFragment fragment = new EventListFragment();
+
+        Bundle args = new Bundle();
+        args.putParcelableArrayList(MainActivity.USER_EVENT_PARTECIPATION, userPartecipationEventList);
+        fragment.setArguments(args);
+
         return fragment;
     }
 
@@ -56,16 +73,40 @@ public class EventListFragment extends Fragment {
         setRetainInstance(true);
         setHasOptionsMenu(true);
 
+        try {
+            eventsList = getArguments().getParcelableArrayList(MainActivity.USER_EVENT_PARTECIPATION);
+            Log.d("MAHLISTA", Integer.toString(eventsList.size()));
+        } catch (Exception e){
+            eventsList = null;
+        }
+
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_event_list);
         loadBar = (LinearLayout) rootView.findViewById(R.id.linlaHeaderProgressEvent);
+        noEventsFindText = (TextView) rootView.findViewById(R.id.no_event_find);
 
-        mChannelUrl = getActivity().getIntent().getStringExtra(ChatFragment.EXTRA_CHANNEL_URL);
         eventListAdapter = new EventListAdapter(getContext());
 
         loadBar.setVisibility(View.VISIBLE);
         setUpAdapter();
         setUpRecyclerView();
-        getEventFromDb();
+
+        if (eventsList == null){
+            mChannelUrl = getActivity().getIntent().getStringExtra(ChatFragment.EXTRA_CHANNEL_URL);
+            getEventFromDb();
+
+        } else {
+
+            if (eventsList.size() == 0) {
+                noEventsFindText.setVisibility(View.VISIBLE);
+
+                loadBar.setVisibility(View.GONE);
+            } else {
+                eventListAdapter.setEventList(eventsList);
+                noEventsFindText.setVisibility(View.GONE);
+                loadBar.setVisibility(View.GONE);
+            }
+
+        }
 
         return rootView;
 
@@ -76,7 +117,6 @@ public class EventListFragment extends Fragment {
         eventListAdapter.setOnItemClickListener(new EventListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(MyEvent event) {
-
 
                 EventFragment fragment = EventFragment.newInstance(event.toJsonString());
                 getFragmentManager().beginTransaction()
@@ -99,28 +139,34 @@ public class EventListFragment extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(eventListAdapter);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
+//        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//            @Override
+//            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+//                if (mLayoutManager.findLastVisibleItemPosition() == eventListAdapter.getItemCount() - 1) {
+//                    eventListAdapter.addLast();
+//                }
+//            }
+//        });
+
+
     }
 
 
-    /**
-     * Gets the channel instance with the channel URL.
-     */
     private void getEventFromDb() {
         eventsList = new ArrayList<MyEvent>();
         DatabaseReference dbRefChannelEvents = FirebaseDatabase.getInstance().getReference("channelEvents").child(mChannelUrl);
-        dbRefChannelEvents.orderByChild("timestampDateEvent").addListenerForSingleValueEvent(new ValueEventListener() {
+        dbRefChannelEvents.orderByChild("timestampDateEvent").limitToLast(30).addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 //for each child
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Log.d("MAH", snapshot.getKey());
                     Log.d("MAH", snapshot.toString());
                     eventsList.add(snapshot.getValue(MyEvent.class));
-                    Log.d("MAH", eventsList.get(0).channelName);
                 }
 
+                Collections.reverse(eventsList);
                 eventListAdapter.setEventList(eventsList);
                 loadBar.setVisibility(View.GONE);
             }

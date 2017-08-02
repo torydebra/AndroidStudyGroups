@@ -71,6 +71,11 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
         notifyDataSetChanged();
     }
 
+    void addLast(MyEvent event) {
+        eventList.add(event);
+        notifyDataSetChanged();
+    }
+
     static class EventHolder extends RecyclerView.ViewHolder {
 
         private String[] colorList = {"#ff2de3e1", "#ff35a3fb", "#ff805aff", "#ffcf47fb", "#ffe248c3"};
@@ -97,23 +102,30 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
                           @Nullable final OnItemLongClickListener longClickListener) {
 
             int gray = Color.parseColor("#d9d9d9");
-            boolean old = false;
+            int black = Color.parseColor("#000000");
+            int darkGray = Color.parseColor("#8e8e8e");
+            boolean old = Calendar.getInstance().getTimeInMillis() >= (event.timestampDateEvent);
             nameEventText.setText(event.name);
             locationEventText.setText(event.location);
             dayEventText.setText(event.day);
             timeEventText.setText(event.hour);
 
             // evento passato
-            if ((Calendar.getInstance().getTimeInMillis()) >= (event.timestampDateEvent)) {
+            if (old) {
                 decoratorImage.setBackgroundColor(gray);
                 nameEventText.setTextColor(gray);
                 locationEventText.setTextColor(gray);
                 dayEventText.setTextColor(gray);
                 timeEventText.setTextColor(gray);
-                old = true;
+
 
             } else {
                 decoratorImage.setBackgroundColor(Color.parseColor(colorList[position % colorList.length]));
+                nameEventText.setTextColor(black);
+                locationEventText.setTextColor(darkGray);
+                dayEventText.setTextColor(black);
+                timeEventText.setTextColor(darkGray);
+
             }
 
             if (clickListener != null) {

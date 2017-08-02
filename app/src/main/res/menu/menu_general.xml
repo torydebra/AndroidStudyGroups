@@ -2,8 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/menu_general_personal_page"
-        android:title="@string/personalPage"
+        android:id="@+id/menu_home"
+        android:title="Home"
         android:orderInCategory="8"/>
 
     <item

@@ -15,7 +15,7 @@ public class EventDB {
 
     // database constants
     public static final String DB_NAME = "studyGroups.db";
-    public static final int    DB_VERSION = 1;
+    public static final int    DB_VERSION = 2;
 
 
     // event table constants
@@ -129,7 +129,7 @@ public class EventDB {
 
         this.openReadableDB();
         Cursor cursor = db.query(EVENT_TABLE, null, null, null,
-                null, null, null);
+                null, null, EVENT_TIMESTAMP_DATE_EVENT + " DESC");
 
         ArrayList<MyEvent> events = new ArrayList<MyEvent>();
         while (cursor.moveToNext()) {

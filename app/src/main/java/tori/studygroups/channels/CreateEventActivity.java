@@ -231,16 +231,6 @@ public class CreateEventActivity extends AppCompatActivity {
 
                 progressDialog.show();
                 MyEvent eventCreated = createEvent();
-                progressDialog.dismiss();
-
-                if (eventCreated != null) {
-                    Intent resultIntent = new Intent();
-                    resultIntent.putExtra("eventAdded", eventCreated);
-                    setResult(Activity.RESULT_OK, resultIntent);
-                } else{
-                    setResult(Activity.RESULT_CANCELED);
-                }
-                finish();
 
             }
         });
@@ -321,35 +311,47 @@ public class CreateEventActivity extends AppCompatActivity {
              Log.d("MAHHHH", "riga inserita in locale");
         }
 
+        progressDialog.dismiss();
+
         new AlertDialog.Builder(this)
                 .setTitle("Calendario")
                 .setMessage("Vuoi inserire l'evento nel calendario?")
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-
                     public void onClick(DialogInterface dialog, int whichButton) {
 
-                        Intent intent = new Intent(Intent.ACTION_INSERT)
-                                .setData(CalendarContract.Events.CONTENT_URI)
-                                .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, event.timestampDateEvent)
-                                .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, event.timestampDateEvent + 3*60*60*1000)
-                                .putExtra(CalendarContract.Events.TITLE, event.name)
-                                .putExtra(CalendarContract.Events.DESCRIPTION, "evento creato con l'app StudyGroups")
-                                .putExtra(CalendarContract.Events.ORGANIZER, event.userName)
-                                .putExtra(CalendarContract.Attendees.EVENT_ID, event.timestampDateEvent)
-                                .putExtra(CalendarContract.Events.EVENT_LOCATION, event.location);
-                        startActivity(intent);
+                        if (event != null) {
+                            Intent resultIntent = new Intent();
+                            resultIntent.putExtra("eventAdded", event);
+                            resultIntent.putExtra("calendar", true);
+                            setResult(Activity.RESULT_OK, resultIntent);
+                        } else{
+                            setResult(Activity.RESULT_CANCELED);
+                        }
+
+                        finish();
 
                     }
                 })
 
-                .setNegativeButton(R.string.no, null).show();
+                .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        if (event != null) {
+                            Intent resultIntent = new Intent();
+                            resultIntent.putExtra("eventAdded", event);
+                            resultIntent.putExtra("calendar", true);
+                            setResult(Activity.RESULT_OK, resultIntent);
+                        } else{
+                            setResult(Activity.RESULT_CANCELED);
+                        }
 
+                        finish();
+
+                    }
+                })
+                .show();
 
         return event;
-
     }
-
-
 }
 

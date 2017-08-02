@@ -47,6 +47,7 @@
     <string name="view_partecipants">Vedi Partecipanti</string>
     <string name="view_maps">Vedi Mappa</string>
     <string name="view_events">Vedi Eventi</string>
+    <string name="no_events">Nessun evento trovato</string>
     <string name="partecipa_confirmation">Partecipa</string>
     <string name="partecipa_delete">Cancella Partecipazione</string>
     <string name="no_partecipant_find">Nessun partecipante</string>
