@@ -24,6 +24,7 @@ import com.sendbird.android.OpenChannel;
 import java.util.ArrayList;
 import java.util.List;
 
+import tori.studygroups.Exams.ExamListActivity;
 import tori.studygroups.channels.ChannelListFragment;
 import tori.studygroups.channels.ChannelsActivity;
 import tori.studygroups.R;
@@ -41,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private Button findGroupsButton;
     private Button viewPrefGroupsButton;
     private Button viewEventPartecipation;
+    private Button viewPersonalPage;
 
     private FirebaseUser user;
     ArrayList<String> prefChannels;
@@ -56,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
         findGroupsButton = (Button) findViewById(R.id.main_button_find_groups);
         viewPrefGroupsButton = (Button) findViewById(R.id.main_button_view_pref_groups);
         viewEventPartecipation = (Button) findViewById(R.id.main_button_view_event_partecipation);
+        viewPersonalPage = (Button) findViewById(R.id.main_button_view_personal_page);
 
         prefChannels = null;
 
@@ -142,6 +145,14 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra(USER_EVENT_PARTECIPATION, true);
                 startActivity(intent);
 
+            }
+        });
+
+        viewPersonalPage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, ExamListActivity.class);
+                startActivity(intent);
             }
         });
 

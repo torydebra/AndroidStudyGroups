@@ -15,8 +15,7 @@ public class EventDB {
 
     // database constants
     public static final String DB_NAME = "studyGroups.db";
-    public static final int    DB_VERSION = 2;
-
+    public static final int    DB_VERSION = 3;
 
     // event table constants
     public static final String EVENT_TABLE = "event";

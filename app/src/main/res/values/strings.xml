@@ -66,4 +66,7 @@
     <string name="view_pref_groups">Vedi i tuoi gruppi preferiti</string>
     <string name="view_event_partecipation">Vedi eventi ai quali parteciperai</string>
 
+    <string name="no_exam_find">Nessun esame inserito</string>
+    <string name="add_exam">Aggiungi esame</string>
+
 </resources>

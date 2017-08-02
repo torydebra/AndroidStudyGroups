@@ -43,6 +43,9 @@
             android:windowSoftInputMode="stateUnchanged"/>
         <activity android:name=".channels.EventsChannelListActivity"
             android:windowSoftInputMode="stateUnchanged"/>
+        <activity android:name=".Exams.ExamListActivity"
+            android:windowSoftInputMode="stateUnchanged"/>
+
 
         <service
             android:name=".services.MyFirebaseMessagingService">

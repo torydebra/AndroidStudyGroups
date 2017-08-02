@@ -55,4 +55,14 @@
         android:text="@string/view_event_partecipation"
         android:textSize="24sp" />
 
+    <Button
+        android:id="@+id/main_button_view_personal_page"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.04"
+        android:layout_marginTop="20dp"
+        android:background="@android:color/transparent"
+        android:text="@string/personalPage"
+        android:textSize="24sp" />
+
 </LinearLayout>
