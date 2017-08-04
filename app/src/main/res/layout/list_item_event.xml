@@ -18,7 +18,7 @@
     <LinearLayout
         android:layout_width="50dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:orientation="vertical"
         android:layout_weight="0.98">
 
@@ -43,7 +43,7 @@
     <LinearLayout
         android:layout_width="275dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:orientation="vertical">
 
         <TextView

@@ -68,8 +68,6 @@ public class ChatFragment extends Fragment {
     private EditText mMessageEditText;
     private Button mMessageSendButton;
     private ImageButton mUploadFileButton;
-    private View mCurrentEventLayout;
-    private TextView mCurrentEventText;
 
     private boolean favouriteGroup;
 
@@ -131,9 +129,6 @@ public class ChatFragment extends Fragment {
         mRootLayout = rootView.findViewById(R.id.layout_chat_root);
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_channel_chat);
-
-        mCurrentEventLayout = rootView.findViewById(R.id.layout_chat_current_event);
-        mCurrentEventText = (TextView) rootView.findViewById(R.id.text_chat_current_event);
 
         checkFavouriteGroup();
         setUpChatAdapter();

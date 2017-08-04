@@ -33,7 +33,7 @@ admin.initializeApp(functions.config().firebase);
  * Followers add a flag to `/followers/{followedUid}/{followerUid}`.
  * Users save their device notification tokens to `/users/{followedUid}/notificationTokens/{notificationToken}`.
  */
-exports.sendNewEventNotification = functions.database.ref('/channelEvents/{channelUrl}/{newEventId}').onWrite(event => {
+exports.sendNewEventNotification2 = functions.database.ref('/channelEvents/{channelUrl}/{newEventId}').onWrite(event => {
   const newEventId = event.params.newEventId;
   const newEvent = event.data.val();
   const channelName = event.data.val().channelUrl;
@@ -67,7 +67,7 @@ exports.sendNewEventNotification = functions.database.ref('/channelEvents/{chann
       notification: {
         title: 'Nuovo Evento creato',
         body: `${newEvent.name} per il gruppo ${newEvent.channelName}`,
-       // icon: follower.photoURL,
+        icon: '@mipmap/ic_launcher_round',
         sound : 'default'
       },
 

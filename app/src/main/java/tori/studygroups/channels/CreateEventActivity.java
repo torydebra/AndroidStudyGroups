@@ -339,7 +339,7 @@ public class CreateEventActivity extends AppCompatActivity {
                         if (event != null) {
                             Intent resultIntent = new Intent();
                             resultIntent.putExtra("eventAdded", event);
-                            resultIntent.putExtra("calendar", true);
+                            resultIntent.putExtra("calendar", false);
                             setResult(Activity.RESULT_OK, resultIntent);
                         } else{
                             setResult(Activity.RESULT_CANCELED);

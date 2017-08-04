@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="StudyGroups_theme" parent="android:Theme.Holo.Light" >
+        <item name="android:colorPrimary">#FF9800</item>
+        <item name="android:colorPrimaryDark">#F57C00</item>
+        <item name="android:statusBarColor">#F57C00</item>
+        <item name="android:textColorPrimary">#212121</item>
+    </style>
+</resources>

@@ -14,8 +14,8 @@
         android:paddingRight="24dp">
 
         <ImageView android:src="@drawable/ic_general"
-            android:layout_width="280dp"
-            android:layout_height="280dp"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
             android:layout_marginBottom="24dp"
             android:layout_gravity="center_horizontal" />
 
@@ -25,14 +25,11 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp">
-
-            <EditText
-                android:id="@+id/input_username"
+            <EditText android:id="@+id/input_username"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/login_username"
                 android:inputType="textCapWords"
-                android:textSize="24sp" />
+                android:hint="@string/login_username" />
         </android.support.design.widget.TextInputLayout>
 
         <!--email-->
@@ -41,14 +38,11 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp">
-
-            <EditText
-                android:id="@+id/input_email"
+            <EditText android:id="@+id/input_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/login_email"
                 android:inputType="textEmailAddress"
-                android:textSize="24sp" />
+                android:hint="@string/login_email" />
         </android.support.design.widget.TextInputLayout>
 
         <!-- Password Label -->
@@ -57,14 +51,11 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp">
-
-            <EditText
-                android:id="@+id/input_password"
+            <EditText android:id="@+id/input_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/login_password"
                 android:inputType="textPassword"
-                android:textSize="24sp" />
+                android:hint="@string/login_password"/>
         </android.support.design.widget.TextInputLayout>
 
         <!-- PasswordRepeat Label -->
@@ -73,14 +64,11 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp">
-
-            <EditText
-                android:id="@+id/input_password2"
+            <EditText android:id="@+id/input_password2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/login_password2"
                 android:inputType="textPassword"
-                android:textSize="24sp" />
+                android:hint="@string/login_password2"/>
         </android.support.design.widget.TextInputLayout>
 
         <!-- Signup Button -->
@@ -91,18 +79,16 @@
             android:layout_marginBottom="24dp"
             android:layout_marginTop="24dp"
             android:background="@android:color/holo_orange_light"
-            android:padding="12dp"
-            android:text="@string/create_account"
-            android:textSize="30dp" />
+            android:padding="20dp"
+            android:text="@string/create_account" />
 
-        <TextView
-            android:id="@+id/link_login"
+        <TextView android:id="@+id/link_login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
-            android:gravity="center"
             android:text="@string/already_member_message"
-            android:textSize="20sp" />
+            android:gravity="center"
+            android:textSize="20sp"/>
 
     </LinearLayout>
 </ScrollView>

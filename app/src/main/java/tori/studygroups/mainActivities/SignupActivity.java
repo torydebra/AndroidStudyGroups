@@ -1,5 +1,6 @@
 package tori.studygroups.mainActivities;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.app.ProgressDialog;
 import android.os.Bundle;
@@ -17,8 +18,11 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 
@@ -32,12 +36,13 @@ public class SignupActivity extends AppCompatActivity {
     private static final int REQUEST_SIGNUP = 0;
     private FirebaseAuth mAuth;
 
-    @Bind(R.id.input_username) EditText _nameText;
+    @Bind(R.id.input_username) EditText _usernameText;
     @Bind(R.id.input_email) EditText _emailText;
     @Bind(R.id.input_password) EditText _passwordText;
     @Bind(R.id.input_password2) EditText _password2Text;
     @Bind(R.id.btn_signup) Button _signupButton;
     @Bind(R.id.link_login) TextView _loginLink;
+    private ProgressDialog progressDialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -47,10 +52,15 @@ public class SignupActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
         ButterKnife.bind(this);
+        progressDialog = new ProgressDialog(SignupActivity.this,
+                R.style.AppTheme_Dark_Dialog);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Creazione utente...");
 
         _signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                progressDialog.show();
                 signup();
             }
         });
@@ -59,7 +69,10 @@ public class SignupActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Finish the registration screen and return to the Login activity
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                startActivity(intent);
                 finish();
+                overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
             }
         });
     }
@@ -74,19 +87,44 @@ public class SignupActivity extends AppCompatActivity {
             return;
         }
 
-        _signupButton.setEnabled(false);
-
-        String username = _nameText.getText().toString();
-        String email = _emailText.getText().toString();
-        String password = _passwordText.getText().toString();
-        String password2 = _password2Text.getText().toString();
-        
+        String username = _usernameText.getText().toString();
         username = username.replaceAll("\\s", "");
-        signupFirebase(email, password);
+
+        DatabaseReference dbRefUsernameTaken = FirebaseDatabase.getInstance().getReference("usernameTaken");
+        dbRefUsernameTaken.child(username.toLowerCase()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if (snapshot.getValue() != null) {
+                    Log.d("MAHREG", "username in uso");
+                    _usernameText.setError("username già in uso");
+                    _usernameText.requestFocus();
+                    onSignupFailed();
+                    return;
+                } else {
+                    Log.d("MAHREG", "username non in uso");
+                    _usernameText.setError(null);
+                    _signupButton.setEnabled(false);
+
+
+                    String email = _emailText.getText().toString();
+                    String password = _passwordText.getText().toString();
+                    String username = _usernameText.getText().toString();
+                    username = username.replaceAll("\\s", "");
+                    signupFirebase(email, password, username);
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d("MAHREG", databaseError.getMessage());
+            }
+
+        });
 
     }
 
-    private void signupFirebase(final String email, final String password) {
+    private void signupFirebase(final String email, final String password, final String username) {
         final ProgressDialog progressDialog = new ProgressDialog(SignupActivity.this,
                 R.style.AppTheme_Dark_Dialog);
         progressDialog.setIndeterminate(true);
@@ -100,13 +138,16 @@ public class SignupActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success
                             _emailText.setError(null);
-                            String username = email.substring(0, email.indexOf('@'));
+                            //String username = email.substring(0, email.indexOf('@'));
                             Log.d("BOHMAH", "createUserWithEmail:success");
                             MyUser myUser = new MyUser(username, email);
                             FirebaseUser user = mAuth.getCurrentUser();
 
                             DatabaseReference dbRefUsers = FirebaseDatabase.getInstance().getReference("users");
                             dbRefUsers.child(user.getUid()).setValue(myUser);
+
+                            DatabaseReference dbRefUsernameTaken = FirebaseDatabase.getInstance().getReference("usernameTaken");
+                            dbRefUsernameTaken.child(username.toLowerCase()).setValue("true");
 
                             String token = FirebaseInstanceId.getInstance().getToken();
                             dbRefUsers.child(user.getUid()).child("devices").child(token).setValue("true");
@@ -137,6 +178,7 @@ public class SignupActivity extends AppCompatActivity {
                             Log.w("BOHMAH", "createUserWithEmail:failure", task.getException());
                             progressDialog.dismiss();
                             _emailText.setError("Email già in uso");
+                            _emailText.requestFocus();
                             onSignupFailed();
                         }
                     }
@@ -145,12 +187,14 @@ public class SignupActivity extends AppCompatActivity {
 
 
     public void onSignupSuccess() {
+        progressDialog.dismiss();
         _signupButton.setEnabled(true);
         setResult(RESULT_OK, null);
         finish();
     }
 
     public void onSignupFailed() {
+        progressDialog.dismiss();
         Toast.makeText(getBaseContext(), "Registrazione fallita", Toast.LENGTH_LONG).show();
 
         _signupButton.setEnabled(true);
@@ -159,21 +203,23 @@ public class SignupActivity extends AppCompatActivity {
     public boolean validate() {
         boolean valid = true;
 
-        //String name = _nameText.getText().toString();
+        String username = _usernameText.getText().toString();
         String email = _emailText.getText().toString();
         String password = _passwordText.getText().toString();
         String password2 = _password2Text.getText().toString();
 
-//        if (name.isEmpty() || name.length() < 3) {
-//            _nameText.setError("almeno 3 caratteri");
-//            valid = false;
-//        } else {
-//            _nameText.setError(null);
-//        }
+        if (username.isEmpty() || username.length() < 3) {
+            _usernameText.setError("almeno 3 caratteri");
+            _usernameText.requestFocus();
+            valid = false;
+        } else {
+            _usernameText.setError(null);
+        }
 
 
         if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             _emailText.setError("inserisci una email valida");
+            _emailText.requestFocus();
             valid = false;
         } else {
             _emailText.setError(null);
@@ -181,6 +227,7 @@ public class SignupActivity extends AppCompatActivity {
 
         if (password.isEmpty() || password.length() < 4) {
             _passwordText.setError("almeno 4 caratteri");
+            _passwordText.requestFocus();
             valid = false;
         } else {
             _passwordText.setError(null);
@@ -188,11 +235,13 @@ public class SignupActivity extends AppCompatActivity {
 
         if (password2.isEmpty() || password2.length() < 4 || !(password2.equals(password))) {
             _password2Text.setError("Password non combaciano");
+            _password2Text.requestFocus();
             valid = false;
         } else {
             _password2Text.setError(null);
         }
 
         return valid;
+
     }
 }

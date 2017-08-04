@@ -11,59 +11,59 @@
 
     <TextView
         android:id="@+id/text_chat_date"
-        android:text="February 22nd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:textColor="#000000"
-        android:layout_marginTop="24dp"
         android:layout_marginBottom="8dp"
+        android:layout_marginTop="24dp"
         android:gravity="center"
-        android:textSize="14sp" />
+        android:text="February 22nd"
+        android:textColor="#000000"
+        android:textSize="18sp" />
 
     <ImageView
         android:id="@+id/image_chat_profile"
-        android:contentDescription="@string/channel_chat_content_desc_profile"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentStart="true"
         android:layout_below="@id/text_chat_date"
         android:layout_marginTop="4dp"
-        android:layout_alignParentLeft="true" />
+        android:contentDescription="@string/channel_chat_content_desc_profile" />
 
     <TextView
         android:id="@+id/text_chat_nickname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Terry"
-        android:textStyle="bold"
-        android:textSize="16sp"
-        android:textColor="#3a414d"
-        android:layout_toRightOf="@id/image_chat_profile"
         android:layout_below="@id/text_chat_date"
-        android:layout_marginLeft="16dp"/>
+        android:layout_marginStart="16dp"
+        android:layout_toRightOf="@id/image_chat_profile"
+        android:text="Terry"
+        android:textColor="#3a414d"
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/text_chat_message"
-        android:text="@string/upload_file_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:textColor="#999999"
+        android:layout_alignLeft="@id/text_chat_nickname"
         android:layout_below="@id/text_chat_nickname"
-        android:layout_alignLeft="@id/text_chat_nickname" />
+        android:text="@string/upload_file_text"
+        android:textColor="@color/common_google_signin_btn_text_dark_focused"
+        android:textSize="18sp" />
 
 
     <TextView
-        android:text="11:36"
         android:id="@+id/text_chat_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/text_chat_nickname"
-        android:layout_marginLeft="8dp"
         android:layout_alignBaseline="@id/text_chat_nickname"
-        android:textSize="10sp"
-        android:textColor="#bebed1"/>
+        android:layout_marginStart="8dp"
+        android:layout_toRightOf="@id/text_chat_nickname"
+        android:text="11:36"
+        android:textColor="@color/common_google_signin_btn_text_light_default"
+        android:textSize="13sp" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -81,12 +81,12 @@
             android:id="@+id/image_chat_file_thumbnail"
             android:layout_width="68dp"
             android:layout_height="68dp"
-            android:src="@drawable/login_logo"/>
+            android:src="@drawable/ic_general"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
             android:gravity="center_vertical"
             android:orientation="vertical">
 
@@ -94,18 +94,18 @@
                 android:id="@+id/text_chat_file_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
+                android:layout_marginBottom="4dp"
+                android:layout_marginEnd="16dp"
                 android:text="IMG_20140623_142311.jpg"
                 android:textColor="#000000"
-                android:layout_marginRight="16dp"
-                android:layout_marginBottom="4dp"/>
+                android:textSize="19sp" />
 
             <TextView
                 android:id="@+id/text_chat_file_size"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:text="1.3MB" />
+                android:text="1.3MB"
+                android:textSize="18sp" />
 
 
         </LinearLayout>

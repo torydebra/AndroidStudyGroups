@@ -6,8 +6,24 @@
     android:id="@+id/layout_chat_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/ic_imageedit_1_8224648896"
+    android:background="@color/background_color"
+
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.48"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/ic_general_trasparent" />
+    </FrameLayout>
+
+
 
     <LinearLayout
         android:id="@+id/layout_chat_chatbox"
@@ -19,12 +35,12 @@
 
         <ImageButton
             android:id="@+id/button_channel_chat_upload"
-            app:srcCompat="@drawable/send_file_image_plus_24dp"
-            android:background="?attr/selectableItemBackground"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
             android:layout_gravity="bottom"
-            android:contentDescription="Carica File" />
+            android:background="?attr/selectableItemBackground"
+            android:contentDescription="Carica File"
+            app:srcCompat="@drawable/send_file_image_plus_24dp" />
 
         <EditText
             android:id="@+id/edittext_chat_message"
@@ -35,7 +51,8 @@
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:hint="@string/chat_enter_message"
-            android:maxLines="6" />
+            android:maxLines="6"
+            android:textSize="21sp" />
 
         <Button
             android:id="@+id/button_channel_chat_send"
@@ -47,7 +64,7 @@
             android:gravity="center"
             android:text="@string/chat_button_send"
             android:textColor="#000000"
-            android:textSize="14dp" />
+            android:textSize="19dp" />
     </LinearLayout>
 
     <View
@@ -74,22 +91,6 @@
 
         </android.support.v7.widget.RecyclerView>
 
-        <LinearLayout
-            android:id="@+id/layout_chat_current_event"
-            android:layout_width="match_parent"
-            android:layout_height="36dp"
-            android:layout_marginLeft="@dimen/activity_horizontal_margin"
-            android:layout_marginRight="@dimen/activity_horizontal_margin"
-            android:visibility="gone">
-
-            <TextView
-                android:id="@+id/text_chat_current_event"
-                android:text="Terry and Harry are typing"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"/>
-
-        </LinearLayout>
 
     </LinearLayout>
 

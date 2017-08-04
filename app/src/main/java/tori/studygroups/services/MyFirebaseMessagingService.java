@@ -66,13 +66,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         if (remoteMessage.getData().size() > 0) {
             Log.d(TAG, "Message data payload: " + remoteMessage.getData());
 
-            if (/* Check if data needs to be processed by long running job */ false) {
-                // For long-running tasks (10 seconds or more) use Firebase Job Dispatcher.
-                scheduleJob();
-            } else {
-                // Handle message within 10 seconds
-                handleNow();
-            }
+            // Handle message within 10 seconds
+            handleNow();
 
         }
 
@@ -87,19 +82,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
     // [END receive_message]
 
-    /**
-     * Schedule a job using FirebaseJobDispatcher.
-     */
-    private void scheduleJob() {
-        // [START dispatch_job]
-        FirebaseJobDispatcher dispatcher = new FirebaseJobDispatcher(new GooglePlayDriver(this));
-        Job myJob = dispatcher.newJobBuilder()
-                .setService(MyJobService.class)
-                .setTag("my-job-tag")
-                .build();
-        dispatcher.schedule(myJob);
-        // [END dispatch_job]
-    }
 
     /**
      * Handle time allotted to BroadcastReceivers.
@@ -126,7 +108,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.ic_stat_ic_notification)
+                .setSmallIcon(R.mipmap.ic_launcher_round)
                 .setContentTitle("Nuovo Evento Creato")
                 .setContentText(remoteMessage.getNotification().getBody())
                 .setAutoCancel(true)
