@@ -1,34 +1,46 @@
-package tori.studygroups.Exams;
+package tori.studygroups.exams;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import tori.studygroups.R;
 import tori.studygroups.otherClass.Argument;
 import tori.studygroups.otherClass.Exam;
 
-public class ExamListActivity extends AppCompatActivity {
+public class ExamListFragment extends Fragment {
+
+    private TextView textTitleUser;
+    private Button createExamButton;
+
+
+    public static ExamListFragment newInstance() {
+        ExamListFragment fragment = new ExamListFragment();
+        return fragment;
+    }
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState){
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
 
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_personal_page);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle(getClass().getSimpleName());
+        View rootView = inflater.inflate(R.layout.fragment_personal_page, container, false);
 
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        setRetainInstance(true);
+        setHasOptionsMenu(true);
+
+        textTitleUser = (TextView) rootView.findViewById(R.id.personal_page_hello_message);
+        createExamButton = (Button) rootView.findViewById(R.id.btn_personal_page_add_exam);
+        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
 
         // RecyclerView has some built in animations to it, using the DefaultItemAnimator.
         // Specifically when you call notifyItemChanged() it does a fade animation for the changing
@@ -57,7 +69,7 @@ public class ExamListActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
 
-        Button clear = (Button) findViewById(R.id.toggle_button);
+        Button clear = (Button) rootView.findViewById(R.id.toggle_button);
         clear.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -69,5 +81,25 @@ public class ExamListActivity extends AppCompatActivity {
 
             }
         });
+
+        setupCreateExamButton();
+
+        return rootView;
+    }
+
+    private void setupCreateExamButton() {
+
+        createExamButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                Fragment fragment = createExamFragment.newInstance();
+//                FragmentManager manager = getSupportFragmentManager();
+//                manager.popBackStack();
+//                manager.beginTransaction()
+//                        .replace(R.id.container_channels_list, fragment)
+//                        .commit();
+            }
+        });
+
     }
 }

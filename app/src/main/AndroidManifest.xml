@@ -43,7 +43,7 @@
             android:windowSoftInputMode="stateUnchanged"/>
         <activity android:name=".channels.EventsChannelListActivity"
             android:windowSoftInputMode="stateUnchanged"/>
-        <activity android:name=".Exams.ExamListActivity"
+        <activity android:name=".exams.ActivityExamList"
             android:windowSoftInputMode="stateUnchanged"/>
 
 

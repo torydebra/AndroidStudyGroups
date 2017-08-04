@@ -8,8 +8,10 @@
         android:id="@+id/list_item_argument_name"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginStart="10dp"
+        android:layout_marginStart="18dp"
+        android:fontFamily="sans-serif"
         android:gravity="center_vertical"
+        android:textSize="19sp"
         tools:text="Argument Name" />
 
 </FrameLayout>

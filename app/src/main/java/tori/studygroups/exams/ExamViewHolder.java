@@ -1,4 +1,4 @@
-package tori.studygroups.Exams;
+package tori.studygroups.exams;
 
 
 import android.view.View;
@@ -17,19 +17,19 @@ public class ExamViewHolder extends GroupViewHolder {
 
     private TextView examName;
     private ImageView arrow;
-    private ImageView icon;
+    //private ImageView icon;
 
     public ExamViewHolder(View itemView) {
         super(itemView);
         examName = (TextView) itemView.findViewById(R.id.list_item_exam_name);
-        icon = (ImageView) itemView.findViewById(R.id.list_item_exam_icon);
+        //icon = (ImageView) itemView.findViewById(R.id.list_item_exam_icon);
         arrow = (ImageView) itemView.findViewById(R.id.list_item_exam_arrow);
     }
 
     public void setExamTitle(ExpandableGroup exam) {
         if (exam instanceof Exam) {
             examName.setText(exam.getTitle());
-            icon.setBackgroundResource(((Exam) exam).getIconResId());
+            //icon.setBackgroundResource(((Exam) exam).getIconResId());
         }
    
     }

@@ -1,4 +1,4 @@
-package tori.studygroups.Exams;
+package tori.studygroups.exams;
 
 import android.view.View;
 import android.widget.TextView;
@@ -6,7 +6,6 @@ import android.widget.TextView;
 import com.thoughtbot.expandablerecyclerview.viewholders.ChildViewHolder;
 
 import tori.studygroups.R;
-import tori.studygroups.otherClass.Argument;
 
 public class ArgumentViewHolder extends ChildViewHolder {
 

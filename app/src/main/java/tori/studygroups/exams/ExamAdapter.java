@@ -1,4 +1,4 @@
-package tori.studygroups.Exams;
+package tori.studygroups.exams;
 
 import android.view.View;
 import android.view.ViewGroup;
