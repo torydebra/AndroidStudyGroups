@@ -9,9 +9,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginStart="18dp"
-        android:fontFamily="sans-serif"
+        android:fontFamily="monospace"
         android:gravity="center_vertical"
-        android:textSize="19sp"
+        android:textAllCaps="false"
+        android:textColor="@android:color/black"
+        android:textSize="20sp"
+        android:textStyle="bold"
         tools:text="Argument Name" />
 
 </FrameLayout>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">StudyGroups</string>
     <string name="login_username">Username</string>
@@ -6,13 +7,13 @@
     <string name="login_password2">Ripeti Password</string>
     <string name="login_button">Login</string>
     <string name="create_account">Crea Account</string>
-    <string name="already_member_message">Già registrato? Login</string>
-    <string name="not_member_yet">Non ancora registrato? Registrati</string>
+    <string name="already_member_message"><u>Già registrato? Login</u></string>
+    <string name="not_member_yet"><u>Non ancora registrato? Registrati</u></string>
     <string name="disconnect">Disconnetti</string>
     <string name="personalPage">Pagina Personale</string>
 
-    <string name="search_channel_text">Cerca gruppi di studio...</string>
-    <string name="channel_list_participant_count">%1$d participanti</string>
+    <string name="search_channel_text">Cerca gruppi di studio…</string>
+    <string name="channel_list_participant_count">%1$d utenti nella chat</string>
 
     <string name="chat_enter_message">Scrivi Messaggio</string>
     <string name="chat_button_send">Invia</string>
@@ -68,5 +69,8 @@
 
     <string name="no_exam_find">Nessun esame inserito</string>
     <string name="add_exam">Aggiungi esame</string>
+
+    <string name="exam_name">Nome esame</string>
+    <string name="argument_name">Nome Argomento</string>
 
 </resources>

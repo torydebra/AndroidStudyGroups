@@ -22,7 +22,8 @@
                 android:id="@+id/edittext_create_channel_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/create_channel_name" />
+                android:hint="@string/create_channel_name"
+                android:textSize="24sp" />
 
 
         </android.support.design.widget.TextInputLayout>
@@ -30,12 +31,13 @@
 
         <Button
             android:id="@+id/button_create_channel"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="50dp"
-            android:background="?attr/selectableItemBackground"
-            android:text="@string/create_channel" />
+            android:background="@android:color/holo_orange_light"
+            android:text="@string/create_channel"
+            android:textSize="30sp" />
 
 
     </LinearLayout>

@@ -64,4 +64,10 @@ public class ActivityExamList extends AppCompatActivity {
 
     }
 
+    void setActionBarTitle(String title) {
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(title);
+        }
+    }
+
 }

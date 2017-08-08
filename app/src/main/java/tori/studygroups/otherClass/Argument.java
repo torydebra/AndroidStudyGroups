@@ -4,54 +4,48 @@ import android.os.Parcelable;
 
 public class Argument implements Parcelable {
 
+    public enum ArgumentState {INCOMPLETE, INPROGRESS, COMPLETE}
+
     private String name;
-    private boolean isFavorite;
+    private ArgumentState state;
 
-    public Argument(String name, boolean isFavorite) {
+    public Argument(String name, ArgumentState state) {
         this.name = name;
-        this.isFavorite = isFavorite;
-    }
-
-    protected Argument(Parcel in) {
-        name = in.readString();
+        this.state = state;
     }
 
     public String getName() {
         return name;
     }
 
-    public boolean isFavorite() {
-        return isFavorite;
+    public ArgumentState getState() {
+        return state;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Argument)) return false;
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (!(o instanceof Argument)) return false;
+//
+//        Argument argument = (Argument) o;
+//
+//        if (getState() != argument.getState()) return false;
+//        return getName() != null ? getName().equals(argument.getName()) : argument.getName() == null;
+//
+//    }
 
-        Argument argument = (Argument) o;
-
-        if (isFavorite() != argument.isFavorite()) return false;
-        return getName() != null ? getName().equals(argument.getName()) : argument.getName() == null;
-
-    }
-
-    @Override
-    public int hashCode() {
-        int result = getName() != null ? getName().hashCode() : 0;
-        result = 31 * result + (isFavorite() ? 1 : 0);
-        return result;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(name);
-    }
 
     @Override
     public int describeContents() {
         return 0;
     }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(name);
+        dest.writeSerializable(state);
+    }
+
 
     public static final Creator<Argument> CREATOR = new Creator<Argument>() {
         @Override
@@ -64,4 +58,9 @@ public class Argument implements Parcelable {
             return new Argument[size];
         }
     };
+
+    protected Argument(Parcel in) {
+        name = in.readString();
+        state = (ArgumentState) in.readSerializable();
+    }
 }

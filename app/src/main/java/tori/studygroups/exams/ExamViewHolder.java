@@ -1,14 +1,22 @@
 package tori.studygroups.exams;
 
 
+import android.graphics.Color;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.RotateAnimation;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
 import com.thoughtbot.expandablerecyclerview.viewholders.GroupViewHolder;
 
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+
 import tori.studygroups.R;
+import tori.studygroups.otherClass.Argument;
 import tori.studygroups.otherClass.Exam;
 
 import static android.view.animation.Animation.RELATIVE_TO_SELF;
@@ -17,20 +25,50 @@ public class ExamViewHolder extends GroupViewHolder {
 
     private TextView examName;
     private ImageView arrow;
+    private FrameLayout containerExamName;
     //private ImageView icon;
 
     public ExamViewHolder(View itemView) {
         super(itemView);
         examName = (TextView) itemView.findViewById(R.id.list_item_exam_name);
-        //icon = (ImageView) itemView.findViewById(R.id.list_item_exam_icon);
+        containerExamName = (FrameLayout) itemView.findViewById((R.id.container_list_item_exam_name));
         arrow = (ImageView) itemView.findViewById(R.id.list_item_exam_arrow);
     }
 
     public void setExamTitle(ExpandableGroup exam) {
-        if (exam instanceof Exam) {
-            examName.setText(exam.getTitle());
-            //icon.setBackgroundResource(((Exam) exam).getIconResId());
+
+        int examColor = Color.WHITE; //trasparent
+        String examTitle = exam.getTitle();
+
+        if (exam.getItemCount() > 0){
+            examColor = Color.rgb(32, 219, 0);
+            examTitle += "  (completato)";
+            ListIterator<Argument> iterator = exam.getItems().listIterator();
+
+            externalLoop : while (iterator.hasNext()){
+                //Log.d("MAHH", iterator.next().getName());
+                switch (iterator.next().getState()) {
+                    case COMPLETE:
+                        break;
+                    case INCOMPLETE:
+                        examColor = Color.RED;
+                        examTitle = exam.getTitle() + "  (da completare)";
+                        break externalLoop;
+                    case INPROGRESS:
+                        examTitle = exam.getTitle() + "  (in corso)";
+                        examColor = Color.rgb(249,241,0);
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
+
+        examTitle = Character.toUpperCase(examTitle.charAt(0)) + examTitle.substring(1);
+        examName.setText(examTitle);
+        containerExamName.setBackgroundColor(examColor);
+
+
    
     }
 

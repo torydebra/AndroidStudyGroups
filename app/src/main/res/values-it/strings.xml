@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+        <string name="app_name" >StudyGroups</string>
+        <string name="login_username" >Username</string>
+        <string name="login_email" >Email</string>
+        <string name="login_password" >Password</string>
+        <string name="login_password2" >Ripeti Password</string>
+        <string name="login_button" >Login</string>
+        <string name="create_account" >Crea Account</string>
+        <string name="already_member_message" ><u>Già registrato? Login</u></string>
+        <string name="not_member_yet" ><u>Non ancora registrato? Registrati</u></string>
+        <string name="disconnect" >Disconnetti</string>
+        <string name="personalPage" >Pagina Personale</string>
+
+        <string name="search_channel_text" >Cerca gruppi di studio…</string>
+        <string name="channel_list_participant_count" >%1$d utenti nella chat</string>
+
+        <string name="chat_enter_message" >Scrivi Messaggio</string>
+        <string name="chat_button_send" >Invia</string>
+
+        <string name="download" >Scarica</string>
+        <string name="cancel" >Annulla</string>
+        <string name="upload" >Carica</string>
+        <string name="info_permission_storage" >"Permessi di scrittura sul dispositivo sono necessari per caricare/scaricare i file"</string>
+        <string name="delete_message_confirmation" >"Cancella"</string>
+        <string name="delete_message_question" >"Cancella messaggio?"</string>
+        <string name="delete_message_cancel" >"Annulla"</string>
+
+        <string name="error_message_not_send" >"Errore: messaggio non inviato"</string>
+        <string name="error_file_not_storage" >"File deve essere presente in memoria"</string>
+        <string name="error_file_not_send" >"Errore: file non inviato"</string>
+        <string name="error_deleting_message" >"Errore: messaggio non cancellato"</string>
+
+        <string name="channel_chat_content_desc_profile" >Immagine Profilo</string>
+        <string name="upload_file_text" >ha caricato un file</string>
+
+        <string name="participant_list" >Participanti</string>
+        <string name="participant_menu" >Vedi participanti</string>
+        <string name="add_event" >Crea evento</string>
+
+        <string name="add_event_title" >Crea Evento per </string>
+        <string name="add_event_name" >Nome Evento</string>
+        <string name="add_event_location" >Luogo</string>
+        <string name="add_event_date" >Giorno</string>
+        <string name="add_event_time" >Ora</string>
+        <string name="create_event" >Crea Evento</string>
+        <string name="created_event_text" >ha creato un evento</string>
+        <string name="view_partecipants" >Vedi Partecipanti</string>
+        <string name="view_maps" >Vedi Mappa</string>
+        <string name="view_events" >Vedi Eventi</string>
+        <string name="no_events" >Nessun evento trovato</string>
+        <string name="partecipa_confirmation" >Partecipa</string>
+        <string name="partecipa_delete" >Cancella Partecipazione</string>
+        <string name="no_partecipant_find" >Nessun partecipante</string>
+
+        <string name="no_channel_find" >Nessun gruppo con questo nome, creane uno</string>
+        <string name="create_channel" >Crea Gruppo</string>
+        <string name="create_channel_name" >Nome gruppo</string>
+        <string name="loading" >Caricamento</string>
+
+        <string name="yes" >sì</string>
+        <string name="no" >no</string>
+        <string name="add_favourite" >Aggiungi gruppo ai preferiti</string>
+
+        <string name="welcome_back_message" >Bentornato su StudyGroups</string>
+        <string name="find_groups" >Cerca Gruppi</string>
+        <string name="view_pref_groups" >Vedi i tuoi gruppi preferiti</string>
+        <string name="view_event_partecipation" >Vedi eventi ai quali parteciperai</string>
+
+        <string name="no_exam_find" >Nessun esame inserito</string>
+        <string name="add_exam" >Aggiungi esame</string>
+
+        <string name="exam_name" >Nome esame</string>
+        <string name="argument_name" >Nome Argomento</string>
+
+
+</resources>

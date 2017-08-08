@@ -39,6 +39,7 @@
             android:id="@+id/linlaHeaderProgress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
             android:gravity="center_horizontal"
             android:orientation="horizontal"
             android:visibility="gone">
@@ -72,27 +73,26 @@
 
         </LinearLayout>
 
-        <Button
-            android:id="@+id/toggle_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Toggle Exam" />
-
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/toggle_button" />
+            android:layout_above="@+id/btn_personal_page_add_exam"
+            android:layout_marginBottom="10dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginTop="20dp" />
+
 
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/btn_personal_page_add_exam"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_toEndOf="@+id/linlaHeaderProgress"
             android:background="@android:color/holo_orange_light"
             android:text="@string/add_exam"
-            android:textSize="24sp" />
+            android:textSize="24sp"
+            android:layout_alignParentBottom="true"
+            android:layout_toEndOf="@+id/no_exams_find_container" />
 
     </RelativeLayout>
 

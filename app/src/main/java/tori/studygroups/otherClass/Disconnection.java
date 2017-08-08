@@ -33,11 +33,14 @@ public class Disconnection {
 
                 FirebaseAuth auth = FirebaseAuth.getInstance();
 
-
                 String token = FirebaseInstanceId.getInstance().getToken();
                 Log.d("MAHDISCO", token);
+
                 DatabaseReference dbRefUsers = FirebaseDatabase.getInstance().getReference("users");
                 dbRefUsers.child(auth.getCurrentUser().getUid()).child("devices").child(token).getRef().removeValue();
+
+                DatabaseReference dbRefChannelToDevice = FirebaseDatabase.getInstance().getReference("channelToDevice");
+                dbRefChannelToDevice.orderByChild(token).getRef().removeValue();
 
                 FirebaseAuth.getInstance().signOut();
                 PreferenceUtils.clearAll(context);
@@ -46,6 +49,9 @@ public class Disconnection {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+
+
+                context.deleteDatabase(EventDB.DB_NAME);
 
                 Intent intent = new Intent(context, LoginActivity.class);
                 context.startActivity(intent);

@@ -39,7 +39,7 @@ public class ExamAdapter extends ExpandableRecyclerViewAdapter<ExamViewHolder, A
                                       ExpandableGroup group, int childIndex) {
 
         final Argument argument = ((Exam) group).getItems().get(childIndex);
-        holder.setArgumentName(argument.getName());
+        holder.setArgumentName(argument.getName(), argument.getState());
     }
 
     @Override

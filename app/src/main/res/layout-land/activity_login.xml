@@ -71,6 +71,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
             android:gravity="center"
+            android:textColor="#0645AD"
             android:text="@string/not_member_yet"
             android:textSize="20sp" />
 

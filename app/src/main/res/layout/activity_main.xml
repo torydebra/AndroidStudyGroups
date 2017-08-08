@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -24,12 +25,14 @@
         android:id="@+id/welcome_back_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
         android:fontFamily="cursive"
         android:text="@string/welcome_back_message"
         android:textAlignment="center"
         android:textColor="@color/place_autocomplete_prediction_primary_text"
-        android:textSize="30sp" />
+        android:textSize="30sp"
+        android:layout_below="@+id/hello_Username_Message"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="14dp" />
 
     <ImageView
         android:id="@+id/imageView"
@@ -37,47 +40,75 @@
         android:layout_height="380dp"
         android:layout_weight="0.48"
         android:scaleType="fitCenter"
-        app:srcCompat="@drawable/ic_general" />
+        app:srcCompat="@drawable/ic_general"
+        android:layout_marginTop="51dp"
+        android:layout_below="@+id/welcome_back_message"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="10dp" />
 
     <Button
         android:id="@+id/main_button_find_groups"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:layout_weight="0.04"
         android:background="#ED303C"
         android:padding="25dp"
         android:text="@string/find_groups"
-        android:textSize="24sp" />
+        android:textSize="24sp"
+        android:layout_above="@+id/view"
+        android:layout_centerHorizontal="true" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/black"
+        android:layout_above="@+id/main_button_view_pref_groups"
+        android:id="@+id/view" />
+
 
     <Button
         android:id="@+id/main_button_view_pref_groups"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.04"
         android:background="#F5634A"
         android:padding="25dp"
         android:text="@string/view_pref_groups"
-        android:textSize="24sp" />
+        android:textSize="24sp"
+        android:layout_above="@+id/view2"
+        android:layout_centerHorizontal="true" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/black"
+        android:layout_above="@+id/main_button_view_event_partecipation"
+        android:id="@+id/view2" />
+
 
     <Button
         android:id="@+id/main_button_view_event_partecipation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.04"
         android:background="#FF9C5B"
         android:padding="25dp"
         android:text="@string/view_event_partecipation"
-        android:textSize="24sp" />
+        android:textSize="24sp"
+        android:layout_above="@+id/view3"
+        android:layout_alignParentStart="true" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/black"
+        android:layout_above="@+id/main_button_view_personal_page"
+        android:id="@+id/view3" />
+
 
     <Button
         android:id="@+id/main_button_view_personal_page"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.04"
         android:background="#FAD089"
         android:padding="25dp"
         android:text="@string/personalPage"
-        android:textSize="24sp" />
+        android:textSize="24sp"
+        android:layout_alignParentBottom="true"/>
 
-</LinearLayout>
+
+</RelativeLayout>

@@ -70,6 +70,7 @@
             android:layout_marginBottom="24dp"
             android:gravity="center"
             android:text="@string/not_member_yet"
+            android:textColor="#0645AD"
             android:textSize="20sp" />
 
     </LinearLayout>
