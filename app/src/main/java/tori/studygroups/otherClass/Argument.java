@@ -8,14 +8,20 @@ public class Argument implements Parcelable {
 
     private String name;
     private ArgumentState state;
+    private String examFather;
 
-    public Argument(String name, ArgumentState state) {
+    public Argument(String name, ArgumentState state, String examFather) {
         this.name = name;
         this.state = state;
+        this.examFather = examFather;
     }
 
     public String getName() {
         return name;
+    }
+
+    public String getExamFather() {
+        return examFather;
     }
 
     public ArgumentState getState() {

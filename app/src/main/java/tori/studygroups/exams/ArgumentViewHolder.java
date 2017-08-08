@@ -1,6 +1,8 @@
 package tori.studygroups.exams;
 
+import android.content.Context;
 import android.graphics.Color;
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.TextView;
 
@@ -34,8 +36,20 @@ public class ArgumentViewHolder extends ChildViewHolder {
                 break;
 
         }
+    }
 
 
+    void bind(Context context, final Argument argument,
+              @Nullable final ExamAdapter.OnItemLongClickListener longClickListener) {
 
+        if (longClickListener != null) {
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    longClickListener.onArgumentLongClick(argument);
+                    return true;
+                }
+            });
+        }
     }
 }

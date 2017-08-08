@@ -170,8 +170,8 @@ public class CreateExamFragment extends Fragment{
 
                         TextInputEditText editTextArg = (TextInputEditText) rootView.findViewById(ediTextId);
                         if (! editTextArg.getText().toString().isEmpty()) {
-                            String name = editTextArg.getText().toString();
-                            argumentList.add(new Argument(name, Argument.ArgumentState.INCOMPLETE));
+                            String name = editTextArg.getText().toString().toLowerCase();
+                            argumentList.add(new Argument(name, Argument.ArgumentState.INCOMPLETE, examName));
                         }
                     }
 

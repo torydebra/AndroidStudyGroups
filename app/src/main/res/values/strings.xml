@@ -72,5 +72,35 @@
 
     <string name="exam_name">Nome esame</string>
     <string name="argument_name">Nome Argomento</string>
+    <string name="delete_exam_question">Sei sicuro di voler cancellare questo esame?</string>
+    <string name="delete_argument_question">Sei sicuro di voler cancellare questo argomento?</string>
+    <string name="add_exam_argument">Inserisci nome del nuovo argomento
+    </string>
+    <string name="add_exam_confirmation">Aggiungi argomento</string>
+    <string name="argument_change_state">Cambia stato all\'argomento</string>
+
+    <string name="add">Aggiungi</string>
+    <string name="change">Cambia</string>
+
+    <string-array
+        name="exam_long_clic_options">
+        <item>Aggiungi argomento</item>
+        <item>Cancella Esame</item>
+    </string-array>
+
+    <string-array
+        name="argument_long_clic_options">
+        <item>Cambia stato</item>
+        <item>Cancella Argomento</item>
+    </string-array>
+
+    <string-array
+        name="argument_option_states">
+        <item>Da completare</item>
+        <item>In corso</item>
+        <item>Completato</item>
+    </string-array>
+
+
 
 </resources>

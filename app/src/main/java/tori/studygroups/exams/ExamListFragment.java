@@ -1,8 +1,12 @@
 package tori.studygroups.exams;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,8 +15,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -21,9 +29,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.thoughtbot.expandablerecyclerview.listeners.OnGroupClickListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import tori.studygroups.R;
@@ -37,6 +47,9 @@ public class ExamListFragment extends Fragment {
     private FirebaseUser user;
     private LinearLayoutManager layoutManager;
     private RecyclerView recyclerView;
+
+    private ExamAdapter examAdapter;
+    private ArrayList<Exam> examList;
 
 
     public static ExamListFragment newInstance() {
@@ -71,24 +84,7 @@ public class ExamListFragment extends Fragment {
         }
         setupCreateExamButton();
 
-
         getExamsFromFirebase(rootView);
-//        ArrayList<Exam> examList= new ArrayList<>();
-//        ArrayList<Argument> argumentList= new ArrayList<>();
-//        argumentList.add(new Argument("Laplaciano", Argument.ArgumentState.COMPLETE));
-//        argumentList.add(new Argument("Fibra", Argument.ArgumentState.COMPLETE));
-//        argumentList.add(new Argument("Addizioni", Argument.ArgumentState.COMPLETE));
-//        final Exam ex = new Exam("Fisica Matematica", argumentList, R.drawable.ic_arrow_down);
-//        final Exam ex2 = new Exam("Reti di calcolatori", argumentList, R.drawable.ic_arrow_down);
-//        final Exam ex3 = new Exam("Algoritmi", argumentList, R.drawable.ic_arrow_down);
-//        final Exam ex4 = new Exam("Calcolatori", argumentList, R.drawable.ic_arrow_down);
-//        examList.add(ex);
-//        examList.add(ex2);
-//        examList.add(ex3);
-//        examList.add(ex4);
-
-
-
 
         setupCreateExamButton();
 
@@ -113,6 +109,8 @@ public class ExamListFragment extends Fragment {
 
     }
 
+
+
     private void getExamsFromFirebase(final View rootView) {
 
         final LinearLayout loadingBar = (LinearLayout) rootView.findViewById(R.id.linlaHeaderProgress);
@@ -128,20 +126,16 @@ public class ExamListFragment extends Fragment {
 
                 } else {
 
-                    Log.d("MAHHHHHH",  Long.toString(dataSnapshot.getChildrenCount()));
                     noExamContainer.setVisibility(View.GONE);
-                    ArrayList<Exam> examList = new ArrayList<Exam>();
+                    examList = new ArrayList<Exam>();
                     for (DataSnapshot exam : dataSnapshot.getChildren()){
 
-                        Log.d("MAHHHHHH", exam.toString());
                         if (exam.hasChildren()){
 
                             ArrayList<Argument> argumentList = new ArrayList<Argument>();
                             for (DataSnapshot argument : exam.getChildren()){
-                                Log.d("MAHHHHHH", "culerrimo");
                                 Log.d("MAHHHHHH", argument.getValue().toString());
                                 Map map =  (HashMap) argument.getValue();
-                                //Log.d("MAHHH", map.get("name").toString());
                                 Argument.ArgumentState state = null;
                                 if (map.get("state").toString().equals(Argument.ArgumentState.INCOMPLETE.toString())){
                                     state = Argument.ArgumentState.INCOMPLETE;
@@ -151,7 +145,7 @@ public class ExamListFragment extends Fragment {
                                     state = Argument.ArgumentState.INPROGRESS;
                                 }
 
-                                Argument arg = new Argument(map.get("name").toString(), state);
+                                Argument arg = new Argument(map.get("name").toString(), state, exam.getKey());
                                 argumentList.add(arg);
                             }
                             examList.add(new Exam(exam.getKey(), argumentList, R.drawable.ic_arrow_down));
@@ -160,9 +154,7 @@ public class ExamListFragment extends Fragment {
                             examList.add(new Exam(exam.getKey(), null, R.drawable.ic_arrow_down));
                     }
 
-                    final ExamAdapter adapter = new ExamAdapter(examList);
-                    recyclerView.setLayoutManager(layoutManager);
-                    recyclerView.setAdapter(adapter);
+                    setupAdapter();
 
                 }
                 loadingBar.setVisibility(View.GONE);
@@ -176,4 +168,291 @@ public class ExamListFragment extends Fragment {
 
 
     }
+
+    private void setupAdapter() {
+
+        examAdapter = new ExamAdapter(examList, getContext());
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(examAdapter);
+
+        examAdapter.setOnItemLongClickListener(new ExamAdapter.OnItemLongClickListener() {
+            @Override
+            public void onExamLongClick(final Exam exam) {
+
+                new AlertDialog.Builder(getActivity())
+                        .setTitle("Opzioni")
+                        .setItems(R.array.exam_long_clic_options, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                switch (which) {
+                                    case 0: //aggiungi argo
+                                        addArgument(exam);
+                                        break;
+                                    case 1: //cancella esame
+                                        deleteExam(exam);
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                        })
+                        .create()
+                        .show();
+
+            }
+
+            @Override
+            public void onArgumentLongClick(final Argument argument) {
+                new AlertDialog.Builder(getActivity())
+                        .setTitle("Opzioni")
+                        .setItems(R.array.argument_long_clic_options, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                switch (which) {
+                                    case 0: //cambia stato
+                                        changeArgumentState(argument);
+                                        break;
+                                    case 1: //cancella argomento
+                                        deleteArgument(argument);
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                        })
+                        .create()
+                        .show();
+            }
+        });
+
+
+
+
+
+
+    }
+
+
+
+    private void addArgument(final Exam exam) {
+
+        final EditText input = new EditText(getActivity());
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT);
+        input.setLayoutParams(lp);
+
+        new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.add_exam_argument)
+                .setView(input)
+                .setNegativeButton(R.string.cancel, null)
+                .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        DatabaseReference dbRefUserExams = FirebaseDatabase.getInstance().getReference("userExams").child(user.getUid());
+                        dbRefUserExams.child(exam.getTitle()).orderByChild("name").equalTo(input.getText().toString().toLowerCase()).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                Log.d("MAH", Boolean.toString(dataSnapshot.exists()));
+                                if (dataSnapshot.exists()){
+                                    Toast toast = Toast.makeText(getContext(), "Argomento già inserito per questo esame", Toast.LENGTH_LONG);
+                                    toast.show();
+
+                                } else {
+                                    DatabaseReference dbRefUserExams = FirebaseDatabase.getInstance().getReference("userExams").child(user.getUid());
+                                    dbRefUserExams.child(exam.getTitle()).push()
+                                            .setValue(new Argument(input.getText().toString(), Argument.ArgumentState.INCOMPLETE, exam.getTitle()));
+
+
+                                    //refresh frag
+                                    Fragment currentFragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.container_personal_page);
+                                    if (currentFragment instanceof ExamListFragment) {
+                                        FragmentTransaction fragTransaction = (getActivity()).getSupportFragmentManager().beginTransaction();
+                                        fragTransaction.detach(currentFragment);
+                                        fragTransaction.attach(currentFragment);
+                                        fragTransaction.commit();
+                                    }
+                                }
+
+
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                Log.d("MAHH", databaseError.getMessage());
+
+                            }
+                        });
+
+
+                        //refresh fragent
+
+                    }
+                })
+                .create()
+                .show();
+
+
+
+    }
+
+
+    private void deleteExam(final Exam exam) {
+
+        new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.delete_exam_question)
+                .setNegativeButton(R.string.delete_message_cancel, null)
+                .setPositiveButton(R.string.delete_message_confirmation, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        DatabaseReference dbRefUserExams = FirebaseDatabase.getInstance().getReference("userExams").child(user.getUid());
+                        dbRefUserExams.child(exam.getTitle()).removeValue();
+
+                        //refresh fragment
+                        Fragment currentFragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.container_personal_page);
+                        if (currentFragment instanceof ExamListFragment) {
+                            FragmentTransaction fragTransaction =   (getActivity()).getSupportFragmentManager().beginTransaction();
+                            fragTransaction.detach(currentFragment);
+                            fragTransaction.attach(currentFragment);
+                            fragTransaction.commit();}
+                    }
+                })
+                .create()
+                .show();
+
+    }
+
+
+    private void changeArgumentState(final Argument argument) {
+
+        int defaultSelection;
+        switch (argument.getState()) {
+            case INCOMPLETE:
+                defaultSelection = 0;
+                break;
+            case INPROGRESS:
+                defaultSelection = 1;
+                break;
+            case COMPLETE:
+                defaultSelection = 2;
+                break;
+            default:
+                defaultSelection = 0;
+                break;
+        }
+
+
+        new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.argument_change_state)
+                .setSingleChoiceItems(R.array.argument_option_states, defaultSelection,
+                        new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {}
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .setPositiveButton(R.string.change, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        ListView lw = ((AlertDialog)dialog).getListView();
+                        final Object checkedItem = lw.getAdapter().getItem(lw.getCheckedItemPosition());
+
+                        DatabaseReference dbRefUserExams = FirebaseDatabase.getInstance().getReference("userExams").child(user.getUid());
+                        dbRefUserExams.child(argument.getExamFather()).orderByChild("name").
+                                equalTo(argument.getName()).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                Iterator<DataSnapshot> iterator = dataSnapshot.getChildren().iterator();
+
+                                Argument arg = null;
+                                switch (checkedItem.toString()){
+                                    case "Da completare":
+                                        arg = new Argument(argument.getName(), Argument.ArgumentState.INCOMPLETE, argument.getExamFather());
+                                        iterator.next().getRef().setValue(arg);
+                                        break;
+                                    case "In corso":
+                                        arg = new Argument(argument.getName(), Argument.ArgumentState.INPROGRESS, argument.getExamFather());
+                                        iterator.next().getRef().setValue(arg);
+                                        break;
+                                    case "Completato":
+                                        arg = new Argument(argument.getName(), Argument.ArgumentState.COMPLETE, argument.getExamFather());
+                                        iterator.next().getRef().setValue(arg);
+                                        break;
+                                }
+
+                                //refresh fragment
+                                Fragment currentFragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.container_personal_page);
+                                if (currentFragment instanceof ExamListFragment) {
+                                    FragmentTransaction fragTransaction =   (getActivity()).getSupportFragmentManager().beginTransaction();
+                                    fragTransaction.detach(currentFragment);
+                                    fragTransaction.attach(currentFragment);
+                                    fragTransaction.commit();
+                                }
+
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+                })
+                .create()
+                .show();
+
+
+
+    }
+
+
+    private void deleteArgument(final Argument argument) {
+
+        new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.delete_argument_question)
+                .setNegativeButton(R.string.delete_message_cancel, null)
+                .setPositiveButton(R.string.delete_message_confirmation, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        DatabaseReference dbRefUserExams = FirebaseDatabase.getInstance().getReference("userExams").child(user.getUid());
+                        dbRefUserExams.child(argument.getExamFather()).orderByChild("name").
+                                equalTo(argument.getName()).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                Iterator<DataSnapshot> iterator = dataSnapshot.getChildren().iterator();
+                                iterator.next().getRef().removeValue();
+
+                                //refresh fragment
+                                Fragment currentFragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.container_personal_page);
+                                if (currentFragment instanceof ExamListFragment) {
+                                    FragmentTransaction fragTransaction =   (getActivity()).getSupportFragmentManager().beginTransaction();
+                                    fragTransaction.detach(currentFragment);
+                                    fragTransaction.attach(currentFragment);
+                                    fragTransaction.commit();}
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+
+
+                    }
+                })
+                .create()
+                .show();
+
+
+
+    }
+
+
+
 }
+

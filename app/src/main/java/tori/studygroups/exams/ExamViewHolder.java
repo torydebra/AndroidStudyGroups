@@ -1,10 +1,13 @@
 package tori.studygroups.exams;
 
 
+import android.content.Context;
 import android.graphics.Color;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.RotateAnimation;
+import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -96,5 +99,21 @@ public class ExamViewHolder extends GroupViewHolder {
         rotate.setDuration(300);
         rotate.setFillAfter(true);
         arrow.setAnimation(rotate);
+    }
+
+
+    // Binds message details to ViewHolder item
+    void bind(Context context, final Exam exam,
+              @Nullable final ExamAdapter.OnItemLongClickListener longClickListener) {
+
+        if (longClickListener != null) {
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    longClickListener.onExamLongClick(exam);
+                    return true;
+                }
+            });
+        }
     }
 }

@@ -1,9 +1,11 @@
 package tori.studygroups.exams;
 
+import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.thoughtbot.expandablerecyclerview.ExpandableRecyclerViewAdapter;
+import com.thoughtbot.expandablerecyclerview.listeners.OnGroupClickListener;
 import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
 
 import java.util.List;
@@ -16,14 +18,29 @@ import android.view.LayoutInflater;
 
 public class ExamAdapter extends ExpandableRecyclerViewAdapter<ExamViewHolder, ArgumentViewHolder> {
 
-    public ExamAdapter(List<? extends ExpandableGroup> groups) {
+    private OnItemLongClickListener mItemLongClickListener;
+
+    private Context context;
+
+    interface OnItemLongClickListener {
+        void onExamLongClick(Exam exam);
+        void onArgumentLongClick(Argument argument);
+    }
+
+    void setOnItemLongClickListener(ExamAdapter.OnItemLongClickListener listener) {
+        mItemLongClickListener = listener;
+    }
+
+    public ExamAdapter(List<? extends ExpandableGroup> groups, Context context) {
         super(groups);
+        this.context = context;
     }
 
     @Override
     public ExamViewHolder onCreateGroupViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.list_item_exam, parent, false);
+
         return new ExamViewHolder(view);
     }
 
@@ -40,6 +57,7 @@ public class ExamAdapter extends ExpandableRecyclerViewAdapter<ExamViewHolder, A
 
         final Argument argument = ((Exam) group).getItems().get(childIndex);
         holder.setArgumentName(argument.getName(), argument.getState());
+        holder.bind(context, argument, mItemLongClickListener);
     }
 
     @Override
@@ -47,5 +65,7 @@ public class ExamAdapter extends ExpandableRecyclerViewAdapter<ExamViewHolder, A
                                       ExpandableGroup group) {
 
         holder.setExamTitle(group);
+        holder.bind(context, (Exam)group, mItemLongClickListener);
+
     }
 }
