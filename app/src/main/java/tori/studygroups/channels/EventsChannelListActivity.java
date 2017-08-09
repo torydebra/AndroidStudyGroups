@@ -16,6 +16,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -33,6 +35,7 @@ import tori.studygroups.otherClass.MyEvent;
 import tori.studygroups.otherClass.MyUser;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -50,32 +53,57 @@ public class EventsChannelListActivity extends AppCompatActivity {
 
         boolean userEventPartecipation = getIntent().getBooleanExtra(MainActivity.USER_EVENT_PARTECIPATION, false);
 
-        Fragment fragment;
+
 
         if (userEventPartecipation){
-            EventDB localDB = new EventDB(this);
-            fragment = EventListFragment.newInstance(localDB.getEvents());
+
+           // EventDB localDB = new EventDB(this);
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            DatabaseReference dbRefUserEvents = FirebaseDatabase.getInstance().getReference("userEvents");
+            dbRefUserEvents.child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    ArrayList<MyEvent> eventList = new ArrayList<>();
+                    for (DataSnapshot eventSnapshot: dataSnapshot.getChildren()){
+                        MyEvent event = eventSnapshot.getValue(MyEvent.class);
+                        eventList.add(event);
+                    }
+
+                    Fragment fragment = EventListFragment.newInstance(eventList);
+                    FragmentManager manager = getSupportFragmentManager();
+                    manager.popBackStack();
+
+                    manager.beginTransaction()
+                            .replace(R.id.container_event_list, fragment)
+                            .commit();
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
 
         } else {
-            fragment = EventListFragment.newInstance();
+            Fragment fragment = EventListFragment.newInstance();
+            FragmentManager manager = getSupportFragmentManager();
+            manager.popBackStack();
+
+            manager.beginTransaction()
+                    .replace(R.id.container_event_list, fragment)
+                    .commit();
         }
-
-
-        FragmentManager manager = getSupportFragmentManager();
-        manager.popBackStack();
-
-        manager.beginTransaction()
-                .replace(R.id.container_event_list, fragment)
-                .commit();
-
-
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_general, menu);
         return true;
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

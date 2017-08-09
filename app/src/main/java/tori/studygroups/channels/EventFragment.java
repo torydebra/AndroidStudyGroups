@@ -168,6 +168,7 @@ public class EventFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
     }
 
 
@@ -281,12 +282,17 @@ public class EventFragment extends Fragment {
 
         dbRefEventPartecipants.child(eventId).child(user.getUid()).setValue("true");
 
+        DatabaseReference dbRefUserEvents = FirebaseDatabase.getInstance().getReference("userEvents");
+        dbRefUserEvents.child(user.getUid()).child(eventId).setValue(event);
+
         Toast t = Toast.makeText(getContext(), "Ora partecipi all'evento", Toast.LENGTH_LONG);
         t.show();
 
         eventPartecipaButton.setText(R.string.partecipa_delete);
         eventPartecipaButton.setBackgroundColor(ResourcesCompat.getColor(getResources(), color.holo_red_light, null));
         eventPartecipaBool = true;
+
+
 
         EventDB localDB = new EventDB(getContext());
         String insertId = localDB.insertEvent(event);
@@ -329,6 +335,9 @@ public class EventFragment extends Fragment {
     private void cancelPartecipazione() {
 
         dbRefEventPartecipants.child(eventId).child(user.getUid()).getRef().removeValue();
+
+        DatabaseReference dbRefUserEvents = FirebaseDatabase.getInstance().getReference("userEvents");
+        dbRefUserEvents.child(user.getUid()).child(eventId).getRef().removeValue();
 
         Toast t = Toast.makeText(getContext(), "Non partecipi più all'evento, ricordati di cancellare l'evento dal tuo calendario", Toast.LENGTH_LONG);
         t.show();

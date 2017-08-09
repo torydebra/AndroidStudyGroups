@@ -110,6 +110,11 @@ public class EventListFragment extends Fragment {
 
     }
 
+    @Override
+    public void onResume(){
+        super.onResume();
+    }
+
 
     private void setUpAdapter() {
         eventListAdapter.setOnItemClickListener(new EventListAdapter.OnItemClickListener() {

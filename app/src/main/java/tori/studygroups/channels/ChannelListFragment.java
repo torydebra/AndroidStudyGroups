@@ -304,31 +304,35 @@ public class ChannelListFragment extends Fragment {
         channelListQuery.setLimit(numChannels);
         loadBar.setVisibility(View.VISIBLE);
 
+        //richiesta arriva dal main dove ho cliccato su vedi gruppi preferiti
         if (userPrefChannelList != null) {
-            for (String prefChannel : userPrefChannelList) {
-                channelListQuery.setUrlKeyword(prefChannel);
-                channelListQuery.next(new OpenChannelListQuery.OpenChannelListQueryResultHandler() {
-                    @Override
-                    public void onResult(List<OpenChannel> channels, SendBirdException e) {
-                        if (e != null) {
-                            return;
-                        }
-
-                        mChannelListAdapter.addLast(channels.get(0));
-                    }
-                });
-            }
-
+            createGroupButton.setVisibility(View.GONE);
             if (userPrefChannelList.size() == 0){
-
                 noChannelFind.setText("Nessun gruppo tra i preferiti. Puoi aggiungerne cercando tra i gruppi e cliccando sulla stella in alto");
                 channelListRecyclerView.setVisibility(View.GONE);
                 linearLayoutNoChannel.setVisibility(View.VISIBLE);
-                createGroupButton.setVisibility(View.GONE);
+
             } else {
+                for (String prefChannel : userPrefChannelList) {
+                    channelListQuery.setUrlKeyword(prefChannel);
+                    channelListQuery.next(new OpenChannelListQuery.OpenChannelListQueryResultHandler() {
+                        @Override
+                        public void onResult(List<OpenChannel> channels, SendBirdException e) {
+                            if (e != null) {
+                                return;
+                            }
+
+                            try {
+                                mChannelListAdapter.addLast(channels.get(0));
+
+                            } catch (Exception err){
+
+                            }
+                        }
+                    });
+                }
                 channelListRecyclerView.setVisibility(View.VISIBLE);
                 linearLayoutNoChannel.setVisibility(View.GONE);
-                createGroupButton.setVisibility(View.VISIBLE);
 
             }
 

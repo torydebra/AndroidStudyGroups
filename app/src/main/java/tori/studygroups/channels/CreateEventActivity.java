@@ -303,6 +303,8 @@ public class CreateEventActivity extends AppCompatActivity {
         DatabaseReference dbRefEventPartecipants = FirebaseDatabase.getInstance().getReference("eventPartecipant");
         dbRefEventPartecipants.child(eventId).child(user.getUid()).setValue("true");
 
+        DatabaseReference dbRefUserEvents = FirebaseDatabase.getInstance().getReference("userEvents");
+        dbRefUserEvents.child(user.getUid()).child(eventId).setValue(event);
 
         //local db
         EventDB localDB = new EventDB(this);
