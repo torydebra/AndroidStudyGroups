@@ -75,7 +75,6 @@ public class EventListFragment extends Fragment {
 
         try {
             eventsList = getArguments().getParcelableArrayList(MainActivity.USER_EVENT_PARTECIPATION);
-            Log.d("MAHLISTA", Integer.toString(eventsList.size()));
         } catch (Exception e){
             eventsList = null;
         }
@@ -98,7 +97,6 @@ public class EventListFragment extends Fragment {
 
             if (eventsList.size() == 0) {
                 noEventsFindText.setVisibility(View.VISIBLE);
-
                 loadBar.setVisibility(View.GONE);
             } else {
                 eventListAdapter.setEventList(eventsList);
@@ -160,15 +158,22 @@ public class EventListFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                //for each child
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Log.d("MAH", snapshot.toString());
-                    eventsList.add(snapshot.getValue(MyEvent.class));
-                }
+                if (dataSnapshot.hasChildren()){
+                    noEventsFindText.setVisibility(View.GONE);
+                    //for each child
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        Log.d("MAH", snapshot.toString());
+                        eventsList.add(snapshot.getValue(MyEvent.class));
+                    }
 
-                Collections.reverse(eventsList);
-                eventListAdapter.setEventList(eventsList);
-                loadBar.setVisibility(View.GONE);
+                    Collections.reverse(eventsList);
+                    eventListAdapter.setEventList(eventsList);
+                    loadBar.setVisibility(View.GONE);
+
+                } else {
+                    loadBar.setVisibility(View.GONE);
+                    noEventsFindText.setVisibility(View.VISIBLE);
+                }
             }
 
             @Override

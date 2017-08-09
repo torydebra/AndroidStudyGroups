@@ -53,7 +53,6 @@ public class EventsChannelListActivity extends AppCompatActivity {
         Fragment fragment;
 
         if (userEventPartecipation){
-
             EventDB localDB = new EventDB(this);
             fragment = EventListFragment.newInstance(localDB.getEvents());
 

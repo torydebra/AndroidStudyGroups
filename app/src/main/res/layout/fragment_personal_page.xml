@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:fontFamily="casual"
-            android:text="Pagina Personale di Username"
+            android:text=""
             android:textAlignment="center"
             android:textColor="@android:color/black"
             android:textSize="30sp"
@@ -93,7 +93,8 @@
             android:textSize="24sp"
             android:layout_alignParentBottom="true"
             android:layout_toEndOf="@+id/no_exams_find_container"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentStart="true"
+            android:visibility="gone"/>
 
     </RelativeLayout>
 

@@ -25,12 +25,12 @@
 
     <ImageView
         android:id="@+id/image_chat_profile"
-        android:contentDescription="@string/channel_chat_content_desc_profile"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentStart="true"
         android:layout_below="@id/text_chat_date"
         android:layout_marginTop="4dp"
-        android:layout_alignParentStart="true" />
+        android:contentDescription="@string/channel_chat_content_desc_profile" />
 
     <TextView
         android:id="@+id/text_chat_nickname"

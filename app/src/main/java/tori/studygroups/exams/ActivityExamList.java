@@ -6,32 +6,55 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import tori.studygroups.R;
+import tori.studygroups.channels.ChannelListFragment;
 import tori.studygroups.mainActivities.MainActivity;
 import tori.studygroups.otherClass.Disconnection;
 
 
 public class ActivityExamList extends AppCompatActivity {
 
+    public static final String USERID = "userId";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_personal_page);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(getClass().getSimpleName());
 
-        Fragment fragment = ExamListFragment.newInstance();
-        FragmentManager manager = getSupportFragmentManager();
-        manager.popBackStack();
+        Intent intent = getIntent();
+        String userId = intent.getStringExtra(USERID);
+        Fragment fragment = null;
 
-        manager.beginTransaction()
-                .replace(R.id.container_personal_page, fragment, "FRAGMENT_EXAM_LIST")
-                .commit();
+
+        if (savedInstanceState == null) {
+
+            if (userId != null && userId.length() >0){
+                fragment = ExamListFragment.newInstance(userId);
+            } else {
+                fragment = ExamListFragment.newInstance();
+
+            }
+
+            FragmentManager manager = getSupportFragmentManager();
+            manager.popBackStack();
+            manager.beginTransaction()
+                    .replace(R.id.container_personal_page, fragment, "FRAGMENT_EXAM_LIST")
+                    .commit();
+
+        } else { //fragment esiste già (es orientation change)
+            fragment = getSupportFragmentManager().findFragmentByTag("FRAGMENT_EXAM_LIST");
+        }
+
+
+
+
+
 
     }
 
@@ -50,7 +73,6 @@ public class ActivityExamList extends AppCompatActivity {
 
                 Intent intent = new Intent (this, MainActivity.class);
                 startActivity(intent);
-
                 return true;
 
             case R.id.menu_general_item_disconnect:

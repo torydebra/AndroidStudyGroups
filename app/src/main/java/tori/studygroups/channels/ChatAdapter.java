@@ -61,7 +61,8 @@ class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     interface OnItemLongClickListener {
-        void onBaseMessageLongClick(BaseMessage message);
+        void onUserMessageLongClick(UserMessage message);
+        void onFileMessageLongClick(FileMessage message);
     }
 
 
@@ -247,7 +248,7 @@ class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 itemView.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View v) {
-                        longClickListener.onBaseMessageLongClick(message);
+                        longClickListener.onUserMessageLongClick(message);
                         return true;
                     }
                 });
@@ -378,7 +379,7 @@ class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 itemView.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View v) {
-                        longClickListener.onBaseMessageLongClick(message);
+                        longClickListener.onFileMessageLongClick(message);
                         return true;
                     }
                 });
@@ -463,7 +464,7 @@ class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 itemView.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View v) {
-                        longClickListener.onBaseMessageLongClick(message);
+                        longClickListener.onUserMessageLongClick(message);
                         return true;
                     }
                 });

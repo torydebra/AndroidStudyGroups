@@ -31,6 +31,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.sendbird.android.*;
 import tori.studygroups.R;
+import tori.studygroups.exams.ActivityExamList;
 import tori.studygroups.otherClass.MyEvent;
 import tori.studygroups.utils.FileUtils;
 import tori.studygroups.utils.PhotoViewerActivity;
@@ -68,6 +69,7 @@ public class ChatFragment extends Fragment {
     private EditText mMessageEditText;
     private Button mMessageSendButton;
     private ImageButton mUploadFileButton;
+    private LinearLayout loadingBarContainer;
 
     private boolean favouriteGroup;
 
@@ -115,6 +117,8 @@ public class ChatFragment extends Fragment {
         dbRefUser = FirebaseDatabase.getInstance().getReference("users");
         dbRefChannelToDevice = FirebaseDatabase.getInstance().getReference("channelToDevice");
 
+
+
     }
 
     @Nullable
@@ -129,6 +133,8 @@ public class ChatFragment extends Fragment {
         mRootLayout = rootView.findViewById(R.id.layout_chat_root);
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_channel_chat);
+
+        loadingBarContainer = (LinearLayout) rootView.findViewById(R.id.linlaHeaderProgressMessage);
 
         checkFavouriteGroup();
         setUpChatAdapter();
@@ -496,21 +502,94 @@ public class ChatFragment extends Fragment {
             }
         });
 
-        mChatAdapter.setOnItemLongClickListener(new ChatAdapter.OnItemLongClickListener() {
-            @Override
-            public void onBaseMessageLongClick(final BaseMessage message) {
 
+        mChatAdapter.setOnItemLongClickListener(new ChatAdapter.OnItemLongClickListener() {
+
+            @Override
+            public void onUserMessageLongClick(final UserMessage message) {
+                int arrayRes;
+                if (user.getUid().equals(message.getSender().getUserId())){
+                    arrayRes = R.array.chat_message_long_clic_options;
+                } else{
+                    arrayRes = R.array.chat_message_long_clic_options_not_delete;
+                }
                 new AlertDialog.Builder(getActivity())
-                        .setTitle(R.string.delete_message_question)
-                        .setNegativeButton(R.string.delete_message_cancel, null)
-                        .setPositiveButton(R.string.delete_message_confirmation, new DialogInterface.OnClickListener() {
+                        .setTitle("Opzioni")
+                        .setItems(arrayRes, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                deleteMessage(message);
+                                switch (which) {
+                                    case 0: //vedi userpage
+                                        Intent intent = new Intent(getActivity(), ActivityExamList.class);
+                                        intent.putExtra(ActivityExamList.USERID, message.getSender().getUserId());
+                                        startActivity(intent);
+                                        break;
+
+                                    case 1: //cancella messaggio
+                                        new AlertDialog.Builder(getActivity())
+                                                .setTitle(R.string.delete_message_question)
+                                                .setNegativeButton(R.string.delete_message_cancel, null)
+                                                .setPositiveButton(R.string.delete_message_confirmation, new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialog, int which) {
+                                                        deleteMessage(message);
+                                                    }
+                                                })
+                                                .create()
+                                                .show();
+                                        break;
+                                    default:
+                                        break;
+                                }
                             }
                         })
                         .create()
                         .show();
+
+            }
+
+            @Override
+            public void onFileMessageLongClick(final FileMessage message) {
+                int arrayRes;
+                if (user.getUid().equals(message.getSender().getUserId())){
+                    arrayRes = R.array.chat_message_long_clic_options;
+                } else{
+                    arrayRes = R.array.chat_message_long_clic_options_not_delete;
+                }
+                new AlertDialog.Builder(getActivity())
+                        .setTitle("Opzioni")
+                        .setItems(arrayRes, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                switch (which) {
+                                    case 0: //vedi userpage
+                                        Intent intent = new Intent(getActivity(), ActivityExamList.class);
+                                        intent.putExtra(ActivityExamList.USERID, message.getSender().getUserId());
+                                        startActivity(intent);
+                                        break;
+
+                                    case 1: //cancella messaggio
+                                        new AlertDialog.Builder(getActivity())
+                                                .setTitle(R.string.delete_message_question)
+                                                .setNegativeButton(R.string.delete_message_cancel, null)
+                                                .setPositiveButton(R.string.delete_message_confirmation, new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialog, int which) {
+                                                        deleteMessage(message);
+                                                    }
+                                                })
+                                                .create()
+                                                .show();
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                        })
+                        .create()
+                        .show();
+
+
             }
 
         });
@@ -720,6 +799,8 @@ public class ChatFragment extends Fragment {
      * @param uri The URI of the image, which in this case is received through an Intent request.
      */
     private void sendImageWithThumbnail(Uri uri, List<FileMessage.ThumbnailSize> thumbnailSizes) {
+        loadingBarContainer.setVisibility(View.VISIBLE);
+
         Hashtable<String, Object> info = FileUtils.getFileInfo(getActivity(), uri);
         final String path = (String) info.get("path");
         final File file = new File(path);
@@ -742,6 +823,7 @@ public class ChatFragment extends Fragment {
                     }
 
                     mChatAdapter.addFirst(fileMessage);
+                    loadingBarContainer.setVisibility(View.GONE);
                 }
             });
         }

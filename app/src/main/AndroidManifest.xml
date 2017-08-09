@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".mainActivities.LoginActivity"
-            android:windowSoftInputMode="stateUnchanged">
+            android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -23,9 +23,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".mainActivities.MainActivity"
-            android:windowSoftInputMode="stateUnchanged"/>
+            android:windowSoftInputMode="stateHidden"/>
         <activity android:name=".mainActivities.SignupActivity"
-            android:windowSoftInputMode="stateUnchanged"/>
+            android:windowSoftInputMode="stateHidden"/>
         <activity android:name=".utils.PhotoViewerActivity"/>
         <activity
             android:name=".utils.MediaPlayerActivity"
@@ -34,17 +34,19 @@
             android:name=".channels.ChatPartecipantListActivity"
             android:label="@string/participant_list" />
         <activity android:name=".channels.ChannelsActivity"
-            android:windowSoftInputMode="stateUnchanged"/>
+            android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity android:name=".channels.CreateChannelActivity"
             android:windowSoftInputMode="stateUnchanged"/>
         <activity android:name=".channels.CreateEventActivity"
-            android:windowSoftInputMode="stateUnchanged"/>
+            android:windowSoftInputMode="stateHidden"/>
         <activity android:name=".channels.EventPartecipantListActivity"
-            android:windowSoftInputMode="stateUnchanged"/>
+            android:windowSoftInputMode="stateAlwaysHidden"
+            android:label="@string/event_participant_list" />
         <activity android:name=".channels.EventsChannelListActivity"
-            android:windowSoftInputMode="stateUnchanged"/>
+            android:windowSoftInputMode="stateAlwaysHidden"
+            android:label="@string/event_channel_list" />
         <activity android:name=".exams.ActivityExamList"
-            android:windowSoftInputMode="stateUnchanged"/>
+            android:windowSoftInputMode="stateAlwaysHidden"/>
 
 
         <service

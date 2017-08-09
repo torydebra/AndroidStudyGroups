@@ -35,8 +35,8 @@
     <string name="channel_chat_content_desc_profile" >Immagine Profilo</string>
     <string name="upload_file_text" >ha caricato un file</string>
 
-    <string name="participant_list" >Participanti</string>
-    <string name="participant_menu" >Vedi participanti</string>
+    <string name="participant_list">Utenti in chat attualmente</string>
+    <string name="participant_menu">Vedi utenti in chat</string>
     <string name="add_event" >Crea evento</string>
 
     <string name="add_event_title" >Crea Evento per </string>
@@ -53,6 +53,8 @@
     <string name="partecipa_confirmation" >Partecipa</string>
     <string name="partecipa_delete" >Cancella Partecipazione</string>
     <string name="no_partecipant_find" >Nessun partecipante</string>
+    <string name="event_participant_list">Partecipanti all\'evento</string>
+    <string name="event_channel_list">Eventi</string>
 
     <string name="no_channel_find" >Nessun gruppo con questo nome, creane uno</string>
     <string name="create_channel" >Crea Gruppo</string>
@@ -100,6 +102,11 @@
         <item>Da completare</item>
         <item>In corso</item>
         <item>Completato</item>
+    </string-array>
+
+    <string-array
+        name="chat_message_long_clic_options_not_delete">
+        <item>Vedi pagina utente</item>
     </string-array>
 
 

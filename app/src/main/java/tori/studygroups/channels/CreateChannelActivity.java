@@ -25,8 +25,11 @@ import tori.studygroups.R;
 
 public class CreateChannelActivity extends AppCompatActivity {
 
+    public static final int CHANNEL_CREATED = 10;
+
     TextInputEditText mNameEditText;
     private Button mCreateButton;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -86,9 +89,6 @@ public class CreateChannelActivity extends AppCompatActivity {
                                 // Error!
                                 return;
                             }
-
-                            // Open Channel created
-
                             //add created channel to favourite
                             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                             DatabaseReference dbRefUserPrefChannels = FirebaseDatabase.getInstance().getReference("userPrefChannels");
@@ -97,6 +97,9 @@ public class CreateChannelActivity extends AppCompatActivity {
                             DatabaseReference dbRefChannelPrefUser = FirebaseDatabase.getInstance().getReference("channelPrefUser");
                             dbRefChannelPrefUser.child(openChannel.getUrl()).child(user.getUid()).setValue("true");
 
+                            Intent intent = new Intent();
+                            intent.putExtra("channelName", name);
+                            setResult(CHANNEL_CREATED, intent);
                             finish();
                         }
                     });

@@ -1,9 +1,12 @@
 package tori.studygroups.channels;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,6 +16,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -26,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import tori.studygroups.R;
+import tori.studygroups.exams.ExamListFragment;
 import tori.studygroups.mainActivities.MainActivity;
 
 
@@ -112,6 +118,10 @@ public class ChannelListFragment extends Fragment {
 
         setUpCreateButton();
 
+
+        // Refresh once
+        refreshChannelList(15);
+
         return rootView;
     }
 
@@ -120,11 +130,49 @@ public class ChannelListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        Log.d("MAHHHH", "channllistFrag resumed");
 
-        // Refresh once
-        refreshChannelList(15);
+    }
 
+
+    //in ritorno dal create chan activity
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == 0) {
+
+            if (resultCode == CreateChannelActivity.CHANNEL_CREATED) {
+
+                groupNameSearched = data.getStringExtra("channelName");
+                Log.d("BOHH", data.getStringExtra("channelName"));
+                channelListQuery = OpenChannel.createOpenChannelListQuery();
+                channelListQuery.setLimit(15);
+                channelListQuery.setNameKeyword(data.getStringExtra("channelName"));
+                loadBar.setVisibility(View.VISIBLE);
+                channelListQuery.next(new OpenChannelListQuery.OpenChannelListQueryResultHandler() {
+                    @Override
+                    public void onResult(List<OpenChannel> channels, SendBirdException e) {
+                        if (e != null) {
+                            // Error!
+                            return;
+                        }
+                        Log.d("BOHH", Integer.toString(channels.size()));
+
+
+                        mChannelListAdapter.setChannelList(channels);
+                        loadBar.setVisibility(View.GONE);
+
+                        if(channels.size() == 0){
+                            channelListRecyclerView.setVisibility(View.GONE);
+                            linearLayoutNoChannel.setVisibility(View.VISIBLE);
+
+                        } else {
+                            linearLayoutNoChannel.setVisibility(View.GONE);
+                            channelListRecyclerView.setVisibility(View.VISIBLE);
+                        }
+                    }
+                });
+            }
+        }
     }
 
 
@@ -150,6 +198,18 @@ public class ChannelListFragment extends Fragment {
         mChannelListAdapter.setOnItemClickListener(new ChannelListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(OpenChannel channel) {
+
+                //hide soft keyboard
+                InputMethodManager inputManager = (InputMethodManager) getContext()
+                        .getSystemService(Context.INPUT_METHOD_SERVICE);
+
+                // check if no view has focus:
+                View v = ((Activity) getContext()).getCurrentFocus();
+                if (v != null) {
+                    inputManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                }
+                // finish: hide keyboard
+
                 String channelUrl = channel.getUrl();
                 String channelName = channel.getName();
                 ChatFragment fragment = ChatFragment.newInstance(channelUrl, channelName);
@@ -223,9 +283,10 @@ public class ChannelListFragment extends Fragment {
         createGroupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Intent intentCreateChannel = new Intent(getActivity(), CreateChannelActivity.class);
                 intentCreateChannel.putExtra("groupName", groupNameSearched);
-                startActivity(intentCreateChannel);
+                startActivityForResult(intentCreateChannel, 0);
             }
         });
 

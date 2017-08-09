@@ -47,15 +47,27 @@ public class ExamListFragment extends Fragment {
     private FirebaseUser user;
     private LinearLayoutManager layoutManager;
     private RecyclerView recyclerView;
+    private LinearLayout noExamContainer;
 
     private ExamAdapter examAdapter;
     private ArrayList<Exam> examList;
+
+    private String userId;
 
 
     public static ExamListFragment newInstance() {
         ExamListFragment fragment = new ExamListFragment();
         return fragment;
     }
+
+    public static ExamListFragment newInstance(String userId) { //pagina di un altro utente
+        ExamListFragment fragment = new ExamListFragment();
+        Bundle args = new Bundle();
+        args.putString(ActivityExamList.USERID, userId);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
@@ -65,15 +77,65 @@ public class ExamListFragment extends Fragment {
         setRetainInstance(true);
         setHasOptionsMenu(true);
 
-        user = FirebaseAuth.getInstance().getCurrentUser();
-        ((ActivityExamList) getActivity()).setActionBarTitle(user.getDisplayName());
+        try{
+            userId = getArguments().getString(ActivityExamList.USERID);
+        } catch (NullPointerException e){
+            userId = null;
+        }
+
 
         textTitleUser = (TextView) rootView.findViewById(R.id.personal_page_hello_message);
-        String s = "Pagina personale di " + user.getDisplayName();
-        textTitleUser.setText(s) ;
+        noExamContainer = (LinearLayout) rootView.findViewById(R.id.no_exams_find_container);
         createExamButton = (Button) rootView.findViewById(R.id.btn_personal_page_add_exam);
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
         layoutManager = new LinearLayoutManager(getContext());
+
+        if (userId == null){
+
+            user = FirebaseAuth.getInstance().getCurrentUser();
+            ((ActivityExamList) getActivity()).setActionBarTitle(user.getDisplayName());
+            String s = "Pagina personale di " + user.getDisplayName();
+            textTitleUser.setText(s);
+            createExamButton.setVisibility(View.VISIBLE);
+            setupCreateExamButton();
+
+
+        } else {
+            user = FirebaseAuth.getInstance().getCurrentUser();
+
+            if (user.getUid().equals(userId)){ //mia pag
+                userId = null;
+                ((ActivityExamList) getActivity()).setActionBarTitle(user.getDisplayName());
+                String s = "Pagina personale di " + user.getDisplayName();
+                textTitleUser.setText(s);
+                createExamButton.setVisibility(View.VISIBLE);
+                setupCreateExamButton();
+
+
+            } else {
+                FirebaseDatabase.getInstance().getReference("users")
+                        .child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        String username = dataSnapshot.child("username").getValue().toString();
+                        ((ActivityExamList) getActivity()).setActionBarTitle(username);
+                        String s = "Pagina personale di " + username;
+                        textTitleUser.setText(s);
+                        createExamButton.setVisibility(View.GONE);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            }
+
+
+
+
+        }
+
 
         // RecyclerView has some built in animations to it, using the DefaultItemAnimator.
         // Specifically when you call notifyItemChanged() it does a fade animation for the changing
@@ -82,11 +144,8 @@ public class ExamListFragment extends Fragment {
         if (animator instanceof DefaultItemAnimator) {
             ((DefaultItemAnimator) animator).setSupportsChangeAnimations(false);
         }
-        setupCreateExamButton();
 
         getExamsFromFirebase(rootView);
-
-        setupCreateExamButton();
 
         return rootView;
     }
@@ -110,17 +169,23 @@ public class ExamListFragment extends Fragment {
     }
 
 
-
     private void getExamsFromFirebase(final View rootView) {
 
         final LinearLayout loadingBar = (LinearLayout) rootView.findViewById(R.id.linlaHeaderProgress);
         loadingBar.setVisibility(View.VISIBLE);
 
-        DatabaseReference dbRefUserExams = FirebaseDatabase.getInstance().getReference("userExams").child(user.getUid());
+        DatabaseReference dbRefUserExams = null;
+        if (userId == null){
+            dbRefUserExams = FirebaseDatabase.getInstance().getReference("userExams").child(user.getUid());
+
+        } else {
+            dbRefUserExams = FirebaseDatabase.getInstance().getReference("userExams").child(userId);
+
+        }
         dbRefUserExams.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                LinearLayout noExamContainer = (LinearLayout) rootView.findViewById(R.id.no_exams_find_container);
+
                 if (! dataSnapshot.hasChildren()){
                     noExamContainer.setVisibility(View.VISIBLE);
 
@@ -166,7 +231,6 @@ public class ExamListFragment extends Fragment {
             }
         });
 
-
     }
 
     private void setupAdapter() {
@@ -175,60 +239,57 @@ public class ExamListFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(examAdapter);
 
-        examAdapter.setOnItemLongClickListener(new ExamAdapter.OnItemLongClickListener() {
-            @Override
-            public void onExamLongClick(final Exam exam) {
+        if (userId == null){
+            examAdapter.setOnItemLongClickListener(new ExamAdapter.OnItemLongClickListener() {
+                @Override
+                public void onExamLongClick(final Exam exam) {
 
-                new AlertDialog.Builder(getActivity())
-                        .setTitle("Opzioni")
-                        .setItems(R.array.exam_long_clic_options, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                switch (which) {
-                                    case 0: //aggiungi argo
-                                        addArgument(exam);
-                                        break;
-                                    case 1: //cancella esame
-                                        deleteExam(exam);
-                                        break;
-                                    default:
-                                        break;
+                    new AlertDialog.Builder(getActivity())
+                            .setTitle("Opzioni")
+                            .setItems(R.array.exam_long_clic_options, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    switch (which) {
+                                        case 0: //aggiungi argo
+                                            addArgument(exam);
+                                            break;
+                                        case 1: //cancella esame
+                                            deleteExam(exam);
+                                            break;
+                                        default:
+                                            break;
+                                    }
                                 }
-                            }
-                        })
-                        .create()
-                        .show();
+                            })
+                            .create()
+                            .show();
 
-            }
+                }
 
-            @Override
-            public void onArgumentLongClick(final Argument argument) {
-                new AlertDialog.Builder(getActivity())
-                        .setTitle("Opzioni")
-                        .setItems(R.array.argument_long_clic_options, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                switch (which) {
-                                    case 0: //cambia stato
-                                        changeArgumentState(argument);
-                                        break;
-                                    case 1: //cancella argomento
-                                        deleteArgument(argument);
-                                        break;
-                                    default:
-                                        break;
+                @Override
+                public void onArgumentLongClick(final Argument argument) {
+                    new AlertDialog.Builder(getActivity())
+                            .setTitle("Opzioni")
+                            .setItems(R.array.argument_long_clic_options, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    switch (which) {
+                                        case 0: //cambia stato
+                                            changeArgumentState(argument);
+                                            break;
+                                        case 1: //cancella argomento
+                                            deleteArgument(argument);
+                                            break;
+                                        default:
+                                            break;
+                                    }
                                 }
-                            }
-                        })
-                        .create()
-                        .show();
-            }
-        });
-
-
-
-
-
+                            })
+                            .create()
+                            .show();
+                }
+            });
+        }
 
     }
 
@@ -448,11 +509,7 @@ public class ExamListFragment extends Fragment {
                 .create()
                 .show();
 
-
-
     }
-
-
 
 }
 

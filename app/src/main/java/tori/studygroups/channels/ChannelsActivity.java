@@ -50,11 +50,8 @@ public class ChannelsActivity extends AppCompatActivity{
 
         } else if (userPrefChannelList != null) {
 
-            Log.d("MAHCHAN", "chanActivity legge la lista");
             Fragment fragment;
-
             fragment = ChannelListFragment.newInstance(userPrefChannelList);
-
             FragmentManager manager = getSupportFragmentManager();
             manager.popBackStack();
 
@@ -66,21 +63,21 @@ public class ChannelsActivity extends AppCompatActivity{
 
         } else {
 
-                // Load list of Channels
-                Fragment fragment;
+            // Load list of Channels
+            Fragment fragment;
 
-                if (savedInstanceState == null) {
-                    fragment = ChannelListFragment.newInstance();
-                    FragmentManager manager = getSupportFragmentManager();
-                    manager.popBackStack();
+            if (savedInstanceState == null) {
+                fragment = ChannelListFragment.newInstance();
+                FragmentManager manager = getSupportFragmentManager();
+                manager.popBackStack();
 
-                    manager.beginTransaction()
-                            .replace(R.id.container_channels_list, fragment, "FRAGMENT_CHANNEL_LIST")
-                            .commit();
+                manager.beginTransaction()
+                        .replace(R.id.container_channels_list, fragment, "FRAGMENT_CHANNEL_LIST")
+                        .commit();
 
-                } else { //fragment esiste già (es orientation change)
-                    fragment = getSupportFragmentManager().findFragmentByTag("FRAGMENT_CHANNEL_LIST");
-                }
+            } else { //fragment esiste già (es orientation change)
+                fragment = getSupportFragmentManager().findFragmentByTag("FRAGMENT_CHANNEL_LIST");
+            }
         }
     }
 
