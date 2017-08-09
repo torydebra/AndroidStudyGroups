@@ -2,6 +2,8 @@ package tori.studygroups.exams;
 
 import android.app.ActionBar;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
@@ -29,15 +31,22 @@ import com.google.firebase.database.ValueEventListener;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.TreeSet;
 
 import tori.studygroups.R;
 import tori.studygroups.mainActivities.SignupActivity;
 import tori.studygroups.otherClass.Argument;
+import tori.studygroups.utils.PreferenceUtils;
 
 
 public class CreateExamFragment extends Fragment{
 
     private EditText examNameEditText;
+    private EditText firsArgName;
     private ImageButton addArgumentButton;
     private ImageButton removeArgumentButton;
     private Button createExamButton;
@@ -47,6 +56,8 @@ public class CreateExamFragment extends Fragment{
     private ArrayList<Integer> layoutIdList;
     private ArrayList<Integer> argumentEditTextIdList;
     private ProgressDialog progressDialog;
+
+    private SharedPreferences savedValues;
 
     public static CreateExamFragment newInstance() {
         CreateExamFragment fragment = new CreateExamFragment();
@@ -61,12 +72,14 @@ public class CreateExamFragment extends Fragment{
         setRetainInstance(true);
         setHasOptionsMenu(true);
 
+        savedValues = getContext().getSharedPreferences("CreateExamFragment", Context.MODE_PRIVATE);
+
         examNameEditText = (EditText) rootView.findViewById(R.id.edittext_exam_name);
         addArgumentButton = (ImageButton) rootView.findViewById(R.id.image_button_add_argument);
         removeArgumentButton = (ImageButton) rootView.findViewById(R.id.image_button_remove_argument);
         createExamButton = (Button) rootView.findViewById(R.id.button_create_exam);
         layoutContainerArgumentList = (LinearLayout) rootView.findViewById(R.id.layout_container_arguments);
-
+        firsArgName = (EditText) rootView.findViewById(R.id.first_argument_name);
         layoutIdList = new ArrayList<>();
         argumentEditTextIdList = new ArrayList<>();
         argumentList = new ArrayList<>();
@@ -74,6 +87,7 @@ public class CreateExamFragment extends Fragment{
         //aggiunge primo argomento che c'è di default;
         layoutIdList.add(R.id.layout_first_argument);
         argumentEditTextIdList.add(R.id.first_argument_name);
+
         setupAddArgBtn();
         setupDeleteArgBtn(rootView, layoutContainerArgumentList);
         setupCreateBtn(rootView);
@@ -88,51 +102,123 @@ public class CreateExamFragment extends Fragment{
     }
 
 
+    @Override
+    public void onResume(){
+        super.onResume();
+
+        if (savedValues != null){
+
+            firsArgName.setText(savedValues.getString("firstArgumentName", ""));
+            examNameEditText.setText(savedValues.getString("examName", ""));
+
+            Set<String> argumentsNameSet = savedValues.getStringSet("argumentsName", null);
+            if (argumentsNameSet != null){
+
+                Iterator it = argumentsNameSet.iterator();
+                while (it.hasNext()){
+                    int editTextId = addArgumentEditText();
+                    EditText argumentEditText = (EditText) getView().findViewById(editTextId);
+                    argumentEditText.setText(it.next().toString());
+                }
+
+            }
+
+        }
+
+    }
+
+
+    @Override
+    public void onPause(){
+
+        Set<String> argumentsNameSet = new TreeSet<>();
+
+        for (int i = 1; i<argumentEditTextIdList.size(); i++){
+            EditText argument = (EditText) getView().findViewById(argumentEditTextIdList.get(i));
+            if (! argument.getText().toString().isEmpty()){
+                argumentsNameSet.add(argument.getText().toString());
+
+            }
+        }
+
+        SharedPreferences.Editor editor = savedValues.edit();
+        editor.putInt("argumentNumber", argumentEditTextIdList.size());
+        editor.putStringSet("argumentsName", argumentsNameSet);
+        editor.putString("examName", examNameEditText.getText().toString());
+        editor.putString("firstArgumentName", firsArgName.getText().toString());
+        editor.apply();
+
+
+        for(int i = layoutIdList.size()-1; i>0; i--){
+            int idToDelete = layoutIdList.remove(layoutIdList.size()-1);
+            argumentEditTextIdList.remove(argumentEditTextIdList.size()-1);
+            if (argumentList.size()>1){
+                argumentList.remove(argumentList.size()-1);
+            }
+
+            TextInputLayout layoutEditTextArgumentToDelete =
+                    (TextInputLayout) getView().findViewById(idToDelete);
+
+            layoutContainerArgumentList.removeView(layoutEditTextArgumentToDelete);
+
+        }
+
+        super.onPause();
+
+    }
+
 
     private void setupAddArgBtn() {
         addArgumentButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                int layoutId = View.generateViewId();
-                int editTextId = View.generateViewId();
-                layoutIdList.add(layoutId);
-                argumentEditTextIdList.add(editTextId);
-
-                TextInputLayout layoutEditTextArgument = new TextInputLayout(getContext());
-                TextInputLayout.LayoutParams layoutParam = new TextInputLayout.LayoutParams(TextInputLayout.LayoutParams.WRAP_CONTENT,
-                        TextInputLayout.LayoutParams.WRAP_CONTENT);
-                layoutEditTextArgument.setLayoutParams(layoutParam);
-
-                TextInputEditText editTextArgument = new TextInputEditText(getContext());
-                editTextArgument.setId(editTextId);
-                editTextArgument.setHint("Nome Argomento");
-                editTextArgument.setTextSize(18);
-
-                LinearLayout.LayoutParams editTextParams = new LinearLayout.LayoutParams(
-                        600, LinearLayout.LayoutParams.WRAP_CONTENT);
-                editTextArgument.setLayoutParams(editTextParams);
-
-                layoutEditTextArgument.setId(layoutId);
-                layoutEditTextArgument.addView(editTextArgument);
-
-                layoutContainerArgumentList.addView(layoutEditTextArgument);
-
+                addArgumentEditText();
 
             }
         });
 
     }
 
+    private int addArgumentEditText() {
+
+        int layoutId = View.generateViewId();
+        int editTextId = View.generateViewId();
+        layoutIdList.add(layoutId);
+        argumentEditTextIdList.add(editTextId);
+
+        TextInputLayout layoutEditTextArgument = new TextInputLayout(getContext());
+        TextInputLayout.LayoutParams layoutParam = new TextInputLayout.LayoutParams(TextInputLayout.LayoutParams.WRAP_CONTENT,
+                TextInputLayout.LayoutParams.WRAP_CONTENT);
+        layoutEditTextArgument.setLayoutParams(layoutParam);
+
+        TextInputEditText editTextArgument = new TextInputEditText(getContext());
+        editTextArgument.setId(editTextId);
+        editTextArgument.setHint("Nome Argomento");
+        editTextArgument.setTextSize(18);
+
+        LinearLayout.LayoutParams editTextParams = new LinearLayout.LayoutParams(
+                600, LinearLayout.LayoutParams.WRAP_CONTENT);
+        editTextArgument.setLayoutParams(editTextParams);
+
+        layoutEditTextArgument.setId(layoutId);
+        layoutEditTextArgument.addView(editTextArgument);
+
+        layoutContainerArgumentList.addView(layoutEditTextArgument);
+
+        return editTextId;
+    }
+
+
     private void setupDeleteArgBtn(final View rootView, final LinearLayout parentLinearLayout) {
 
         removeArgumentButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (layoutIdList.size() > 0){
+                if (layoutIdList.size() > 1){
                     int idToDelete = layoutIdList.remove(layoutIdList.size()-1);
                     argumentEditTextIdList.remove(argumentEditTextIdList.size()-1);
-                    if (argumentList.size()>0){
+                    if (argumentList.size()>1){
                         argumentList.remove(argumentList.size()-1);
                     }
 
@@ -184,17 +270,27 @@ public class CreateExamFragment extends Fragment{
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             if (dataSnapshot.getValue() == null){
-                                Log.d("MAHH", "nulll");
+
+                                SharedPreferences.Editor editor = getContext().
+                                        getSharedPreferences("CreateExamFragment", Context.MODE_PRIVATE).edit();
+                                editor.clear().apply();
+                                argumentEditTextIdList.clear();
+                                argumentList.clear();
+                                layoutIdList.clear();
+                                examNameEditText.setText("");
+                                firsArgName.setText("");
+
                                 if (argumentList.size() > 0) {
                                     for (int i = 0; i < argumentList.size(); i++) {
                                         dataSnapshot.getRef().push().setValue(argumentList.get(i));
-                                        //dbRefUserExams.child(examName).push().setValue(argumentList.get(i));
+
                                     }
                                 } else {
                                     dataSnapshot.getRef().setValue("true");
 
                                 }
                                 progressDialog.dismiss();
+
                                 Toast.makeText(getContext(), "Esame aggiunto", Toast.LENGTH_LONG).show();
                                 getActivity().onBackPressed();
 

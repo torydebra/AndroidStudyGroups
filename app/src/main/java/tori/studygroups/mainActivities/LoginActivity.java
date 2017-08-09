@@ -1,5 +1,8 @@
 package tori.studygroups.mainActivities;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
 import android.app.ProgressDialog;
 import android.os.Bundle;
@@ -59,6 +62,16 @@ public class LoginActivity extends AppCompatActivity {
 
         _emailText.setText(PreferenceUtils.getEmail(this));
         _passwordText.setText(PreferenceUtils.getPassword(this));
+
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        if (netInfo == null || !netInfo.isConnected()) {
+            Toast.makeText(LoginActivity.this,
+                    "Devi essere connesso alla rete per usare l'applicazione", Toast.LENGTH_LONG).show();
+            progressDialog.dismiss();
+            finish();
+
+        }
 
         _loginButton.setOnClickListener(new View.OnClickListener() {
 
