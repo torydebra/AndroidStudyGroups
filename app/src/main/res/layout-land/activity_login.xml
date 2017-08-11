@@ -8,7 +8,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="56dp"
+        android:paddingTop="20dp"
         android:paddingLeft="24dp"
         android:paddingRight="24dp"
         android:weightSum="1">
@@ -63,7 +63,18 @@
             android:background="@android:color/holo_orange_light"
             android:padding="20dp"
             android:text="@string/login_button"
-            android:textSize="30dp" />
+            android:textSize="30sp" />
+
+        <TextView
+            android:id="@+id/password_forget"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:gravity="center"
+            android:text="@string/password_forget"
+            android:textColor="#0645AD"
+            android:textSize="20sp" />
+
 
         <TextView
             android:id="@+id/link_signup"

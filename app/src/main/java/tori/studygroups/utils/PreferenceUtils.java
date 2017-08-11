@@ -28,9 +28,9 @@ public class PreferenceUtils {
         return getSharedPreferences(context).getString(PREFERENCE_KEY_EMAIL, "");
     }
 
-    public static void setPassword(Context context, String nickname) {
+    public static void setPassword(Context context, String password) {
         SharedPreferences.Editor editor = getSharedPreferences(context).edit();
-        editor.putString(PREFERENCE_KEY_PASSWORD, nickname).apply();
+        editor.putString(PREFERENCE_KEY_PASSWORD, password).apply();
     }
 
     public static String getPassword(Context context) {

@@ -245,6 +245,7 @@ public class CreateExamFragment extends Fragment{
 
                 if (examNameEditText.getText().toString().isEmpty()){
                     examNameEditText.setError("Inserire un nome");
+                    examNameEditText.requestFocus();
                     createExamButton.setEnabled(true);
                     progressDialog.dismiss();
                     return;

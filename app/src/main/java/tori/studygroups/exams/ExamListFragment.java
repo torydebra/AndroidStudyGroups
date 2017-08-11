@@ -406,67 +406,64 @@ public class ExamListFragment extends Fragment {
 
 
         new AlertDialog.Builder(getActivity())
-                .setTitle(R.string.argument_change_state)
-                .setSingleChoiceItems(R.array.argument_option_states, defaultSelection,
-                        new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {}
-                })
-                .setNegativeButton(R.string.cancel, null)
-                .setPositiveButton(R.string.change, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+            .setTitle(R.string.argument_change_state)
+            .setSingleChoiceItems(R.array.argument_option_states, defaultSelection,
+                    new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {}
+            })
+            .setNegativeButton(R.string.cancel, null)
+            .setPositiveButton(R.string.change, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
 
-                        ListView lw = ((AlertDialog)dialog).getListView();
-                        final Object checkedItem = lw.getAdapter().getItem(lw.getCheckedItemPosition());
+                    ListView lw = ((AlertDialog)dialog).getListView();
+                    final Object checkedItem = lw.getAdapter().getItem(lw.getCheckedItemPosition());
 
-                        DatabaseReference dbRefUserExams = FirebaseDatabase.getInstance().getReference("userExams").child(user.getUid());
-                        dbRefUserExams.child(argument.getExamFather()).orderByChild("name").
-                                equalTo(argument.getName()).addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
+                    DatabaseReference dbRefUserExams = FirebaseDatabase.getInstance().getReference("userExams").child(user.getUid());
+                    dbRefUserExams.child(argument.getExamFather()).orderByChild("name").
+                            equalTo(argument.getName()).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
 
-                                Iterator<DataSnapshot> iterator = dataSnapshot.getChildren().iterator();
+                            Iterator<DataSnapshot> iterator = dataSnapshot.getChildren().iterator();
 
-                                Argument arg = null;
-                                switch (checkedItem.toString()){
-                                    case "Da completare":
-                                        arg = new Argument(argument.getName(), Argument.ArgumentState.INCOMPLETE, argument.getExamFather());
-                                        iterator.next().getRef().setValue(arg);
-                                        break;
-                                    case "In corso":
-                                        arg = new Argument(argument.getName(), Argument.ArgumentState.INPROGRESS, argument.getExamFather());
-                                        iterator.next().getRef().setValue(arg);
-                                        break;
-                                    case "Completato":
-                                        arg = new Argument(argument.getName(), Argument.ArgumentState.COMPLETE, argument.getExamFather());
-                                        iterator.next().getRef().setValue(arg);
-                                        break;
-                                }
-
-                                //refresh fragment
-                                Fragment currentFragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.container_personal_page);
-                                if (currentFragment instanceof ExamListFragment) {
-                                    FragmentTransaction fragTransaction =   (getActivity()).getSupportFragmentManager().beginTransaction();
-                                    fragTransaction.detach(currentFragment);
-                                    fragTransaction.attach(currentFragment);
-                                    fragTransaction.commit();
-                                }
-
+                            Argument arg = null;
+                            switch (checkedItem.toString()){
+                                case "Da completare":
+                                    arg = new Argument(argument.getName(), Argument.ArgumentState.INCOMPLETE, argument.getExamFather());
+                                    iterator.next().getRef().setValue(arg);
+                                    break;
+                                case "In corso":
+                                    arg = new Argument(argument.getName(), Argument.ArgumentState.INPROGRESS, argument.getExamFather());
+                                    iterator.next().getRef().setValue(arg);
+                                    break;
+                                case "Completato":
+                                    arg = new Argument(argument.getName(), Argument.ArgumentState.COMPLETE, argument.getExamFather());
+                                    iterator.next().getRef().setValue(arg);
+                                    break;
                             }
 
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-
+                            //refresh fragment
+                            Fragment currentFragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.container_personal_page);
+                            if (currentFragment instanceof ExamListFragment) {
+                                FragmentTransaction fragTransaction =   (getActivity()).getSupportFragmentManager().beginTransaction();
+                                fragTransaction.detach(currentFragment);
+                                fragTransaction.attach(currentFragment);
+                                fragTransaction.commit();
                             }
-                        });
-                    }
-                })
-                .create()
-                .show();
 
+                        }
 
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
 
+                        }
+                    });
+                }
+            })
+            .create()
+            .show();
     }
 
 

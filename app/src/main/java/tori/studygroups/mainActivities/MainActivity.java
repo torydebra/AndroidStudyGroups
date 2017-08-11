@@ -77,12 +77,22 @@ public class MainActivity extends AppCompatActivity {
 
         int id = item.getItemId();
         switch (id){
+            case R.id.user_setting:
+                Intent intent3 = new Intent(MainActivity.this, SettingsActivity.class);
+                startActivity(intent3);
+
+                return true;
             case R.id.menu_home:
 
                 return true;
 
             case R.id.menu_general_item_disconnect:
                 Disconnection.disconnect(this);
+                return true;
+
+            case R.id.menu_general_about:
+                Intent intent = new Intent(MainActivity.this, AboutActivity.class);
+                startActivity(intent);
                 return true;
 
             default:

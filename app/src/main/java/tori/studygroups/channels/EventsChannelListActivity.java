@@ -28,7 +28,9 @@ import com.sendbird.android.SendBirdException;
 import com.sendbird.android.User;
 import com.sendbird.android.UserListQuery;
 import tori.studygroups.R;
+import tori.studygroups.mainActivities.AboutActivity;
 import tori.studygroups.mainActivities.MainActivity;
+import tori.studygroups.mainActivities.SettingsActivity;
 import tori.studygroups.otherClass.Disconnection;
 import tori.studygroups.otherClass.EventDB;
 import tori.studygroups.otherClass.MyEvent;
@@ -110,15 +112,22 @@ public class EventsChannelListActivity extends AppCompatActivity {
 
         int id = item.getItemId();
         switch (id){
-            case R.id.menu_home:
+            case R.id.user_setting:
+                Intent intent3 = new Intent(EventsChannelListActivity.this, SettingsActivity.class);
+                startActivity(intent3);
 
-                Intent intent = new Intent (this, MainActivity.class);
-                startActivity(intent);
+                return true;
+            case R.id.menu_home:
 
                 return true;
 
             case R.id.menu_general_item_disconnect:
                 Disconnection.disconnect(this);
+                return true;
+
+            case R.id.menu_general_about:
+                Intent intent = new Intent(EventsChannelListActivity.this, AboutActivity.class);
+                startActivity(intent);
                 return true;
 
             default:

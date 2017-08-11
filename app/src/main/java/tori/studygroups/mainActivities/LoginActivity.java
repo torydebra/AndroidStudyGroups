@@ -1,5 +1,6 @@
 package tori.studygroups.mainActivities;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -10,12 +11,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import android.content.Intent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -34,7 +38,6 @@ import butterknife.Bind;
 import tori.studygroups.R;
 import tori.studygroups.utils.PreferenceUtils;
 
-
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "BOHMAH";
     private static final int REQUEST_SIGNUP = 0;
@@ -45,6 +48,7 @@ public class LoginActivity extends AppCompatActivity {
     @Bind(R.id.input_password) EditText _passwordText;
     @Bind(R.id.btn_login) Button _loginButton;
     @Bind(R.id.link_signup) TextView _signupLink;
+    @Bind(R.id.password_forget) TextView _passwordForget;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,7 +59,6 @@ public class LoginActivity extends AppCompatActivity {
                 R.style.AppTheme_Dark_Dialog);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Autenticazione...");
-
 
         ButterKnife.bind(this);
         mAuth = FirebaseAuth.getInstance();
@@ -82,7 +85,6 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         _signupLink.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
                 // Start the Signup activity
@@ -91,7 +93,16 @@ public class LoginActivity extends AppCompatActivity {
                 overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
             }
         });
+
+        _passwordForget.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                passwordForget();
+            }
+        });
     }
+
+
 
     @Override
     public void onStart() {
@@ -111,7 +122,7 @@ public class LoginActivity extends AppCompatActivity {
         }
         else if (PreferenceUtils.getConnected(this)) { //non loggato con firebase,
             Log.d("BOHMAH", "preferences salvate in locale");
-           // Log.d("BOHMAH", PreferenceUtils.getEmail(this));
+            Log.d("BOHMAH", PreferenceUtils.getEmail(this));
             Log.d("BOHMAH", PreferenceUtils.getPassword(this));
             connectToFirebase(PreferenceUtils.getEmail(this), PreferenceUtils.getPassword(this));
         }
@@ -132,7 +143,6 @@ public class LoginActivity extends AppCompatActivity {
         String email = _emailText.getText().toString();
         String password = _passwordText.getText().toString();
 
-        //TODO un checkbox con remember me?
         PreferenceUtils.setEmail(LoginActivity.this, email);
         PreferenceUtils.setPassword(LoginActivity.this, password);
 
@@ -243,10 +253,10 @@ public class LoginActivity extends AppCompatActivity {
 
                 if (e != null) {
                     // Error!
-                    Toast.makeText(
-                            LoginActivity.this, "" + e.getCode() + ": " + e.getMessage(),
-                            Toast.LENGTH_SHORT)
-                            .show();
+//                    Toast.makeText(
+//                            LoginActivity.this, "" + e.getCode() + ": " + e.getMessage(),
+//                            Toast.LENGTH_SHORT)
+//                            .show();
 
                     _loginButton.setEnabled(true);
                     _emailText.setEnabled(true);
@@ -275,14 +285,9 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onUpdated(SendBirdException e) {
                 if (e != null) {
-                    // Error!
-//                    Toast.makeText(
-//                            LoginActivity.this, "" + e.getCode() + ":" + e.getMessage(),
-//                            Toast.LENGTH_SHORT)
-//                            .show();
 
                     Toast.makeText(
-                            LoginActivity.this, "Error saving nickname",
+                            LoginActivity.this, "Errore salvataggio username",
                             Toast.LENGTH_SHORT)
                             .show();
 
@@ -292,6 +297,66 @@ public class LoginActivity extends AppCompatActivity {
             }
 
         });
+    }
+
+
+    private void passwordForget() {
+
+        LayoutInflater inflater = getLayoutInflater();
+        final Dialog dialog = new Dialog(LoginActivity.this);
+        dialog.setTitle(R.string.reset_password);
+        dialog.setContentView(inflater.inflate(R.layout.dialog_reset_password, null));
+        dialog.setCancelable(true);
+
+        Button confirm_button = (Button) dialog.findViewById(R.id.dialog_confirm_button);
+        Button cancel_button = (Button) dialog.findViewById(R.id.dialog_cancel_button);
+        final EditText emailEditText = (EditText) dialog.findViewById(R.id.reset_pass_email);
+        if (! _emailText.getText().toString().isEmpty()){
+            emailEditText.append(_emailText.getText().toString());
+        }
+
+        cancel_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        confirm_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                FirebaseAuth auth = FirebaseAuth.getInstance();
+                String emailAddress = emailEditText.getText().toString();
+
+                if (emailAddress.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(emailAddress).matches()){
+                    emailEditText.setText("Inserire email valida");
+
+                } else {
+                    auth.sendPasswordResetEmail(emailAddress).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                                Toast.makeText(LoginActivity.this, "Email inviata", Toast.LENGTH_LONG).show();
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            if (e.getMessage().equals("There is no user record corresponding to this identifier. The user may have been deleted.")){
+                                Toast.makeText(LoginActivity.this, "Errore: non esiste nessun utente registrato con questa email", Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(LoginActivity.this, "Errore", Toast.LENGTH_LONG).show();
+                            }
+                            Log.wtf("BOH", e.getMessage());
+
+                        }
+                    });
+                }
+            }
+        });
+
+        dialog.show();
+
     }
 
 }

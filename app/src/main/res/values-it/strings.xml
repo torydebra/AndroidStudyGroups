@@ -56,6 +56,12 @@
     <string name="event_participant_list">Partecipanti all\'evento</string>
     <string name="event_channel_list">Eventi</string>
 
+    <string name="about_page_description">
+        StudyGroups è un\'app che ti permette di trovare studenti che seguono le tue stesse materie.
+        Puoi creare e gestire i gruppi di studio e personalizzare la tua pagina con le materie che stai studiando.
+    </string>
+    <string name="copy_right">Copyrights © %1$d</string>
+
     <string name="no_channel_find" >Nessun gruppo con questo nome, creane uno</string>
     <string name="create_channel" >Crea Gruppo</string>
     <string name="create_channel_name" >Nome gruppo</string>
@@ -83,6 +89,22 @@
 
     <string name="add">Aggiungi</string>
     <string name="change">Cambia</string>
+
+    <string name="settings">Opzioni</string>
+    <string name="change_mail">Cambia Email</string>
+    <string name="change_password">Cambia Password</string>
+    <string name="change_profile_image">Cambia Immagine Profilo</string>
+    <string name="new_email">Nuova Email</string>
+    <string name="old_email">Vecchia Email</string>
+    <string name="new_password">Nuova Password</string>
+    <string name="new_password_repeat">Ripeti nuova password</string>
+
+    <string name="password_forget"><u>Password dimenticata?</u></string>
+    <string name="reset_password_istruction">
+        Ti verrà inviata una email all\'indirizzo fornito. \nSegui le istruzioni per resettare la password \nRicordati di guardare anche nella cartella spam
+    </string>
+    <string name="confirm">Conferma</string>
+    <string name="reset_password">Password reset</string>
 
 
     <string-array

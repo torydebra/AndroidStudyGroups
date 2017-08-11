@@ -12,7 +12,9 @@ import android.view.MenuItem;
 
 import tori.studygroups.R;
 import tori.studygroups.channels.ChannelListFragment;
+import tori.studygroups.mainActivities.AboutActivity;
 import tori.studygroups.mainActivities.MainActivity;
+import tori.studygroups.mainActivities.SettingsActivity;
 import tori.studygroups.otherClass.Disconnection;
 
 
@@ -31,14 +33,12 @@ public class ActivityExamList extends AppCompatActivity {
         String userId = intent.getStringExtra(USERID);
         Fragment fragment = null;
 
-
         if (savedInstanceState == null) {
 
             if (userId != null && userId.length() >0){
                 fragment = ExamListFragment.newInstance(userId);
             } else {
                 fragment = ExamListFragment.newInstance();
-
             }
 
             FragmentManager manager = getSupportFragmentManager();
@@ -50,12 +50,6 @@ public class ActivityExamList extends AppCompatActivity {
         } else { //fragment esiste già (es orientation change)
             fragment = getSupportFragmentManager().findFragmentByTag("FRAGMENT_EXAM_LIST");
         }
-
-
-
-
-
-
     }
 
 
@@ -69,14 +63,22 @@ public class ActivityExamList extends AppCompatActivity {
 
         int id = item.getItemId();
         switch (id){
+            case R.id.user_setting:
+                Intent intent3 = new Intent(ActivityExamList.this, SettingsActivity.class);
+                startActivity(intent3);
+
+                return true;
             case R.id.menu_home:
 
-                Intent intent = new Intent (this, MainActivity.class);
-                startActivity(intent);
                 return true;
 
             case R.id.menu_general_item_disconnect:
                 Disconnection.disconnect(this);
+                return true;
+
+            case R.id.menu_general_about:
+                Intent intent = new Intent(ActivityExamList.this, AboutActivity.class);
+                startActivity(intent);
                 return true;
 
             default:

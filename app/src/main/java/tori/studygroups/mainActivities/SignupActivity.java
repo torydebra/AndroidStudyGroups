@@ -225,15 +225,15 @@ public class SignupActivity extends AppCompatActivity {
             _emailText.setError(null);
         }
 
-        if (password.isEmpty() || password.length() < 4) {
-            _passwordText.setError("almeno 4 caratteri");
+        if (password.isEmpty() || password.length() < 6) {
+            _passwordText.setError("almeno 6 caratteri");
             _passwordText.requestFocus();
             valid = false;
         } else {
             _passwordText.setError(null);
         }
 
-        if (password2.isEmpty() || password2.length() < 4 || !(password2.equals(password))) {
+        if (password2.isEmpty() || password2.length() < 6 || !(password2.equals(password))) {
             _password2Text.setError("Password non combaciano");
             _password2Text.requestFocus();
             valid = false;

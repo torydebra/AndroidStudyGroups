@@ -256,8 +256,8 @@ public class ChatFragment extends Fragment {
         } else if (requestCode == INTENT_REQUEST_ADD_EVENT){
             //Log.d("MAHBOH", "entrato");
             if (data != null && resultCode == Activity.RESULT_OK){
-                //Log.d("MAHBOH", "not null");
-                MyEvent eventCreated = (MyEvent) data.getParcelableExtra("eventAdded");
+
+                MyEvent eventCreated = data.getParcelableExtra("eventAdded");
                 Log.d("MAHBOH", eventCreated.toJsonString());
                 sendUserMessage("event", eventCreated.toJsonString(), CUSTOM_TYPE_MESSAGE_TEXT_EVENT);
 

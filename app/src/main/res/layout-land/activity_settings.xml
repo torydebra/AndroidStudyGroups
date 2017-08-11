@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/activity_settings_container">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="20dp"
+        android:fontFamily="casual"
+        android:text="@string/settings"
+        android:textAlignment="center"
+        android:textColor="@android:color/black"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        android:id="@+id/textViewSetting" />
+
+    <Button
+        android:id="@+id/settings_button_change_mail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#ED303C"
+        android:padding="25dp"
+        android:text="@string/change_mail"
+        android:textSize="24sp"
+        android:layout_marginTop="67dp"
+        android:layout_below="@+id/textViewSetting"
+        android:layout_alignParentStart="true" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/black"
+        android:layout_above="@+id/settings_button_change_mail"
+        android:id="@+id/view10" />
+
+
+    <Button
+        android:id="@+id/settings_button_change_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#F5634A"
+        android:padding="25dp"
+        android:text="@string/change_password"
+        android:textSize="24sp"
+        android:layout_below="@+id/settings_button_change_mail"
+        android:layout_alignParentStart="true" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/black"
+        android:layout_above="@+id/settings_button_change_profile_image"
+        android:id="@+id/view20" />
+
+
+    <Button
+        android:id="@+id/settings_button_change_profile_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FF9C5B"
+        android:padding="25dp"
+        android:text="@string/change_profile_image"
+        android:textSize="24sp"
+        android:layout_below="@+id/settings_button_change_password"
+        android:layout_alignParentStart="true" />
+
+</RelativeLayout>

@@ -15,7 +15,9 @@ import android.widget.EditText;
 import java.util.ArrayList;
 
 import tori.studygroups.R;
+import tori.studygroups.mainActivities.AboutActivity;
 import tori.studygroups.mainActivities.MainActivity;
+import tori.studygroups.mainActivities.SettingsActivity;
 import tori.studygroups.otherClass.Disconnection;
 
 public class ChannelsActivity extends AppCompatActivity{
@@ -82,41 +84,6 @@ public class ChannelsActivity extends AppCompatActivity{
     }
 
 
-
-    @Override
-    protected void onStart(){
-        super.onStart();
-        Log.d("MAHHHH", "channlActivity started");
-
-    }
-
-    @Override
-    protected void onResume(){
-        super.onResume();
-        //Log.d("MAHHHH", "channlActivity resumed");
-
-    }
-
-    @Override
-    protected void onPause(){
-        super.onPause();
-       // Log.d("MAHHHH", "channlActivity paused");
-
-    }
-
-    @Override
-    protected void onStop(){
-        super.onStop();
-       // Log.d("MAHHHH", "channlActivity stopped");
-
-    }
-    @Override
-    protected void onDestroy(){
-        super.onDestroy();
-        Log.d("MAHHHH", "channlActivity destroyed");
-
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_general, menu);
@@ -127,10 +94,12 @@ public class ChannelsActivity extends AppCompatActivity{
 
         int id = item.getItemId();
         switch (id){
-            case R.id.menu_home:
+            case R.id.user_setting:
+                Intent intent3 = new Intent(ChannelsActivity.this, SettingsActivity.class);
+                startActivity(intent3);
 
-                Intent intent = new Intent (this, MainActivity.class);
-                startActivity(intent);
+                return true;
+            case R.id.menu_home:
 
                 return true;
 
@@ -138,9 +107,13 @@ public class ChannelsActivity extends AppCompatActivity{
                 Disconnection.disconnect(this);
                 return true;
 
+            case R.id.menu_general_about:
+                Intent intent = new Intent(ChannelsActivity.this, AboutActivity.class);
+                startActivity(intent);
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
-
         }
 
     }

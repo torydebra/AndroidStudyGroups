@@ -50,7 +50,7 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
 
     @Override
     public void onBindViewHolder(EventHolder holder, int position) {
-        ((EventHolder) holder).bind(mContext, eventList.get(position), position, mItemClickListener, mItemLongClickListener);
+        holder.bind(mContext, eventList.get(position), position, mItemClickListener, mItemLongClickListener);
     }
 
     @Override

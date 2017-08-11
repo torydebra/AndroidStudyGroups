@@ -23,7 +23,7 @@ import tori.studygroups.utils.PreferenceUtils;
 
 public class Disconnection {
 
-    public Disconnection(){};
+    public Disconnection(){}
 
     public static void disconnect(final Context context){
         SendBird.disconnect(new SendBird.DisconnectHandler() {
