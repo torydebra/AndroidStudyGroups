@@ -261,9 +261,7 @@ public class CreateExamFragment extends Fragment{
                             argumentList.add(new Argument(name, Argument.ArgumentState.INCOMPLETE, examName));
                         }
                     }
-
-                    Log.d("MAHH", argumentList.toString());
-
+                   // Log.d("MAHH", argumentList.toString());
                     FirebaseAuth auth = FirebaseAuth.getInstance();
                     DatabaseReference dbRefUserExams = FirebaseDatabase.getInstance().getReference().child("userExams").child(auth.getCurrentUser().getUid());
 
@@ -271,6 +269,14 @@ public class CreateExamFragment extends Fragment{
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             if (dataSnapshot.getValue() == null){
+
+                                if (argumentList.size() > 0) {
+                                    for (int i = 0; i < argumentList.size(); i++) {
+                                        dataSnapshot.getRef().push().setValue(argumentList.get(i));
+                                    }
+                                } else {
+                                    dataSnapshot.getRef().setValue("true");
+                                }
 
                                 SharedPreferences.Editor editor = getContext().
                                         getSharedPreferences("CreateExamFragment", Context.MODE_PRIVATE).edit();
@@ -280,16 +286,6 @@ public class CreateExamFragment extends Fragment{
                                 layoutIdList.clear();
                                 examNameEditText.setText("");
                                 firsArgName.setText("");
-
-                                if (argumentList.size() > 0) {
-                                    for (int i = 0; i < argumentList.size(); i++) {
-                                        dataSnapshot.getRef().push().setValue(argumentList.get(i));
-
-                                    }
-                                } else {
-                                    dataSnapshot.getRef().setValue("true");
-
-                                }
                                 progressDialog.dismiss();
 
                                 Toast.makeText(getContext(), "Esame aggiunto", Toast.LENGTH_LONG).show();

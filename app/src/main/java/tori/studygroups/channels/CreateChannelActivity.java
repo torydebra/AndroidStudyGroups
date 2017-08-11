@@ -84,7 +84,7 @@ public class CreateChannelActivity extends AppCompatActivity {
 
                     OpenChannel.createChannelWithOperatorUserIds(name, null, null, null, new OpenChannel.OpenChannelCreateHandler() {
                         @Override
-                        public void onResult(OpenChannel openChannel, SendBirdException e) {
+                        public void onResult(final OpenChannel openChannel, SendBirdException e) {
                             if (e != null) {
                                 // Error!
                                 return;
@@ -97,10 +97,31 @@ public class CreateChannelActivity extends AppCompatActivity {
                             DatabaseReference dbRefChannelPrefUser = FirebaseDatabase.getInstance().getReference("channelPrefUser");
                             dbRefChannelPrefUser.child(openChannel.getUrl()).child(user.getUid()).setValue("true");
 
-                            Intent intent = new Intent();
-                            intent.putExtra("channelName", name);
-                            setResult(CHANNEL_CREATED, intent);
-                            finish();
+                            //START: add device for notification
+                            DatabaseReference dbRefUser = FirebaseDatabase.getInstance().getReference("users");
+                            final DatabaseReference dbRefChannelToDevice = FirebaseDatabase.getInstance().getReference("channelToDevice");
+                            dbRefUser.child(user.getUid()).child("devices").addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                    for (DataSnapshot snapshot: dataSnapshot.getChildren()){
+                                        //Log.d("MAH", snapshot.getKey());
+                                        dbRefChannelToDevice.child(openChannel.getUrl()).child(snapshot.getKey()).setValue("true");
+                                    }
+
+                                    Intent intent = new Intent();
+                                    intent.putExtra("channelName", name);
+                                    setResult(CHANNEL_CREATED, intent);
+                                    finish();
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
+                            //FINISH: add device for notification
+
                         }
                     });
 
@@ -116,9 +137,6 @@ public class CreateChannelActivity extends AppCompatActivity {
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });
-
+    });
     }
-
-
 }

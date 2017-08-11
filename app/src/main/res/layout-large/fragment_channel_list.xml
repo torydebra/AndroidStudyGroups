@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:id="@+id/fragment_channel_list_layout">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayoutSearchBar"
+        android:focusable="true"
+        android:focusableInTouchMode="true">
+
+        <EditText
+            android:id="@+id/search_channel_editText"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:drawableStart="@android:drawable/ic_menu_search"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:hint="@string/search_channel_text"
+            android:textSize="30sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/recyclerViewContainer"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/linearLayoutSearchBar">
+
+        <LinearLayout
+            android:id="@+id/linlaHeaderProgress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <ProgressBar
+                android:id="@+id/pbHeaderProgress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+            </ProgressBar>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:id="@+id/no_channel_find_container"
+            android:layout_marginTop="24dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/linlaHeaderProgress"
+            android:layout_centerHorizontal="true">
+
+            <TextView
+                android:id="@+id/text_view_no_channel_find"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="15dp"
+                android:layout_marginStart="15dp"
+                android:text="@string/no_channel_find"
+                android:textSize="22sp" />
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/btn_create_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="15dp"
+                android:background="@android:color/holo_orange_light"
+                android:padding="12dp"
+                android:text="@string/create_channel"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+        <android.support.v7.widget.RecyclerView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/recycler_channel_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="vertical"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentTop="true">
+        </android.support.v7.widget.RecyclerView>
+
+    </RelativeLayout>
+</RelativeLayout>

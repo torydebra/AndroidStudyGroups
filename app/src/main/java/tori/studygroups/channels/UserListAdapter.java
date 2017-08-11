@@ -1,6 +1,7 @@
 package tori.studygroups.channels;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +24,15 @@ public class UserListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     private Context mContext;
     private List<User> mUsers;
+    private OnItemClickListener mItemClickListener;
 
+    interface OnItemClickListener {
+        void onUserItemClick(User user);
+    }
+
+    void setOnItemClickListener(OnItemClickListener listener) {
+        mItemClickListener = listener;
+    }
 
     public UserListAdapter(Context context) {
         mContext = context;
@@ -38,7 +47,7 @@ public class UserListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        ((UserHolder) holder).bind(mContext, mUsers.get(position));
+        ((UserHolder) holder).bind(mContext, mUsers.get(position), mItemClickListener);
     }
 
     @Override
@@ -67,10 +76,20 @@ public class UserListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             profileImage = (ImageView) itemView.findViewById(R.id.image_user_list_profile);
         }
 
+        private void bind(final Context context, final User user,
+                          @Nullable final UserListAdapter.OnItemClickListener clickListener) {
 
-        private void bind(final Context context, final User user) {
             nameText.setText(user.getNickname());
             ImageUtils.displayRoundImageFromUrl(context, user.getProfileUrl(), profileImage);
+
+            if (clickListener != null) {
+                itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        clickListener.onUserItemClick(user);
+                    }
+                });
+            }
         }
     }
 }

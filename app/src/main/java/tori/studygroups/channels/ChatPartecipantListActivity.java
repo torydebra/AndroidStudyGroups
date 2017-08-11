@@ -1,7 +1,10 @@
 package tori.studygroups.channels;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,6 +18,7 @@ import com.sendbird.android.SendBirdException;
 import com.sendbird.android.User;
 import com.sendbird.android.UserListQuery;
 import tori.studygroups.R;
+import tori.studygroups.exams.ActivityExamList;
 
 import java.util.List;
 
@@ -45,8 +49,9 @@ public class ChatPartecipantListActivity extends AppCompatActivity {
 
         loadBar.setVisibility(View.VISIBLE);
         setUpRecyclerView();
-
         getChannelFromUrl();
+        setOnClickListener();
+
     }
 
 
@@ -98,6 +103,33 @@ public class ChatPartecipantListActivity extends AppCompatActivity {
 
                 mListAdapter.setUserList(list);
                 loadBar.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    private void setOnClickListener() {
+
+        mListAdapter.setOnItemClickListener(new UserListAdapter.OnItemClickListener() {
+            @Override
+            public void onUserItemClick(final User user) {
+
+                new AlertDialog.Builder(ChatPartecipantListActivity.this)
+                    .setTitle("Opzioni")
+                    .setItems(R.array.chat_message_long_clic_options_not_delete, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch (which) {
+                                case 0: //vedi userpage
+                                    Intent intent = new Intent(ChatPartecipantListActivity.this, ActivityExamList.class);
+                                    intent.putExtra(ActivityExamList.USERID, user.getUserId());
+                                    startActivity(intent);
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                    })
+                    .create().show();
             }
         });
     }

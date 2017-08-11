@@ -116,10 +116,8 @@ public class ChatFragment extends Fragment {
         dbRefChannelPrefUser = FirebaseDatabase.getInstance().getReference("channelPrefUser");
         dbRefUser = FirebaseDatabase.getInstance().getReference("users");
         dbRefChannelToDevice = FirebaseDatabase.getInstance().getReference("channelToDevice");
-
-
-
     }
+
 
     @Nullable
     @Override
@@ -281,8 +279,6 @@ public class ChatFragment extends Fragment {
     }
 
 
-
-
     @Override
     public void onPause() {
         super.onPause();
@@ -294,7 +290,6 @@ public class ChatFragment extends Fragment {
         editor.putString(CHAT_OPEN, "true");
         editor.putString(EXTRA_CHANNEL_URL, mChannelName);
         editor.commit();
-
     }
 
 
@@ -303,8 +298,6 @@ public class ChatFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         Log.d("MAHHH", "chatFrag ondestroyedView");
-
-
 
         mChannel.exit(new OpenChannel.OpenChannelExitHandler() {
             @Override
@@ -319,7 +312,6 @@ public class ChatFragment extends Fragment {
     }
 
 
-    //menu per vedere partecipanti e altro?
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         Log.d("MAH", "menu created");
@@ -376,48 +368,46 @@ public class ChatFragment extends Fragment {
                 return super.onOptionsItemSelected(item);
 
         }
-
     }
 
     private void addToFavourite(final MenuItem item) {
 
         new AlertDialog.Builder(getContext())
-                .setTitle("Aggiungi preferito")
-                .setMessage("Aggiungere questo gruppo ai preferiti?")
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+            .setTitle("Aggiungi preferito")
+            .setMessage("Aggiungere questo gruppo ai preferiti?")
+            .setIcon(android.R.drawable.ic_dialog_alert)
+            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
-                    public void onClick(DialogInterface dialog, int whichButton) {
+                public void onClick(DialogInterface dialog, int whichButton) {
 
-                        dbRefUser.child(user.getUid()).child("devices").addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
+                    dbRefUser.child(user.getUid()).child("devices").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
 
-                                for (DataSnapshot snapshot: dataSnapshot.getChildren()){
-
-                                    //Log.d("MAH", snapshot.getKey());
-                                    dbRefChannelToDevice.child(mChannelUrl).child(snapshot.getKey()).setValue("true");
-                                }
+                            for (DataSnapshot snapshot: dataSnapshot.getChildren()){
+                                //Log.d("MAH", snapshot.getKey());
+                                dbRefChannelToDevice.child(mChannelUrl).child(snapshot.getKey()).setValue("true");
                             }
+                        }
 
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
 
-                            }
-                        });
+                        }
+                    });
 
-                        dbRefUserPrefChannels.child(user.getUid()).child(mChannelUrl).setValue("true");
-                        dbRefChannelPrefUser.child(mChannelUrl).child(user.getUid()).setValue("true");
-                        item.setIcon(R.drawable.ic_star_full);
-                        favouriteGroup = true;
-                        Toast t = Toast.makeText(getContext(), "Aggiunto ai preferiti", Toast.LENGTH_LONG);
-                        t.show();
-                    }
-                })
+                    dbRefUserPrefChannels.child(user.getUid()).child(mChannelUrl).setValue("true");
+                    dbRefChannelPrefUser.child(mChannelUrl).child(user.getUid()).setValue("true");
+                    item.setIcon(R.drawable.ic_star_full);
+                    favouriteGroup = true;
+                    Toast t = Toast.makeText(getContext(), "Aggiunto ai preferiti", Toast.LENGTH_LONG);
+                    t.show();
+                }
+            })
 
-                .setNegativeButton(android.R.string.no, null).show();
-
+            .setNegativeButton(android.R.string.no, null).show();
     }
+
 
     private void removeFromFavourite(final MenuItem item) {
 
@@ -441,7 +431,6 @@ public class ChatFragment extends Fragment {
 
                             @Override
                             public void onCancelled(DatabaseError databaseError) {
-
                             }
                         });
 
@@ -455,9 +444,8 @@ public class ChatFragment extends Fragment {
                 })
 
                 .setNegativeButton(android.R.string.no, null).show();
-
-
     }
+
 
     private void checkFavouriteGroup() {
 
@@ -514,37 +502,36 @@ public class ChatFragment extends Fragment {
                     arrayRes = R.array.chat_message_long_clic_options_not_delete;
                 }
                 new AlertDialog.Builder(getActivity())
-                        .setTitle("Opzioni")
-                        .setItems(arrayRes, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                switch (which) {
-                                    case 0: //vedi userpage
-                                        Intent intent = new Intent(getActivity(), ActivityExamList.class);
-                                        intent.putExtra(ActivityExamList.USERID, message.getSender().getUserId());
-                                        startActivity(intent);
-                                        break;
+                    .setTitle("Opzioni")
+                    .setItems(arrayRes, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch (which) {
+                                case 0: //vedi userpage
+                                    Intent intent = new Intent(getActivity(), ActivityExamList.class);
+                                    intent.putExtra(ActivityExamList.USERID, message.getSender().getUserId());
+                                    startActivity(intent);
+                                    break;
 
-                                    case 1: //cancella messaggio
-                                        new AlertDialog.Builder(getActivity())
-                                                .setTitle(R.string.delete_message_question)
-                                                .setNegativeButton(R.string.delete_message_cancel, null)
-                                                .setPositiveButton(R.string.delete_message_confirmation, new DialogInterface.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(DialogInterface dialog, int which) {
-                                                        deleteMessage(message);
-                                                    }
-                                                })
-                                                .create()
-                                                .show();
-                                        break;
-                                    default:
-                                        break;
-                                }
+                                case 1: //cancella messaggio
+                                    new AlertDialog.Builder(getActivity())
+                                        .setTitle(R.string.delete_message_question)
+                                        .setNegativeButton(R.string.delete_message_cancel, null)
+                                        .setPositiveButton(R.string.delete_message_confirmation, new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                deleteMessage(message);
+                                            }
+                                        })
+                                        .create()
+                                        .show();
+                                    break;
+                                default:
+                                    break;
                             }
-                        })
-                        .create()
-                        .show();
+                        }
+                    })
+                    .create().show();
 
             }
 
@@ -557,44 +544,40 @@ public class ChatFragment extends Fragment {
                     arrayRes = R.array.chat_message_long_clic_options_not_delete;
                 }
                 new AlertDialog.Builder(getActivity())
-                        .setTitle("Opzioni")
-                        .setItems(arrayRes, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                switch (which) {
-                                    case 0: //vedi userpage
-                                        Intent intent = new Intent(getActivity(), ActivityExamList.class);
-                                        intent.putExtra(ActivityExamList.USERID, message.getSender().getUserId());
-                                        startActivity(intent);
-                                        break;
+                    .setTitle("Opzioni")
+                    .setItems(arrayRes, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch (which) {
+                                case 0: //vedi userpage
+                                    Intent intent = new Intent(getActivity(), ActivityExamList.class);
+                                    intent.putExtra(ActivityExamList.USERID, message.getSender().getUserId());
+                                    startActivity(intent);
+                                    break;
 
-                                    case 1: //cancella messaggio
-                                        new AlertDialog.Builder(getActivity())
-                                                .setTitle(R.string.delete_message_question)
-                                                .setNegativeButton(R.string.delete_message_cancel, null)
-                                                .setPositiveButton(R.string.delete_message_confirmation, new DialogInterface.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(DialogInterface dialog, int which) {
-                                                        deleteMessage(message);
-                                                    }
-                                                })
-                                                .create()
-                                                .show();
-                                        break;
-                                    default:
-                                        break;
-                                }
+                                case 1: //cancella messaggio
+                                    new AlertDialog.Builder(getActivity())
+                                        .setTitle(R.string.delete_message_question)
+                                        .setNegativeButton(R.string.delete_message_cancel, null)
+                                        .setPositiveButton(R.string.delete_message_confirmation, new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                deleteMessage(message);
+                                            }
+                                        })
+                                        .create()
+                                        .show();
+                                    break;
+                                default:
+                                    break;
                             }
-                        })
-                        .create()
-                        .show();
-
-
+                        }
+                    })
+                .create().show();
             }
 
         });
     }
-
 
 
     private void setUpRecyclerView() {
@@ -643,6 +626,7 @@ public class ChatFragment extends Fragment {
         }
     }
 
+
     private void showDownloadConfirmDialog(final FileMessage message) {
 
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -666,6 +650,7 @@ public class ChatFragment extends Fragment {
 
     }
 
+
     private void showUploadConfirmDialog(final Uri uri) {
         new AlertDialog.Builder(getActivity())
                 .setMessage("Carica file?")
@@ -686,6 +671,7 @@ public class ChatFragment extends Fragment {
                 .setNegativeButton(R.string.cancel, null).show();
     }
 
+
     private void requestImage() {
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -705,6 +691,7 @@ public class ChatFragment extends Fragment {
             SendBird.setAutoBackgroundDetection(false);
         }
     }
+
 
     private void requestStoragePermissions() {
         if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
@@ -775,8 +762,7 @@ public class ChatFragment extends Fragment {
                 if (e != null) {
                     // Error!
                     Log.e(LOG_TAG, e.toString());
-//                    Toast.makeText(
-//                            getActivity(),
+//                    Toast.makeText(getActivity(),
 //                            "Send failed with error " + e.getCode() + ": " + e.getMessage(), Toast.LENGTH_SHORT)
 //                            .show();
                     Toast.makeText(
@@ -865,7 +851,6 @@ public class ChatFragment extends Fragment {
         if (mPrevMessageListQuery == null) {
             throw new NullPointerException("Current query instance is null.");
         }
-
 
         mPrevMessageListQuery.load(numMessages, true, new PreviousMessageListQuery.MessageListQueryResult() {
             @Override
