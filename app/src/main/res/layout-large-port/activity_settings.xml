@@ -18,6 +18,12 @@
         android:textSize="30sp"
         android:textStyle="bold"
         android:id="@+id/textViewSetting" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/black"
+        android:layout_above="@+id/settings_button_change_mail"
+        android:id="@+id/view10" />
 
     <Button
         android:id="@+id/settings_button_change_mail"
@@ -27,16 +33,15 @@
         android:padding="25dp"
         android:text="@string/change_mail"
         android:textSize="24sp"
+        android:layout_marginTop="255dp"
         android:layout_below="@+id/textViewSetting"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="162dp" />
+        android:layout_alignParentStart="true" />
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@android:color/black"
-        android:layout_above="@+id/settings_button_change_mail"
-        android:id="@+id/view10" />
-
+        android:layout_below="@id/settings_button_change_mail"
+        android:id="@+id/view30" />
 
     <Button
         android:id="@+id/settings_button_change_password"
@@ -46,14 +51,14 @@
         android:padding="25dp"
         android:text="@string/change_password"
         android:textSize="24sp"
-        android:layout_below="@+id/settings_button_change_mail"
+        android:layout_below="@+id/view30"
         android:layout_alignParentStart="true" />
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@android:color/black"
-        android:layout_above="@+id/settings_button_change_profile_image"
-        android:id="@+id/view20" />
+        android:id="@+id/view20"
+        android:layout_below="@id/settings_button_change_password" />
 
 
     <Button
@@ -64,7 +69,7 @@
         android:padding="25dp"
         android:text="@string/change_profile_image"
         android:textSize="24sp"
-        android:layout_below="@+id/settings_button_change_password"
+        android:layout_below="@+id/view20"
         android:layout_alignParentStart="true" />
 
 </RelativeLayout>

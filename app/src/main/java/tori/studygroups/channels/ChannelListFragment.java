@@ -125,21 +125,11 @@ public class ChannelListFragment extends Fragment {
         return rootView;
     }
 
-
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-    }
-
-
     //in ritorno dal create chan activity
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (requestCode == 0) {
-
             if (resultCode == CreateChannelActivity.CHANNEL_CREATED) {
 
                 groupNameSearched = data.getStringExtra("channelName");
@@ -156,8 +146,6 @@ public class ChannelListFragment extends Fragment {
                             return;
                         }
                         Log.d("BOHH", Integer.toString(channels.size()));
-
-
                         mChannelListAdapter.setChannelList(channels);
                         loadBar.setVisibility(View.GONE);
 
@@ -308,7 +296,7 @@ public class ChannelListFragment extends Fragment {
         if (userPrefChannelList != null) {
             createGroupButton.setVisibility(View.GONE);
             if (userPrefChannelList.size() == 0){
-                noChannelFind.setText("Nessun gruppo tra i preferiti. Puoi aggiungerne cercando tra i gruppi e cliccando sulla stella in alto");
+                noChannelFind.setText(getResources().getText(R.string.no_pref_channel));
                 channelListRecyclerView.setVisibility(View.GONE);
                 linearLayoutNoChannel.setVisibility(View.VISIBLE);
 

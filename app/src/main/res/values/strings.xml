@@ -39,6 +39,8 @@
     <string name="channel_chat_content_desc_profile">Immagine Profilo</string>
     <string name="upload_file_text">ha caricato un file</string>
 
+    <string name="add_channel_title">Crea Gruppo</string>
+
     <string name="participant_list">Utenti in chat attualmente</string>
     <string name="participant_menu">Vedi utenti in chat</string>
     <string name="add_event">Crea evento</string>
@@ -61,6 +63,7 @@
     <string name="event_channel_list">Eventi</string>
 
     <string name="no_channel_find">Nessun gruppo con questo nome, creane uno</string>
+    <string name="no_pref_channel">Nessun gruppo tra i preferiti \nPuoi aggiungerne cercando tra i gruppi e cliccando sulla stella in alto all\'interno della chat</string>
     <string name="create_channel">Crea Gruppo</string>
     <string name="create_channel_name">Nome gruppo</string>
     <string name="loading">Caricamento</string>
@@ -81,8 +84,7 @@
     <string name="argument_name">Nome Argomento</string>
     <string name="delete_exam_question">Sei sicuro di voler cancellare questo esame?</string>
     <string name="delete_argument_question">Sei sicuro di voler cancellare questo argomento?</string>
-    <string name="add_exam_argument">Inserisci nome del nuovo argomento
-    </string>
+    <string name="add_exam_argument">Inserisci nome del nuovo argomento</string>
     <string name="add_exam_confirmation">Aggiungi argomento</string>
     <string name="argument_change_state">Cambia stato all\'argomento</string>
 

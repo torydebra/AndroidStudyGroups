@@ -130,12 +130,7 @@ public class ExamListFragment extends Fragment {
                     }
                 });
             }
-
-
-
-
         }
-
 
         // RecyclerView has some built in animations to it, using the DefaultItemAnimator.
         // Specifically when you call notifyItemChanged() it does a fade animation for the changing
@@ -146,7 +141,6 @@ public class ExamListFragment extends Fragment {
         }
 
         getExamsFromFirebase(rootView);
-
         return rootView;
     }
 

@@ -123,6 +123,8 @@ public class CreateEventActivity extends AppCompatActivity {
             } else if (resultCode == RESULT_CANCELED) {
                 // The user canceled the operation.
             }
+            locationEventText.setEnabled(true);
+            locationEventText.setClickable(true);
         }
     }
 
@@ -133,6 +135,7 @@ public class CreateEventActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 locationEventText.setEnabled(false);
+                locationEventText.setClickable(false);
                 Intent intent = null;
                 try {
                     intent = new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY)
@@ -143,7 +146,7 @@ public class CreateEventActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE);
-                locationEventText.setEnabled(true);
+
             }
 
         });

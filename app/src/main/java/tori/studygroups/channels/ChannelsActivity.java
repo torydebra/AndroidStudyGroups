@@ -97,10 +97,11 @@ public class ChannelsActivity extends AppCompatActivity{
             case R.id.user_setting:
                 Intent intent3 = new Intent(ChannelsActivity.this, SettingsActivity.class);
                 startActivity(intent3);
-
                 return true;
-            case R.id.menu_home:
 
+            case R.id.menu_home:
+                Intent intent2 = new Intent(ChannelsActivity.this, MainActivity.class);
+                startActivity(intent2);
                 return true;
 
             case R.id.menu_general_item_disconnect:

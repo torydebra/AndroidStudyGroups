@@ -292,8 +292,6 @@ public class EventFragment extends Fragment {
         eventPartecipaButton.setBackgroundColor(ResourcesCompat.getColor(getResources(), color.holo_red_light, null));
         eventPartecipaBool = true;
 
-
-
         EventDB localDB = new EventDB(getContext());
         String insertId = localDB.insertEvent(event);
         if (insertId != null) {
@@ -306,28 +304,28 @@ public class EventFragment extends Fragment {
         }
 
         new AlertDialog.Builder(getContext())
-                .setTitle("Calendario")
-                .setMessage("Vuoi inserire l'evento nel calendario?")
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+            .setTitle("Calendario")
+            .setMessage("Vuoi inserire l'evento nel calendario?")
+            .setIcon(android.R.drawable.ic_dialog_alert)
+            .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 
-                    public void onClick(DialogInterface dialog, int whichButton) {
+                public void onClick(DialogInterface dialog, int whichButton) {
 
-                        Intent intent = new Intent(Intent.ACTION_INSERT)
-                                .setData(CalendarContract.Events.CONTENT_URI)
-                                .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, event.timestampDateEvent)
-                                .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, event.timestampDateEvent + 3*60*60*1000)
-                                .putExtra(CalendarContract.Events.TITLE, event.name)
-                                .putExtra(CalendarContract.Events.DESCRIPTION, "evento creato con l'app StudyGroups")
-                                .putExtra(CalendarContract.Events.ORGANIZER, event.userName)
-                                .putExtra(CalendarContract.Attendees.EVENT_ID, event.timestampDateEvent)
-                                .putExtra(CalendarContract.Events.EVENT_LOCATION, event.location);
-                        startActivity(intent);
+                Intent intent = new Intent(Intent.ACTION_INSERT)
+                    .setData(CalendarContract.Events.CONTENT_URI)
+                    .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, event.timestampDateEvent)
+                    .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, event.timestampDateEvent + 3*60*60*1000)
+                    .putExtra(CalendarContract.Events.TITLE, event.name)
+                    .putExtra(CalendarContract.Events.DESCRIPTION, "evento creato con l'app StudyGroups")
+                    .putExtra(CalendarContract.Events.ORGANIZER, event.userName)
+                    .putExtra(CalendarContract.Attendees.EVENT_ID, event.timestampDateEvent)
+                    .putExtra(CalendarContract.Events.EVENT_LOCATION, event.location);
+                startActivity(intent);
 
-                    }
-                })
+                }
+            })
 
-                .setNegativeButton(R.string.no, null).show();
+            .setNegativeButton(R.string.no, null).show();
 
     }
 

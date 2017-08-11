@@ -80,10 +80,9 @@ public class MainActivity extends AppCompatActivity {
             case R.id.user_setting:
                 Intent intent3 = new Intent(MainActivity.this, SettingsActivity.class);
                 startActivity(intent3);
-
                 return true;
-            case R.id.menu_home:
 
+            case R.id.menu_home:
                 return true;
 
             case R.id.menu_general_item_disconnect:

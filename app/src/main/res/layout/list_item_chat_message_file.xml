@@ -50,7 +50,7 @@
         android:layout_alignLeft="@id/text_chat_nickname"
         android:layout_below="@id/text_chat_nickname"
         android:text="@string/upload_file_text"
-        android:textColor="@color/common_google_signin_btn_text_dark_focused"
+        android:textColor="@color/common_google_signin_btn_text_light_focused"
         android:textSize="18sp" />
 
 

@@ -14,6 +14,8 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -50,6 +52,7 @@ import java.util.logging.Logger;
 import javax.sql.DataSource;
 
 import tori.studygroups.R;
+import tori.studygroups.otherClass.Disconnection;
 import tori.studygroups.utils.PreferenceUtils;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -72,6 +75,41 @@ public class SettingsActivity extends AppCompatActivity {
         changeProfileImageButton = (Button) findViewById(R.id.settings_button_change_profile_image);
 
         setupButtons();
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_general, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+        switch (id){
+            case R.id.user_setting:
+                return true;
+
+            case R.id.menu_home:
+                Intent intent = new Intent(SettingsActivity.this, MainActivity.class);
+                startActivity(intent);
+                return true;
+
+            case R.id.menu_general_item_disconnect:
+                Disconnection.disconnect(this);
+                return true;
+
+            case R.id.menu_general_about:
+                Intent intent2 = new Intent(SettingsActivity.this, AboutActivity.class);
+                startActivity(intent2);
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
 
     }
 

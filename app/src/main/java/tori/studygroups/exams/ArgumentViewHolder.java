@@ -27,10 +27,10 @@ public class ArgumentViewHolder extends ChildViewHolder {
                 argumentNameTextView.setTextColor(Color.RED);
                 break;
             case COMPLETE:
-                argumentNameTextView.setTextColor(Color.GREEN);
+                argumentNameTextView.setTextColor(Color.rgb(42,226,13));
                 break;
             case INPROGRESS:
-                argumentNameTextView.setTextColor(Color.rgb(237, 221, 0));
+                argumentNameTextView.setTextColor(Color.rgb(209, 205, 9));
                 break;
             default:
                 break;
