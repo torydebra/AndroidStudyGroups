@@ -3,6 +3,8 @@ package tori.studygroups.channels;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Path;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -14,6 +16,8 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -27,12 +31,18 @@ import com.sendbird.android.OpenChannel;
 import com.sendbird.android.OpenChannelListQuery;
 import com.sendbird.android.SendBirdException;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import tori.studygroups.R;
 import tori.studygroups.exams.ExamListFragment;
 import tori.studygroups.mainActivities.MainActivity;
+import tori.studygroups.mainActivities.SettingsActivity;
 
 
 public class ChannelListFragment extends Fragment {
@@ -110,14 +120,12 @@ public class ChannelListFragment extends Fragment {
         setUpAdapter();
         setUpRecyclerView();
 
-        if (userPrefChannelList != null){
+        if (userPrefChannelList != null){ // pref channels
             searchChannelEditText.setVisibility(View.GONE);
         } else {
             setUpSearchBar();
+            setUpCreateButton();
         }
-
-        setUpCreateButton();
-
 
         // Refresh once
         refreshChannelList(15);
@@ -161,6 +169,13 @@ public class ChannelListFragment extends Fragment {
                 });
             }
         }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        // Set action bar title to name of channel
+        ((ChannelsActivity) getActivity()).setActionBarTitle("StudyGroups");
+
     }
 
 
@@ -294,6 +309,7 @@ public class ChannelListFragment extends Fragment {
 
         //richiesta arriva dal main dove ho cliccato su vedi gruppi preferiti
         if (userPrefChannelList != null) {
+            final ArrayList<OpenChannel> prefChannelsList = new ArrayList<>();
             createGroupButton.setVisibility(View.GONE);
             if (userPrefChannelList.size() == 0){
                 noChannelFind.setText(getResources().getText(R.string.no_pref_channel));
@@ -301,30 +317,32 @@ public class ChannelListFragment extends Fragment {
                 linearLayoutNoChannel.setVisibility(View.VISIBLE);
 
             } else {
-                for (String prefChannel : userPrefChannelList) {
-                    channelListQuery.setUrlKeyword(prefChannel);
-                    channelListQuery.next(new OpenChannelListQuery.OpenChannelListQueryResultHandler() {
+                Log.d("BOHStringsize", Integer.toString(userPrefChannelList.size()));
+                linearLayoutNoChannel.setVisibility(View.GONE);
+                channelListRecyclerView.setVisibility(View.VISIBLE);
+
+                for (int i=0; i<userPrefChannelList.size(); i++) {
+                    loadBar.setVisibility(View.VISIBLE);
+
+                    String prefChannel = userPrefChannelList.get(i);
+
+                    Log.wtf("BOHNOm", prefChannel);
+                    OpenChannel.getChannel(prefChannel, new OpenChannel.OpenChannelGetHandler() {
                         @Override
-                        public void onResult(List<OpenChannel> channels, SendBirdException e) {
+                        public void onResult(OpenChannel openChannel, SendBirdException e) {
                             if (e != null) {
+                                // Error!
                                 return;
                             }
 
-                            try {
-                                mChannelListAdapter.addLast(channels.get(0));
-
-                            } catch (Exception err){
-
-                            }
+                            mChannelListAdapter.addLast(openChannel);
+                            loadBar.setVisibility(View.GONE);
                         }
                     });
                 }
-                channelListRecyclerView.setVisibility(View.VISIBLE);
-                linearLayoutNoChannel.setVisibility(View.GONE);
-
             }
 
-            loadBar.setVisibility(View.GONE);
+
 
         } else {
 
@@ -366,5 +384,18 @@ public class ChannelListFragment extends Fragment {
         });
     }
 
+
+    private class DownloadPrefChannel extends AsyncTask<String, Void, Void>{
+
+        @Override
+        protected Void doInBackground(String... params) {
+
+            final ArrayList<OpenChannel> prefChannelsList = new ArrayList<>();
+
+
+
+            return null;
+        }
+    }
 
 }

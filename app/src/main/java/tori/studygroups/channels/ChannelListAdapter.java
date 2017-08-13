@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.ViewGroup;
 import android.view.View;
 import android.view.LayoutInflater;
@@ -62,6 +63,7 @@ public class ChannelListAdapter extends RecyclerView.Adapter<ChannelListAdapter.
 
     void addLast(OpenChannel channel) {
         mChannelList.add(channel);
+        Log.d("BOH", Integer.toString(mChannelList.size()));
         notifyDataSetChanged();
     }
 
