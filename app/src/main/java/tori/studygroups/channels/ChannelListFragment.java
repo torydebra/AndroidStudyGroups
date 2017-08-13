@@ -383,19 +383,4 @@ public class ChannelListFragment extends Fragment {
             }
         });
     }
-
-
-    private class DownloadPrefChannel extends AsyncTask<String, Void, Void>{
-
-        @Override
-        protected Void doInBackground(String... params) {
-
-            final ArrayList<OpenChannel> prefChannelsList = new ArrayList<>();
-
-
-
-            return null;
-        }
-    }
-
 }
