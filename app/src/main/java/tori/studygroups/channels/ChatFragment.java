@@ -36,7 +36,6 @@ import tori.studygroups.otherClass.MyEvent;
 import tori.studygroups.utils.FileUtils;
 import tori.studygroups.utils.PhotoViewerActivity;
 import tori.studygroups.utils.MediaPlayerActivity;
-import tori.studygroups.utils.PreferenceUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -57,7 +56,7 @@ public class ChatFragment extends Fragment {
     private static final int INTENT_REQUEST_ADD_EVENT = 500;
     private static final int PERMISSION_WRITE_EXTERNAL_STORAGE = 13;
     private static final String CUSTOM_TYPE_MESSAGE_TEXT_NORMAL = "normal";
-    private static final String CUSTOM_TYPE_MESSAGE_TEXT_EVENT = "event";
+    public static final String CUSTOM_TYPE_MESSAGE_TEXT_EVENT = "event";
 
     static final String EXTRA_CHANNEL_URL = "CHANNEL_URL";
     private static final String CHAT_OPEN = "chat_open";
@@ -145,8 +144,11 @@ public class ChatFragment extends Fragment {
         mMessageSendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendUserMessage(mMessageEditText.getText().toString(), null, CUSTOM_TYPE_MESSAGE_TEXT_NORMAL);
-                mMessageEditText.setText("");
+                if (! mMessageEditText.getText().toString().isEmpty()){
+                    sendUserMessage(mMessageEditText.getText().toString(), null, CUSTOM_TYPE_MESSAGE_TEXT_NORMAL);
+                    mMessageEditText.setText("");
+                }
+
             }
         });
 
@@ -326,7 +328,8 @@ public class ChatFragment extends Fragment {
         }
 
         // Set action bar title to name of channel
-        ((ChannelsActivity) getActivity()).setActionBarTitle(mChannelName);
+        String channelNameCapitalized = mChannelName.substring(0, 1).toUpperCase() + mChannelName.substring(1);
+        ((ChannelsActivity) getActivity()).setActionBarTitle(channelNameCapitalized);
 
     }
 
@@ -361,9 +364,8 @@ public class ChatFragment extends Fragment {
                 intent = new Intent(getActivity(), EventsChannelListActivity.class);
                 intent.putExtra(EXTRA_CHANNEL_URL, mChannel.getUrl());
                 startActivity(intent);
-
-
                 return true;
+
             default:
                 return super.onOptionsItemSelected(item);
 
@@ -375,7 +377,7 @@ public class ChatFragment extends Fragment {
         new AlertDialog.Builder(getContext())
             .setTitle("Aggiungi preferito")
             .setMessage("Aggiungere questo gruppo ai preferiti?")
-            .setIcon(android.R.drawable.ic_dialog_alert)
+            .setIcon(R.drawable.ic_star_full)
             .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
                 public void onClick(DialogInterface dialog, int whichButton) {
@@ -414,7 +416,7 @@ public class ChatFragment extends Fragment {
         new AlertDialog.Builder(getContext())
                 .setTitle("Rimuovi preferito")
                 .setMessage("Rimuovere questo gruppo dai preferiti?")
-                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setIcon(R.drawable.ic_star_empty)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
                     public void onClick(DialogInterface dialog, int whichButton) {
@@ -503,6 +505,7 @@ public class ChatFragment extends Fragment {
                 }
                 new AlertDialog.Builder(getActivity())
                     .setTitle("Opzioni")
+                    .setIcon(R.drawable.ic_settings_orange)
                     .setItems(arrayRes, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -636,7 +639,9 @@ public class ChatFragment extends Fragment {
             requestStoragePermissions();
         } else {
             new AlertDialog.Builder(getActivity())
-                    .setMessage("Download file?")
+                    .setTitle("Conferma download")
+                    .setMessage("Vuoi scaricare il file?")
+                    .setIcon(R.drawable.ic_file_download)
                     .setPositiveButton(R.string.download, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -653,7 +658,9 @@ public class ChatFragment extends Fragment {
 
     private void showUploadConfirmDialog(final Uri uri) {
         new AlertDialog.Builder(getActivity())
-                .setMessage("Carica file?")
+                .setTitle("Conferma upload")
+                .setMessage("Vuoi caricare il file?")
+                .setIcon(R.drawable.ic_file_upload)
                 .setPositiveButton(R.string.upload, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

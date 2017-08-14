@@ -13,7 +13,6 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -154,6 +153,7 @@ public class EventPartecipantListActivity extends AppCompatActivity {
 
                 new AlertDialog.Builder(EventPartecipantListActivity.this)
                     .setTitle("Opzioni")
+                        .setIcon(R.drawable.ic_settings_orange)
                     .setItems(R.array.chat_message_long_clic_options_not_delete, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {

@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -40,22 +41,17 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-/**
- * Displays a list of the participants of a specified Channel.
- */
 
 public class EventsChannelListActivity extends AppCompatActivity {
 
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_event_list);
 
         boolean userEventPartecipation = getIntent().getBooleanExtra(MainActivity.USER_EVENT_PARTECIPATION, false);
-
-
 
         if (userEventPartecipation){
 
@@ -72,13 +68,18 @@ public class EventsChannelListActivity extends AppCompatActivity {
                         eventList.add(event);
                     }
 
-                    Fragment fragment = EventListFragment.newInstance(eventList);
-                    FragmentManager manager = getSupportFragmentManager();
-                    manager.popBackStack();
+                    if (savedInstanceState == null) {
+                        Fragment fragment = EventListFragment.newInstance(eventList);
+                        FragmentManager manager = getSupportFragmentManager();
+                        manager.popBackStack();
 
-                    manager.beginTransaction()
-                            .replace(R.id.container_event_list, fragment)
-                            .commit();
+                        manager.beginTransaction()
+                                .replace(R.id.container_event_list, fragment, "FRAGMENT_USER_EVENT_LIST")
+                                .commit();
+
+                    } else { //fragment esiste già (es orientation change)
+                        getSupportFragmentManager().findFragmentByTag("FRAGMENT_USER_EVENT_LIST");
+                    }
                 }
 
                 @Override
@@ -89,13 +90,19 @@ public class EventsChannelListActivity extends AppCompatActivity {
 
 
         } else {
-            Fragment fragment = EventListFragment.newInstance();
-            FragmentManager manager = getSupportFragmentManager();
-            manager.popBackStack();
 
-            manager.beginTransaction()
-                    .replace(R.id.container_event_list, fragment)
-                    .commit();
+            if (savedInstanceState == null){
+                Fragment fragment = EventListFragment.newInstance();
+                FragmentManager manager = getSupportFragmentManager();
+                manager.popBackStack();
+
+                manager.beginTransaction()
+                        .replace(R.id.container_event_list, fragment, "FRAGMENT_CHAT_EVENT_LIST")
+                        .commit();
+            } else {
+                getSupportFragmentManager().findFragmentByTag("FRAGMENT_CHAT_EVENT_LIST");
+            }
+
         }
     }
 

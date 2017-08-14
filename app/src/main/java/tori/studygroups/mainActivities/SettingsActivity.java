@@ -120,7 +120,9 @@ public class SettingsActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK) {
             if (requestCode == SELECT_PICTURE && data != null) {
                 new AlertDialog.Builder(SettingsActivity.this)
-                    .setMessage("Carica immagine?")
+                    .setTitle("Conferma upload")
+                    .setMessage("Vuoi caricare l'immagine?")
+                    .setIcon(R.drawable.ic_file_upload)
                     .setPositiveButton(R.string.upload, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -154,7 +156,6 @@ public class SettingsActivity extends AppCompatActivity {
                     dialog.dismiss();
                 }
             });
-
             change_button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

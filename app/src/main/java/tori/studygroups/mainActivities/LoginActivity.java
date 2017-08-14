@@ -226,7 +226,6 @@ public class LoginActivity extends AppCompatActivity {
                             String token = FirebaseInstanceId.getInstance().getToken();
                             dbRefUsers.child(user.getUid()).child("devices").child(token).setValue("true");
 
-
                             connectToSendBird(user.getUid(), user.getDisplayName());
                         } else {
                             // If sign in fails, display a message to the user.

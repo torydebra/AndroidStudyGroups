@@ -22,6 +22,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
@@ -253,28 +254,32 @@ public class CreateEventActivity extends AppCompatActivity {
         }
 
         if (locationEventText.getText().toString().isEmpty()) {
-            locationEventText.setError("inserisci un luogo");
+            locationEventText.setError("");
+            Toast.makeText(CreateEventActivity.this, "Inserisci un luogo", Toast.LENGTH_LONG).show();
             valid = false;
         } else {
             locationEventText.setError(null);
         }
 
         if (dateEventText.getText().toString().isEmpty()) {
-            dateEventText.setError("inserisci una data");
+            dateEventText.setError("");
+            Toast.makeText(CreateEventActivity.this, "Inserisci una data", Toast.LENGTH_LONG).show();
             valid = false;
         } else {
             dateEventText.setError(null);
         }
 
         if (timeEventText.getText().toString().isEmpty()) {
-            timeEventText.setError("inserisci un orario");
+            timeEventText.setError("");
+            Toast.makeText(CreateEventActivity.this, "Inserisci un orario", Toast.LENGTH_LONG).show();
             valid = false;
         } else {
             timeEventText.setError(null);
         }
 
         if (calendarDateEvent.before(Calendar.getInstance())) {
-            dateEventText.setError("non puoi inserire una data passata");
+            dateEventText.setError("");
+            Toast.makeText(CreateEventActivity.this, "Non puoi inserire una data passata", Toast.LENGTH_LONG).show();
             valid = false;
         } else {
             dateEventText.setError(null);
@@ -321,7 +326,7 @@ public class CreateEventActivity extends AppCompatActivity {
         new AlertDialog.Builder(this)
                 .setTitle("Calendario")
                 .setMessage("Vuoi inserire l'evento nel calendario?")
-                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setIcon(R.drawable.ic_add_event)
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
 

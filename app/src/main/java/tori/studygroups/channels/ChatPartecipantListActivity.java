@@ -115,6 +115,7 @@ public class ChatPartecipantListActivity extends AppCompatActivity {
 
                 new AlertDialog.Builder(ChatPartecipantListActivity.this)
                     .setTitle("Opzioni")
+                        .setIcon(R.drawable.ic_settings_orange)
                     .setItems(R.array.chat_message_long_clic_options_not_delete, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {

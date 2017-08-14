@@ -5,7 +5,7 @@
 
     <item
         android:id="@+id/user_setting"
-        android:icon="@android:drawable/ic_menu_preferences"
+        android:icon="@drawable/ic_settings"
         android:title="Opzioni"
         android:orderInCategory="7"
         app:showAsAction="ifRoom" />

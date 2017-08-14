@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.provider.CalendarContract;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
@@ -34,6 +35,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.sendbird.android.BaseChannel;
+import com.sendbird.android.BaseMessage;
+import com.sendbird.android.OpenChannel;
+import com.sendbird.android.PreviousMessageListQuery;
+import com.sendbird.android.SendBirdException;
+import com.sendbird.android.User;
+import com.sendbird.android.UserMessage;
 
 
 import org.json.JSONException;
@@ -42,6 +50,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.TimeZone;
 
 import tori.studygroups.R;
@@ -49,6 +58,8 @@ import tori.studygroups.otherClass.EventDB;
 import tori.studygroups.otherClass.MyEvent;
 
 import android.R.color;
+
+import static java.lang.Thread.sleep;
 
 public class EventFragment extends Fragment {
 
@@ -68,7 +79,6 @@ public class EventFragment extends Fragment {
     private boolean eventPartecipaBool;
     private Button eventViewMaps;
 
-    private String creatorName;
     private String eventId;
     private FirebaseUser user;
     private DatabaseReference dbRefEventPartecipants;
@@ -228,7 +238,7 @@ public class EventFragment extends Fragment {
                     new AlertDialog.Builder(getContext())
                             .setTitle("Annulla partecipazione")
                             .setMessage("Sei sicuro di non voler più partecipare all'evento?")
-                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .setIcon(R.drawable.ic_delete_forever)
                             .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
                                 public void onClick(DialogInterface dialog, int whichButton) {
@@ -241,7 +251,7 @@ public class EventFragment extends Fragment {
                     new AlertDialog.Builder(getContext())
                             .setTitle("Conferma")
                             .setMessage("Vuoi partecipare all'evento?")
-                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .setIcon(R.drawable.ic_person_add)
                             .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
                                 public void onClick(DialogInterface dialog, int whichButton) {
@@ -273,8 +283,6 @@ public class EventFragment extends Fragment {
 
             }
         });
-
-
     }
 
 
@@ -306,7 +314,7 @@ public class EventFragment extends Fragment {
         new AlertDialog.Builder(getContext())
             .setTitle("Calendario")
             .setMessage("Vuoi inserire l'evento nel calendario?")
-            .setIcon(android.R.drawable.ic_dialog_alert)
+            .setIcon(R.drawable.ic_add_event)
             .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 
                 public void onClick(DialogInterface dialog, int whichButton) {
@@ -324,7 +332,6 @@ public class EventFragment extends Fragment {
 
                 }
             })
-
             .setNegativeButton(R.string.no, null).show();
 
     }
@@ -332,7 +339,8 @@ public class EventFragment extends Fragment {
 
     private void cancelPartecipazione() {
 
-        dbRefEventPartecipants.child(eventId).child(user.getUid()).getRef().removeValue();
+        DatabaseReference dbRefSpecifiedEvent = dbRefEventPartecipants.child(eventId);
+        dbRefSpecifiedEvent.child(user.getUid()).getRef().removeValue();
 
         DatabaseReference dbRefUserEvents = FirebaseDatabase.getInstance().getReference("userEvents");
         dbRefUserEvents.child(user.getUid()).child(eventId).getRef().removeValue();
@@ -346,11 +354,118 @@ public class EventFragment extends Fragment {
 
         EventDB localDB = new EventDB(getContext());
         int deleteCount = localDB.deleteEvent(event.eventId);
-        if (deleteCount == 1) {
-            //Log.d("MAHDELEt", "cancellato");
+//        if (deleteCount == 1) {
+//            Log.d("MAHDELEt", "cancellato");
+//        }
+
+        dbRefSpecifiedEvent.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (! dataSnapshot.exists() && event.userId.equals(user.getUid())){
+                    Log.d("BOHH", "nex partecipante rimasto e sei il creatore dell'evento");
+                    deleteEvent();
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
+    private void deleteEvent() {
+        new AlertDialog.Builder(getContext())
+            .setTitle("Cancella Evento")
+            .setMessage("Eri l'ultimo partecipante all'evento. Vuoi cancellarlo?")
+            .setIcon(android.R.drawable.ic_delete)
+            .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    FirebaseDatabase.getInstance().getReference("channelEvents").child(event.channelUrl)
+                            .child(eventId).removeValue();
+
+                    new FindAndDeleteEventMessage().execute();
+                    getActivity().onBackPressed();
+
+                }
+            })
+            .setNegativeButton(R.string.no, null).show();
+
+    }
+
+    private class FindAndDeleteEventMessage extends AsyncTask<Void, Void, Void>{
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            OpenChannel.getChannel(event.channelUrl, new OpenChannel.OpenChannelGetHandler() {
+                @Override
+                public void onResult(final OpenChannel openChannel, SendBirdException e) {
+                    if (e != null) {
+                        // Error!
+                        e.printStackTrace();
+                        return;
+                    }
+
+                    // Enter the channel
+                    openChannel.enter(new OpenChannel.OpenChannelEnterHandler() {
+                        @Override
+                        public void onResult(SendBirdException e) {
+                            if (e != null) {
+                                // Error!
+                                e.printStackTrace();
+                                return;
+                            }
+
+                            openChannel.getNextMessagesByTimestamp(event.timestampCreated, true, 20,
+                                false, BaseChannel.MessageTypeFilter.USER, ChatFragment.CUSTOM_TYPE_MESSAGE_TEXT_EVENT,
+                                new BaseChannel.GetMessagesHandler() {
+
+                                @Override
+                                public void onResult(List<BaseMessage> list, SendBirdException e) {
+                                    if (e != null) {
+                                        // Error!
+                                        e.printStackTrace();
+                                        return;
+                                    }
+
+                                    for (BaseMessage message : list) {
+
+                                        String eventIdfound = null;
+                                        try {
+                                            JSONObject jsonDataEvent = new JSONObject(((UserMessage) message).getData()).getJSONObject("event");
+                                            eventIdfound = jsonDataEvent.getString("eventId");
+                                        } catch (JSONException e1) {
+                                            e1.printStackTrace();
+                                        }
+
+                                        if (eventIdfound.equals(eventId)) {
+                                            openChannel.deleteMessage(message, new BaseChannel.DeleteMessageHandler() {
+                                                @Override
+                                                public void onResult(SendBirdException e) {
+                                                    if (e != null) {
+                                                        // Error!
+                                                        Toast.makeText(getActivity(), R.string.error_deleting_message, Toast.LENGTH_SHORT).show();
+                                                        return;
+                                                    }
+                                                }
+                                            });
+
+                                            break ;
+                                        }
+
+
+                                    }
+                                }
+                            });
+                        }
+
+                    });
+                }
+            });
+            return null;
         }
-
-
-
     }
 }
