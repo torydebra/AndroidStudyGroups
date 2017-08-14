@@ -189,7 +189,8 @@ public class EventFragment extends Fragment {
     private void setUpPage() {
 
         try {
-            eventNameText.setText(eventDataJson.getString("name"));
+            String output = eventDataJson.getString("name").substring(0, 1).toUpperCase() + eventDataJson.getString("name").substring(1);
+            eventNameText.setText(output);
             eventGroupText.setText("Evento del gruppo " + eventDataJson.getString("channelName"));
             eventCreatorText.setText("Creato da: " + eventDataJson.getString("userName"));
             eventDayText.setText(eventDataJson.getString("day") +
