@@ -1,16 +1,13 @@
 package tori.studygroups.channels;
 
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentManager;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -22,20 +19,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.sendbird.android.OpenChannel;
-import com.sendbird.android.SendBirdException;
-import com.sendbird.android.User;
-import com.sendbird.android.UserListQuery;
-
-import org.w3c.dom.Text;
-
-import tori.studygroups.R;
-import tori.studygroups.mainActivities.MainActivity;
-import tori.studygroups.otherClass.MyEvent;
-import tori.studygroups.otherClass.MyUser;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import tori.studygroups.R;
+import tori.studygroups.mainActivities.MainActivity;
+import tori.studygroups.otherClass.MyEvent;
 
 public class EventListFragment extends Fragment {
 

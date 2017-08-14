@@ -17,10 +17,11 @@ import com.sendbird.android.OpenChannel;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.User;
 import com.sendbird.android.UserListQuery;
-import tori.studygroups.R;
-import tori.studygroups.exams.ActivityExamList;
 
 import java.util.List;
+
+import tori.studygroups.R;
+import tori.studygroups.exams.ActivityExamList;
 
 /**
  * Displays a list of the participants of a specified Channel.

@@ -1,25 +1,17 @@
 package tori.studygroups.channels;
 
-import android.Manifest;
-import android.app.ProgressDialog;
-import android.content.ContentResolver;
-import android.content.ContentUris;
-import android.content.ContentValues;
+import android.R.color;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.provider.CalendarContract;
-import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.provider.CalendarContract;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,28 +30,19 @@ import com.google.firebase.database.ValueEventListener;
 import com.sendbird.android.BaseChannel;
 import com.sendbird.android.BaseMessage;
 import com.sendbird.android.OpenChannel;
-import com.sendbird.android.PreviousMessageListQuery;
 import com.sendbird.android.SendBirdException;
-import com.sendbird.android.User;
 import com.sendbird.android.UserMessage;
-
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.TimeZone;
 
 import tori.studygroups.R;
 import tori.studygroups.otherClass.EventDB;
 import tori.studygroups.otherClass.MyEvent;
-
-import android.R.color;
-
-import static java.lang.Thread.sleep;
 
 public class EventFragment extends Fragment {
 
@@ -175,11 +158,6 @@ public class EventFragment extends Fragment {
     }
 
 
-    @Override
-    public void onResume() {
-        super.onResume();
-
-    }
 
 
     private void checkPartecipationFirebase() {
@@ -302,9 +280,9 @@ public class EventFragment extends Fragment {
 
         EventDB localDB = new EventDB(getContext());
         String insertId = localDB.insertEvent(event);
-        if (insertId != null) {
-            // Log.d("MAHHHH", "riga inserita in locale");
-        }
+//        if (insertId != null) {
+//            // Log.d("MAHHHH", "riga inserita in locale");
+//        }
 
         ArrayList<MyEvent> events = localDB.getEvents();
         for (MyEvent ev : events) {

@@ -4,9 +4,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 
-import java.util.Calendar;
-import java.util.HashMap;
-
 public class MyEvent implements Parcelable{
 
     public String name;

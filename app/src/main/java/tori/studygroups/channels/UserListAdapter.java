@@ -10,11 +10,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sendbird.android.User;
-import tori.studygroups.R;
-import tori.studygroups.utils.ImageUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import tori.studygroups.R;
+import tori.studygroups.utils.ImageUtils;
 
 /**
  * A simple adapter that displays a list of Users.

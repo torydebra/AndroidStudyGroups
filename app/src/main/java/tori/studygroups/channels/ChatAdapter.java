@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,14 +20,13 @@ import com.sendbird.android.UserMessage;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import tori.studygroups.R;
-import tori.studygroups.otherClass.MyEvent;
-import tori.studygroups.utils.DateUtils;
-import tori.studygroups.utils.ImageUtils;
-import tori.studygroups.utils.FileUtils;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import tori.studygroups.R;
+import tori.studygroups.utils.DateUtils;
+import tori.studygroups.utils.FileUtils;
+import tori.studygroups.utils.ImageUtils;
 
 /**
  * An adapter for a RecyclerView that displays messages in an Channel.

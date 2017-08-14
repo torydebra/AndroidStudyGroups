@@ -5,9 +5,9 @@ import android.graphics.Color;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.ViewGroup;
-import android.view.View;
 import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -74,6 +74,7 @@ public class ChannelListAdapter extends RecyclerView.Adapter<ChannelListAdapter.
     void setOnItemLongClickListener(OnItemLongClickListener listener) {
         mItemLongClickListener = listener;
     }
+
 
     static class ChannelHolder extends RecyclerView.ViewHolder {
         // A list of colors for decorating each list item.

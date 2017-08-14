@@ -30,7 +30,6 @@ import com.google.firebase.messaging.RemoteMessage;
 
 import tori.studygroups.R;
 import tori.studygroups.channels.ChannelsActivity;
-import tori.studygroups.mainActivities.MainActivity;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 

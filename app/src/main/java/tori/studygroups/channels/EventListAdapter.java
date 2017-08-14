@@ -10,13 +10,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-
-import tori.studygroups.R;
-import tori.studygroups.otherClass.MyEvent;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
+import tori.studygroups.R;
+import tori.studygroups.otherClass.MyEvent;
 
 
 public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.EventHolder> {

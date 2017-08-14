@@ -24,11 +24,12 @@ import com.sendbird.android.OpenChannel;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.User;
 import com.sendbird.android.UserListQuery;
-import tori.studygroups.R;
-import tori.studygroups.exams.ActivityExamList;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import tori.studygroups.R;
+import tori.studygroups.exams.ActivityExamList;
 
 import static com.sendbird.android.SendBird.createUserListQuery;
 

@@ -4,18 +4,15 @@ package tori.studygroups.exams;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.RotateAnimation;
-import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
 import com.thoughtbot.expandablerecyclerview.viewholders.GroupViewHolder;
 
-import java.util.Iterator;
-import java.util.List;
 import java.util.ListIterator;
 
 import tori.studygroups.R;

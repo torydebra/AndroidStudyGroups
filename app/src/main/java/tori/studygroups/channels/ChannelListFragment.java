@@ -3,15 +3,12 @@ package tori.studygroups.channels;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Path;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -20,7 +17,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -31,18 +27,11 @@ import com.sendbird.android.OpenChannel;
 import com.sendbird.android.OpenChannelListQuery;
 import com.sendbird.android.SendBirdException;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import tori.studygroups.R;
-import tori.studygroups.exams.ExamListFragment;
 import tori.studygroups.mainActivities.MainActivity;
-import tori.studygroups.mainActivities.SettingsActivity;
 
 
 public class ChannelListFragment extends Fragment {
@@ -122,6 +111,7 @@ public class ChannelListFragment extends Fragment {
 
         if (userPrefChannelList != null){ // pref channels
             searchChannelEditText.setVisibility(View.GONE);
+            createGroupButton.setVisibility(View.GONE);
         } else {
             setUpSearchBar();
             setUpCreateButton();
@@ -185,15 +175,17 @@ public class ChannelListFragment extends Fragment {
         channelListRecyclerView.setAdapter(mChannelListAdapter);
         channelListRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
 
-        // If user scrolls to bottom of the list, loads more channels.
-        channelListRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                if (mLayoutManager.findLastVisibleItemPosition() == mChannelListAdapter.getItemCount() - 1) {
-                    loadNextChannelList();
+        if(userPrefChannelList == null){
+            // If user scrolls to bottom of the list, loads more channels.
+            channelListRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                    if (mLayoutManager.findLastVisibleItemPosition() == mChannelListAdapter.getItemCount() - 1) {
+                        loadNextChannelList();
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     // Set touch listeners to RecyclerView items
@@ -303,48 +295,18 @@ public class ChannelListFragment extends Fragment {
      * @param numChannels   The number of channels to load.
      */
     void refreshChannelList(int numChannels) {
-        channelListQuery = OpenChannel.createOpenChannelListQuery();
-        channelListQuery.setLimit(numChannels);
+
         loadBar.setVisibility(View.VISIBLE);
 
         //richiesta arriva dal main dove ho cliccato su vedi gruppi preferiti
         if (userPrefChannelList != null) {
-            final ArrayList<OpenChannel> prefChannelsList = new ArrayList<>();
-            createGroupButton.setVisibility(View.GONE);
-            if (userPrefChannelList.size() == 0){
-                noChannelFind.setText(getResources().getText(R.string.no_pref_channel));
-                channelListRecyclerView.setVisibility(View.GONE);
-                linearLayoutNoChannel.setVisibility(View.VISIBLE);
 
-            } else {
-                Log.d("BOHStringsize", Integer.toString(userPrefChannelList.size()));
-                linearLayoutNoChannel.setVisibility(View.GONE);
-                channelListRecyclerView.setVisibility(View.VISIBLE);
-
-                for (int i=0; i<userPrefChannelList.size(); i++) {
-                    loadBar.setVisibility(View.VISIBLE);
-
-                    String prefChannel = userPrefChannelList.get(i);
-
-                    Log.wtf("BOHNOm", prefChannel);
-                    OpenChannel.getChannel(prefChannel, new OpenChannel.OpenChannelGetHandler() {
-                        @Override
-                        public void onResult(OpenChannel openChannel, SendBirdException e) {
-                            if (e != null) {
-                                // Error!
-                                return;
-                            }
-
-                            mChannelListAdapter.addLast(openChannel);
-                            loadBar.setVisibility(View.GONE);
-                        }
-                    });
-                }
-            }
-
+            loadPrefChannels();
 
 
         } else {
+            channelListQuery = OpenChannel.createOpenChannelListQuery();
+            channelListQuery.setLimit(numChannels);
 
             channelListQuery.next(new OpenChannelListQuery.OpenChannelListQueryResultHandler() {
                 @Override
@@ -358,6 +320,40 @@ public class ChannelListFragment extends Fragment {
 
                 }
             });
+        }
+    }
+
+    private void loadPrefChannels() {
+
+        if (userPrefChannelList.size() == 0){
+            noChannelFind.setText(getResources().getText(R.string.no_pref_channel));
+            channelListRecyclerView.setVisibility(View.GONE);
+            linearLayoutNoChannel.setVisibility(View.VISIBLE);
+            loadBar.setVisibility(View.GONE);
+
+        } else {
+            Log.d("BOHStringsize", Integer.toString(userPrefChannelList.size()));
+            linearLayoutNoChannel.setVisibility(View.GONE);
+            channelListRecyclerView.setVisibility(View.VISIBLE);
+
+            for (int i=0; i<userPrefChannelList.size(); i++) {
+
+                String prefChannel = userPrefChannelList.get(i);
+
+                Log.wtf("BOHNOm", prefChannel);
+                OpenChannel.getChannel(prefChannel, new OpenChannel.OpenChannelGetHandler() {
+                    @Override
+                    public void onResult(OpenChannel openChannel, SendBirdException e) {
+                        if (e != null) {
+                            // Error!
+                            return;
+                        }
+
+                        mChannelListAdapter.addLast(openChannel);
+                        loadBar.setVisibility(View.GONE);
+                    }
+                });
+            }
         }
     }
 

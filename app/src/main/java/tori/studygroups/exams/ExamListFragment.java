@@ -2,7 +2,6 @@ package tori.studygroups.exams;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -18,7 +17,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,7 +27,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.thoughtbot.expandablerecyclerview.listeners.OnGroupClickListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -318,7 +315,6 @@ public class ExamListFragment extends Fragment {
                                     DatabaseReference dbRefUserExams = FirebaseDatabase.getInstance().getReference("userExams").child(user.getUid());
                                     dbRefUserExams.child(exam.getTitle()).push()
                                             .setValue(new Argument(input.getText().toString(), Argument.ArgumentState.INCOMPLETE, exam.getTitle()));
-
 
                                     //refresh frag
                                     Fragment currentFragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.container_personal_page);

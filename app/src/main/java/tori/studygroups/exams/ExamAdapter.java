@@ -1,11 +1,11 @@
 package tori.studygroups.exams;
 
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.thoughtbot.expandablerecyclerview.ExpandableRecyclerViewAdapter;
-import com.thoughtbot.expandablerecyclerview.listeners.OnGroupClickListener;
 import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
 
 import java.util.List;
@@ -13,8 +13,6 @@ import java.util.List;
 import tori.studygroups.R;
 import tori.studygroups.otherClass.Argument;
 import tori.studygroups.otherClass.Exam;
-
-import android.view.LayoutInflater;
 
 public class ExamAdapter extends ExpandableRecyclerViewAdapter<ExamViewHolder, ArgumentViewHolder> {
 

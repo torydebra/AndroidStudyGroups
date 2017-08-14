@@ -1,6 +1,7 @@
 package tori.studygroups.otherClass;
 
 import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
+
 import java.util.List;
 
 public class Exam extends ExpandableGroup<Argument> {

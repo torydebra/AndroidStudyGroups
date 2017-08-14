@@ -1,8 +1,8 @@
 package tori.studygroups.mainActivities;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,11 +20,10 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-import tori.studygroups.exams.ActivityExamList;
-import tori.studygroups.exams.ExamListFragment;
-import tori.studygroups.channels.ChannelsActivity;
 import tori.studygroups.R;
+import tori.studygroups.channels.ChannelsActivity;
 import tori.studygroups.channels.EventsChannelListActivity;
+import tori.studygroups.exams.ActivityExamList;
 import tori.studygroups.otherClass.Disconnection;
 
 public class MainActivity extends AppCompatActivity {
@@ -105,14 +104,26 @@ public class MainActivity extends AppCompatActivity {
         findGroupsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                findGroupsButton.setClickable(false);
+                viewPersonalPage.setClickable(false);
+                viewPrefGroupsButton.setClickable(false);
+                viewEventPartecipation.setClickable(false);
                 Intent intent = new Intent(MainActivity.this, ChannelsActivity.class);
                 startActivity(intent);
+                findGroupsButton.setClickable(true);
+                viewPersonalPage.setClickable(true);
+                viewPrefGroupsButton.setClickable(true);
+                viewEventPartecipation.setClickable(true);
             }
         });
 
         viewPrefGroupsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                findGroupsButton.setClickable(false);
+                viewPersonalPage.setClickable(false);
+                viewPrefGroupsButton.setClickable(false);
+                viewEventPartecipation.setClickable(false);
                 DatabaseReference dbRefUserPrefChannels = FirebaseDatabase.getInstance().getReference("userPrefChannels");
                 prefChannels = new ArrayList<>();
                 dbRefUserPrefChannels.child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -128,6 +139,10 @@ public class MainActivity extends AppCompatActivity {
                         intent.putStringArrayListExtra(USER_PREF_CHANNEL_LIST, prefChannels);
                         Log.d("MAHMAIN0", prefChannels.toString());
                         startActivity(intent);
+                        findGroupsButton.setClickable(true);
+                        viewPersonalPage.setClickable(true);
+                        viewPrefGroupsButton.setClickable(true);
+                        viewEventPartecipation.setClickable(true);
                     }
 
                     @Override
@@ -135,19 +150,24 @@ public class MainActivity extends AppCompatActivity {
 
                     }
                 });
-
-
-
             }
         });
 
         viewEventPartecipation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                findGroupsButton.setClickable(false);
+                viewPersonalPage.setClickable(false);
+                viewPrefGroupsButton.setClickable(false);
+                viewEventPartecipation.setClickable(false);
 
                 Intent intent = new Intent(MainActivity.this, EventsChannelListActivity.class);
                 intent.putExtra(USER_EVENT_PARTECIPATION, true);
                 startActivity(intent);
+                findGroupsButton.setClickable(true);
+                viewPersonalPage.setClickable(true);
+                viewPrefGroupsButton.setClickable(true);
+                viewEventPartecipation.setClickable(true);
 
             }
         });
@@ -155,8 +175,16 @@ public class MainActivity extends AppCompatActivity {
         viewPersonalPage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                findGroupsButton.setClickable(false);
+                viewPersonalPage.setClickable(false);
+                viewPrefGroupsButton.setClickable(false);
+                viewEventPartecipation.setClickable(false);
                 Intent intent = new Intent(MainActivity.this, ActivityExamList.class);
                 startActivity(intent);
+                findGroupsButton.setClickable(true);
+                viewPersonalPage.setClickable(true);
+                viewPrefGroupsButton.setClickable(true);
+                viewEventPartecipation.setClickable(true);
             }
         });
 

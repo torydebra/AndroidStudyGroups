@@ -17,10 +17,20 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.*;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.*;
-import android.widget.*;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -29,18 +39,27 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.sendbird.android.*;
-import tori.studygroups.R;
-import tori.studygroups.exams.ActivityExamList;
-import tori.studygroups.otherClass.MyEvent;
-import tori.studygroups.utils.FileUtils;
-import tori.studygroups.utils.PhotoViewerActivity;
-import tori.studygroups.utils.MediaPlayerActivity;
+import com.sendbird.android.AdminMessage;
+import com.sendbird.android.BaseChannel;
+import com.sendbird.android.BaseMessage;
+import com.sendbird.android.FileMessage;
+import com.sendbird.android.OpenChannel;
+import com.sendbird.android.PreviousMessageListQuery;
+import com.sendbird.android.SendBird;
+import com.sendbird.android.SendBirdException;
+import com.sendbird.android.UserMessage;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+
+import tori.studygroups.R;
+import tori.studygroups.exams.ActivityExamList;
+import tori.studygroups.otherClass.MyEvent;
+import tori.studygroups.utils.FileUtils;
+import tori.studygroups.utils.MediaPlayerActivity;
+import tori.studygroups.utils.PhotoViewerActivity;
 
 import static tori.studygroups.channels.ChannelListFragment.EXTRA_CHANNEL_NAME;
 
