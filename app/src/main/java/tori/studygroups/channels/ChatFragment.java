@@ -163,8 +163,9 @@ public class ChatFragment extends Fragment {
         mMessageSendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (! mMessageEditText.getText().toString().isEmpty()){
-                    sendUserMessage(mMessageEditText.getText().toString(), null, CUSTOM_TYPE_MESSAGE_TEXT_NORMAL);
+                String message = mMessageEditText.getText().toString().trim();
+                if (! message.isEmpty()){
+                    sendUserMessage(message, null, CUSTOM_TYPE_MESSAGE_TEXT_NORMAL);
                     mMessageEditText.setText("");
                 }
 
