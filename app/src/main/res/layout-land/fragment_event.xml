@@ -4,14 +4,11 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
-
 <TableLayout
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_gravity="center"
     android:layout_marginStart="75dp"
     android:layout_marginEnd="75dp"
-    android:paddingTop="50dp"
     android:stretchColumns="*">
 
     <TableRow>
@@ -20,6 +17,7 @@
             android:id="@+id/event_name_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
             android:fontFamily="casual"
             android:text="NomeEvento"
             android:textAlignment="center"
@@ -72,6 +70,20 @@
             android:text="Via boh, Genova, Italia"
             android:textAlignment="center"
             android:textColor="@color/common_google_signin_btn_text_light_default"
+            android:textSize="24sp"
+            android:layout_span="2"/>
+    </TableRow>
+
+    <TableRow>
+        <TextView
+            android:id="@+id/event_description_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Descrizione"
+            android:textAlignment="center"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="70dp"
+            android:textColor="@color/common_google_signin_btn_text_dark_focused"
             android:textSize="24sp"
             android:layout_span="2"/>
     </TableRow>

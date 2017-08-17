@@ -35,9 +35,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import tori.studygroups.R;
-import tori.studygroups.otherClass.EventDB;
+//import tori.studygroups.otherClass.EventDB;
 import tori.studygroups.otherClass.MyEvent;
 
 import static tori.studygroups.channels.ChatFragment.EXTRA_CHANNEL_URL;
@@ -55,6 +57,7 @@ public class CreateEventActivity extends AppCompatActivity {
     private EditText locationEventText;
     private TextView dateEventText;
     private TextView timeEventText;
+    private EditText descriptionEventText;
     private Button createEventButton;
     private Calendar calendarDateEvent;
 
@@ -62,6 +65,8 @@ public class CreateEventActivity extends AppCompatActivity {
     private TimePickerDialog timePickerDialog;
     private SimpleDateFormat dateFormatter;
     private SimpleDateFormat timeFormatter;
+
+    private Pattern pattern = Pattern.compile("^[^\\.#\\$\\[\\]]+$");
 
     private Activity thisActivity;
 
@@ -83,6 +88,7 @@ public class CreateEventActivity extends AppCompatActivity {
         addEventTitle = (TextView) findViewById((R.id.add_event_title));
         addEventTitle.append(" " + channelName);
         nameEventText = (EditText) findViewById(R.id.edittext_add_event_name);
+        descriptionEventText = (EditText) findViewById(R.id.edittext_add_event_description);
         locationEventText = (EditText) findViewById(R.id.edittext_add_event_location);
         locationEventText.setInputType(InputType.TYPE_NULL);
         dateEventText = (TextView) findViewById(R.id.edittext_add_event_date);
@@ -137,18 +143,12 @@ public class CreateEventActivity extends AppCompatActivity {
                 try {
                     intent = new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY)
                             .build(thisActivity);
-                } catch (GooglePlayServicesRepairableException e) {
-                    e.printStackTrace();
-                } catch (GooglePlayServicesNotAvailableException e) {
+                } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
                     e.printStackTrace();
                 }
                 startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE);
-
             }
-
         });
-
-
     }
 
 
@@ -160,8 +160,6 @@ public class CreateEventActivity extends AppCompatActivity {
                 datePickerDialog.show();
             }
         });
-
-
         Calendar calendar = Calendar.getInstance();
 
         OnDateSetListener dateSetListener = new OnDateSetListener() {
@@ -190,22 +188,19 @@ public class CreateEventActivity extends AppCompatActivity {
         Calendar calendar = Calendar.getInstance();
 
         OnTimeSetListener timeSetListener = new OnTimeSetListener() {
-
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay , int minute) {
 
                 calendarDateEvent.set(Calendar.HOUR_OF_DAY, hourOfDay);
                 calendarDateEvent.set(Calendar.MINUTE, minute);
                 timeEventText.setText(timeFormatter.format(calendarDateEvent.getTime()));
-
             }
         };
 
-
-        timePickerDialog = new TimePickerDialog(this, timeSetListener, calendar.get(Calendar.HOUR),
+        timePickerDialog = new TimePickerDialog(this, timeSetListener, calendar.get(Calendar.HOUR_OF_DAY),
                 calendar.get(Calendar.MINUTE), true);
-
     }
+
 
     private void setCreateButton() {
 
@@ -222,7 +217,6 @@ public class CreateEventActivity extends AppCompatActivity {
                     return;
                 }
 
-
                 createEventButton.setEnabled(false);
                 nameEventText.setEnabled(false);
                 locationEventText.setEnabled(false);
@@ -231,22 +225,36 @@ public class CreateEventActivity extends AppCompatActivity {
 
                 progressDialog.show();
                 MyEvent eventCreated = createEvent();
-
             }
         });
 
     }
 
 
-
     private boolean validate() {
         boolean valid = true;
+        String eventName = nameEventText.getText().toString().trim();
+        Matcher nameMatcher = pattern.matcher(eventName);
+        String eventDescr = descriptionEventText.getText().toString().trim();
+        Matcher descMatcher = pattern.matcher(eventDescr);
 
-        if (nameEventText.getText().toString().isEmpty()) {
+        if (eventName.isEmpty()) {
             nameEventText.setError("inserisci un nome valido");
+            valid = false;
+        } else if (! nameMatcher.matches()){
+            nameEventText.setError("Nome evento non può contenere . $ # [ ] ");
             valid = false;
         } else {
             nameEventText.setError(null);
+        }
+
+        if (eventDescr.isEmpty()){
+            descriptionEventText.setError(null);
+        } else if (! descMatcher.matches()){
+            descriptionEventText.setError("Non è possibile usare i caratteri . $ # [ ]");
+            valid = false;
+        } else {
+            descriptionEventText.setError(null);
         }
 
         if (locationEventText.getText().toString().isEmpty()) {
@@ -284,6 +292,7 @@ public class CreateEventActivity extends AppCompatActivity {
         return valid;
     }
 
+
     private MyEvent createEvent() {
 
         FirebaseAuth mAuth;
@@ -294,9 +303,10 @@ public class CreateEventActivity extends AppCompatActivity {
         long now = cal.getTimeInMillis();
         long timestampDateEvent = calendarDateEvent.getTimeInMillis();
 
-        final MyEvent event = new MyEvent(nameEventText.getText().toString(), locationEventText.getText().toString(),
-                timestampDateEvent, dateEventText.getText().toString(), timeEventText.getText().toString(),
-                user.getUid(), user.getDisplayName(), channelUrl, channelName, now, null);
+        final MyEvent event = new MyEvent(nameEventText.getText().toString().trim(), descriptionEventText.getText().toString().trim(),
+                locationEventText.getText().toString(), timestampDateEvent, dateEventText.getText().toString(),
+                timeEventText.getText().toString(), user.getUid(), user.getDisplayName(),
+                channelUrl, channelName, now, null);
 
         DatabaseReference dbRefEvents = FirebaseDatabase.getInstance().getReference("channelEvents")
                 .child(channelUrl).push();
@@ -311,11 +321,11 @@ public class CreateEventActivity extends AppCompatActivity {
         dbRefUserEvents.child(user.getUid()).child(eventId).setValue(event);
 
         //local db
-        EventDB localDB = new EventDB(this);
-        String insertId = localDB.insertEvent(event);
-        if (insertId != null){
-             Log.d("MAHHHH", "riga inserita in locale");
-        }
+//        EventDB localDB = new EventDB(this);
+//        String insertId = localDB.insertEvent(event);
+//        if (insertId != null){
+//             Log.d("MAHHHH", "riga inserita in locale");
+//        }
 
         progressDialog.dismiss();
 

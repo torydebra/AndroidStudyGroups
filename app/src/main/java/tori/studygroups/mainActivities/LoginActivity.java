@@ -138,8 +138,8 @@ public class LoginActivity extends AppCompatActivity {
         _emailText.setEnabled(false);
         _passwordText.setEnabled(false);
 
-        String email = _emailText.getText().toString();
-        String password = _passwordText.getText().toString();
+        String email = _emailText.getText().toString().trim();
+        String password = _passwordText.getText().toString().trim();
 
         PreferenceUtils.setEmail(LoginActivity.this, email);
         PreferenceUtils.setPassword(LoginActivity.this, password);
@@ -182,18 +182,19 @@ public class LoginActivity extends AppCompatActivity {
     public boolean validate() {
         boolean valid = true;
 
-        String email = _emailText.getText().toString();
-        String password = _passwordText.getText().toString();
+        String email = _emailText.getText().toString().trim();
+        String password = _passwordText.getText().toString().trim();
 
-        if (email.isEmpty()) {
-            _emailText.setError("inserisci un username valido");
+        if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            _emailText.setError("inserisci una email valida");
+            _emailText.requestFocus();
             valid = false;
         } else {
             _emailText.setError(null);
         }
 
-        if (password.isEmpty() || password.length() < 4 ) {
-            _passwordText.setError("almeno 4 caratteri");
+        if (password.isEmpty() || password.length() < 6 ) {
+            _passwordText.setError("almeno 6 caratteri");
             valid = false;
         } else {
             _passwordText.setError(null);
@@ -308,8 +309,8 @@ public class LoginActivity extends AppCompatActivity {
         Button confirm_button = (Button) dialog.findViewById(R.id.dialog_confirm_button);
         Button cancel_button = (Button) dialog.findViewById(R.id.dialog_cancel_button);
         final EditText emailEditText = (EditText) dialog.findViewById(R.id.reset_pass_email);
-        if (! _emailText.getText().toString().isEmpty()){
-            emailEditText.append(_emailText.getText().toString());
+        if (! _emailText.getText().toString().trim().isEmpty()){
+            emailEditText.append(_emailText.getText().toString().trim());
         }
 
         cancel_button.setOnClickListener(new View.OnClickListener() {
@@ -324,7 +325,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 FirebaseAuth auth = FirebaseAuth.getInstance();
-                String emailAddress = emailEditText.getText().toString();
+                String emailAddress = emailEditText.getText().toString().trim();
 
                 if (emailAddress.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(emailAddress).matches()){
                     emailEditText.setText("Inserire email valida");

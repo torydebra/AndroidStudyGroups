@@ -204,9 +204,9 @@ public class SettingsActivity extends AppCompatActivity {
         final EditText passwordEditText = (EditText) dialog.findViewById(R.id.settings_input_password_newMail);
         EditText newMailEditText = (EditText) dialog.findViewById(R.id.settings_input_newEmail);
 
-        final String newEmail = newMailEditText.getText().toString();
-        String oldEmail = oldMailEditText.getText().toString();
-        final String password = passwordEditText.getText().toString();
+        final String newEmail = newMailEditText.getText().toString().trim();
+        String oldEmail = oldMailEditText.getText().toString().trim();
+        final String password = passwordEditText.getText().toString().trim();
 
         if (oldEmail.isEmpty()){
             oldMailEditText.setError("Inserire vecchia Email");
@@ -267,10 +267,10 @@ public class SettingsActivity extends AppCompatActivity {
         final EditText passwordEditText = (EditText) dialog.findViewById(R.id.settings_input_oldPassword);
         EditText newPasswordEditText = (EditText) dialog.findViewById(R.id.settings_input_newPassword);
         EditText newPasswordRepeatEditText = (EditText) dialog.findViewById(R.id.settings_input_newPasswordRepeat);
-        final String newPassword = newPasswordEditText.getText().toString();
-        final String oldEmail = oldMailEditText.getText().toString();
-        String password = passwordEditText.getText().toString();
-        String newPassword2 = newPasswordRepeatEditText.getText().toString();
+        final String newPassword = newPasswordEditText.getText().toString().trim();
+        final String oldEmail = oldMailEditText.getText().toString().trim();
+        String password = passwordEditText.getText().toString().trim();
+        String newPassword2 = newPasswordRepeatEditText.getText().toString().trim();
 
         if (oldEmail.isEmpty()){
             oldMailEditText.setError("Inserire vecchia Email");
@@ -330,6 +330,8 @@ public class SettingsActivity extends AppCompatActivity {
         final ProgressDialog progressDialog = new ProgressDialog(SettingsActivity.this,
                 R.style.AppTheme_Dark_Dialog);
         progressDialog.setIndeterminate(true);
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.setCancelable(false);
         progressDialog.setMessage("Caricamento immagine...");
         progressDialog.show();
 

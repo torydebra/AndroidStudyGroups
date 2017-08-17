@@ -46,7 +46,7 @@ public class Disconnection {
                 }
 
 
-                context.deleteDatabase(EventDB.DB_NAME);
+                //context.deleteDatabase(EventDB.DB_NAME);
 
                 Intent intent = new Intent(context, LoginActivity.class);
                 context.startActivity(intent);

@@ -1,15 +1,20 @@
 package tori.studygroups.mainActivities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
 import mehdi.sakout.aboutpage.AboutPage;
 import mehdi.sakout.aboutpage.Element;
 import tori.studygroups.R;
+import tori.studygroups.channels.ChannelsActivity;
+import tori.studygroups.otherClass.Disconnection;
 
 
 public class AboutActivity extends AppCompatActivity {
@@ -44,6 +49,41 @@ public class AboutActivity extends AppCompatActivity {
         setContentView(aboutPage);
 
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_general, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+        switch (id){
+            case R.id.user_setting:
+                Intent intent3 = new Intent(AboutActivity.this, SettingsActivity.class);
+                startActivity(intent3);
+                return true;
+
+            case R.id.menu_home:
+                Intent intent2 = new Intent(AboutActivity.this, MainActivity.class);
+                startActivity(intent2);
+                return true;
+
+            case R.id.menu_general_item_disconnect:
+                Disconnection.disconnect(this);
+                return true;
+
+            case R.id.menu_general_about:
+
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+    }
+
 
     Element getCopyRightsElement() {
         Element copyRightsElement = new Element();

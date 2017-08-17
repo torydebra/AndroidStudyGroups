@@ -19,6 +19,9 @@ import com.google.firebase.database.ValueEventListener;
 import com.sendbird.android.OpenChannel;
 import com.sendbird.android.SendBirdException;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import tori.studygroups.R;
 
 public class CreateChannelActivity extends AppCompatActivity {
@@ -28,6 +31,9 @@ public class CreateChannelActivity extends AppCompatActivity {
     TextInputEditText mNameEditText;
     private Button mCreateButton;
 
+    private Pattern pattern = Pattern.compile("^[^\\.#\\$\\[\\]]+$");
+
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -36,7 +42,7 @@ public class CreateChannelActivity extends AppCompatActivity {
 
         mNameEditText = (TextInputEditText) findViewById(R.id.edittext_create_channel_name);
 
-        String groupName = getIntent().getExtras().getString("groupName","merda");
+        String groupName = getIntent().getExtras().getString("groupName","");
         mNameEditText.append(groupName);
 
         mCreateButton = (Button) findViewById(R.id.button_create_channel);
@@ -44,12 +50,20 @@ public class CreateChannelActivity extends AppCompatActivity {
         mCreateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (! mNameEditText.getText().toString().isEmpty()){
-                    createOpenChannel(mNameEditText.getText().toString());
-                } else {
+                String nameChannel = mNameEditText.getText().toString().trim();
+                Matcher nameMatcher = pattern.matcher(nameChannel);
+                if (nameChannel.isEmpty()){
                     mNameEditText.setError("Inserire nome");
                     mNameEditText.requestFocus();
                     return;
+
+                } else if (!nameMatcher.matches()){
+                    mNameEditText.setError("Nome gruppo non può contenere . $ # [ ]");
+                    mNameEditText.requestFocus();
+                    return;
+
+                } else{
+                    createOpenChannel(nameChannel);
                 }
             }
         });

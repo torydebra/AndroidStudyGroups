@@ -9,6 +9,7 @@ public class MyEvent implements Parcelable{
     public String name;
     public long timestampDateEvent;
     public String day;
+    public String description;
     public String hour;
     public String location;
     public String userId;
@@ -24,17 +25,19 @@ public class MyEvent implements Parcelable{
     public MyEvent() {
     }
 
-    public MyEvent(String name, String location, long timestampDateEvent, String day, String hour, String userId, String userName,
+    public MyEvent(String name, String description, String location, long timestampDateEvent,
+                   String day, String hour, String userId, String userName,
                    String channelUrl, String channelName, long timestampCreated, @Nullable String eventId) {
 
         this.name = name;
+        this.description = description;
         this.timestampDateEvent = timestampDateEvent;
         this.location = location;
         this.day = day;
         this.hour = hour;
         this.userId = userId;
         this.userName = userName;
-        this. channelUrl = channelUrl;
+        this.channelUrl = channelUrl;
         this.channelName = channelName;
         this.timestampCreated = timestampCreated;
         this.eventId = eventId;
@@ -48,6 +51,7 @@ public class MyEvent implements Parcelable{
                 "{ \"event\": " +
                         "{" +
                             "\"name\":\"" + name +"\"," +
+                            "\"description\":\"" + description +"\"," +
                             "\"location\":\"" + location +"\"," +
                             "\"timestampDateEvent\":\"" + timestampDateEvent +"\"," +
                             "\"day\":\"" + day +"\"," +
@@ -72,6 +76,7 @@ public class MyEvent implements Parcelable{
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
+        dest.writeString(description);
         dest.writeString(location);
         dest.writeLong(timestampDateEvent);
         dest.writeString(day);
@@ -96,6 +101,7 @@ public class MyEvent implements Parcelable{
 
     private MyEvent(Parcel in) {
         name = in.readString();
+        description = in.readString();
         location = in.readString();
         timestampDateEvent = in.readLong();
         day = in.readString();

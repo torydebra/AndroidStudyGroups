@@ -1,96 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center">
 
     <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent">
-
-    <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp">
+        android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/settings_input_oldEmail"
+        <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/old_email"
-            android:inputType="textEmailAddress"
-            android:textSize="24sp" />
-    </android.support.design.widget.TextInputLayout>
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="8dp">
 
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp">
+            <EditText
+                android:id="@+id/settings_input_oldEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/old_email"
+                android:inputType="textEmailAddress"
+                android:textSize="24sp" />
+        </android.support.design.widget.TextInputLayout>
 
-        <EditText
-            android:id="@+id/settings_input_password_newMail"
+        <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/login_password"
-            android:inputType="textPassword"
-            android:textSize="24sp" />
-    </android.support.design.widget.TextInputLayout>
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="8dp">
 
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp">
+            <EditText
+                android:id="@+id/settings_input_password_newMail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/login_password"
+                android:inputType="textPassword"
+                android:textSize="24sp" />
+        </android.support.design.widget.TextInputLayout>
 
-        <EditText
-            android:id="@+id/settings_input_newEmail"
+        <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/new_email"
-            android:inputType="textEmailAddress"
-            android:textSize="24sp" />
-    </android.support.design.widget.TextInputLayout>
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="8dp">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="horizontal"
-        android:textAlignment="center"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="20dp"
-        android:weightSum="1">
+            <EditText
+                android:id="@+id/settings_input_newEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/new_email"
+                android:inputType="textEmailAddress"
+                android:textSize="24sp" />
+        </android.support.design.widget.TextInputLayout>
 
-        <Button
-            android:id="@+id/dialog_confirm_button"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="100dp"
-            android:background="@android:color/holo_orange_light"
-            android:padding="10dp"
-            android:text="@string/change"
-            android:layout_marginStart="40dp"/>
+            android:layout_gravity="center"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            android:textAlignment="center"
+            android:weightSum="1">
 
-        <Button
-            android:id="@+id/dialog_cancel_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@android:color/holo_orange_light"
-            android:padding="10dp"
-            android:text="@string/cancel"
-            android:layout_marginEnd="40dp"
-            android:layout_weight="0.11" />
+            <Button
+                android:id="@+id/dialog_confirm_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="100dp"
+                android:layout_marginStart="40dp"
+                android:background="@android:color/holo_orange_light"
+                android:padding="10dp"
+                android:text="@string/change" />
 
-    </LinearLayout>
+            <Button
+                android:id="@+id/dialog_cancel_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="40dp"
+                android:layout_weight="0.11"
+                android:background="@android:color/holo_orange_light"
+                android:padding="10dp"
+                android:text="@string/cancel" />
+
+        </LinearLayout>
 
     </LinearLayout>
 </ScrollView>

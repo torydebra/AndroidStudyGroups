@@ -28,6 +28,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import tori.studygroups.R;
 import tori.studygroups.otherClass.Argument;
@@ -46,6 +48,8 @@ public class CreateExamFragment extends Fragment{
     private ArrayList<Integer> layoutIdList;
     private ArrayList<Integer> argumentEditTextIdList;
     private ProgressDialog progressDialog;
+
+    private Pattern pattern = Pattern.compile("^[^\\.#\\$\\[\\]]+$");
 
     private SharedPreferences savedValues;
 
@@ -122,12 +126,10 @@ public class CreateExamFragment extends Fragment{
     public void onPause(){
 
         Set<String> argumentsNameSet = new TreeSet<>();
-
         for (int i = 1; i<argumentEditTextIdList.size(); i++){
             EditText argument = (EditText) getView().findViewById(argumentEditTextIdList.get(i));
-            if (! argument.getText().toString().isEmpty()){
-                argumentsNameSet.add(argument.getText().toString());
-
+            if (! argument.getText().toString().trim().isEmpty()){
+                argumentsNameSet.add(argument.getText().toString().trim());
             }
         }
 
@@ -162,9 +164,7 @@ public class CreateExamFragment extends Fragment{
         addArgumentButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 addArgumentEditText();
-
             }
         });
 
@@ -232,9 +232,18 @@ public class CreateExamFragment extends Fragment{
 
                 progressDialog.show();
                 createExamButton.setEnabled(false);
+                final String examName= examNameEditText.getText().toString().trim();
+                Matcher matcherExam = pattern.matcher(examName);
 
-                if (examNameEditText.getText().toString().isEmpty()){
+                if (examName.isEmpty()){
                     examNameEditText.setError("Inserire un nome");
+                    examNameEditText.requestFocus();
+                    createExamButton.setEnabled(true);
+                    progressDialog.dismiss();
+                    return;
+
+                } else if (! matcherExam.matches()){
+                    examNameEditText.setError("Nome esame non può contenere . $ # [ ] ");
                     examNameEditText.requestFocus();
                     createExamButton.setEnabled(true);
                     progressDialog.dismiss();
@@ -242,15 +251,26 @@ public class CreateExamFragment extends Fragment{
 
                 } else {
 
-                    final String examName = examNameEditText.getText().toString();
                     for (int ediTextId : argumentEditTextIdList){
 
                         TextInputEditText editTextArg = (TextInputEditText) rootView.findViewById(ediTextId);
-                        if (! editTextArg.getText().toString().isEmpty()) {
-                            String name = editTextArg.getText().toString().toLowerCase();
-                            argumentList.add(new Argument(name, Argument.ArgumentState.INCOMPLETE, examName));
+                        String argName = editTextArg.getText().toString().trim().toLowerCase();
+                        Matcher matcher = pattern.matcher(argName);
+                        if (!matcher.matches()){
+                            editTextArg.setError("Nome argomento non può contenere . $ # [ ] ");
+                            editTextArg.requestFocus();
+                            createExamButton.setEnabled(true);
+                            progressDialog.dismiss();
+                            argumentList.clear();
+                            return;
+
+                        }
+
+                        else if (! argName.isEmpty()) {
+                            argumentList.add(new Argument(argName, Argument.ArgumentState.INCOMPLETE, examName));
                         }
                     }
+
                    // Log.d("MAHH", argumentList.toString());
                     FirebaseAuth auth = FirebaseAuth.getInstance();
                     DatabaseReference dbRefUserExams = FirebaseDatabase.getInstance().getReference().child("userExams").child(auth.getCurrentUser().getUid());
@@ -296,15 +316,8 @@ public class CreateExamFragment extends Fragment{
 
                         }
                     });
-
-
-
                 }
-
             }
         });
-
     }
-
-
 }

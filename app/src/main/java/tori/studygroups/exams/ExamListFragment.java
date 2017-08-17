@@ -237,6 +237,7 @@ public class ExamListFragment extends Fragment {
 
                     new AlertDialog.Builder(getActivity())
                             .setTitle("Opzioni")
+                            .setIcon(R.drawable.ic_settings_orange)
                             .setItems(R.array.exam_long_clic_options, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -261,6 +262,7 @@ public class ExamListFragment extends Fragment {
                 public void onArgumentLongClick(final Argument argument) {
                     new AlertDialog.Builder(getActivity())
                             .setTitle("Opzioni")
+                            .setIcon(R.drawable.ic_settings_orange)
                             .setItems(R.array.argument_long_clic_options, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -296,14 +298,21 @@ public class ExamListFragment extends Fragment {
 
         new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.add_exam_argument)
+                .setIcon(R.drawable.ic_add_circle)
                 .setView(input)
                 .setNegativeButton(R.string.cancel, null)
                 .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
+                        if (input.getText().toString().trim().isEmpty()){
+                            Toast toast = Toast.makeText(getContext(), "Inserisci nome nuovo argomento", Toast.LENGTH_LONG);
+                            toast.show();
+                            return;
+                        }
+
                         DatabaseReference dbRefUserExams = FirebaseDatabase.getInstance().getReference("userExams").child(user.getUid());
-                        dbRefUserExams.child(exam.getTitle()).orderByChild("name").equalTo(input.getText().toString().toLowerCase()).addListenerForSingleValueEvent(new ValueEventListener() {
+                        dbRefUserExams.child(exam.getTitle()).orderByChild("name").equalTo(input.getText().toString().trim().toLowerCase()).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 Log.d("MAH", Boolean.toString(dataSnapshot.exists()));
@@ -314,7 +323,7 @@ public class ExamListFragment extends Fragment {
                                 } else {
                                     DatabaseReference dbRefUserExams = FirebaseDatabase.getInstance().getReference("userExams").child(user.getUid());
                                     dbRefUserExams.child(exam.getTitle()).push()
-                                            .setValue(new Argument(input.getText().toString(), Argument.ArgumentState.INCOMPLETE, exam.getTitle()));
+                                            .setValue(new Argument(input.getText().toString().trim(), Argument.ArgumentState.INCOMPLETE, exam.getTitle()));
 
                                     //refresh frag
                                     Fragment currentFragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.container_personal_page);
@@ -335,17 +344,10 @@ public class ExamListFragment extends Fragment {
 
                             }
                         });
-
-
-                        //refresh fragent
-
                     }
                 })
                 .create()
                 .show();
-
-
-
     }
 
 
@@ -353,6 +355,7 @@ public class ExamListFragment extends Fragment {
 
         new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.delete_exam_question)
+                .setIcon(R.drawable.ic_delete_forever)
                 .setNegativeButton(R.string.delete_message_cancel, null)
                 .setPositiveButton(R.string.delete_message_confirmation, new DialogInterface.OnClickListener() {
                     @Override
@@ -397,6 +400,7 @@ public class ExamListFragment extends Fragment {
 
         new AlertDialog.Builder(getActivity())
             .setTitle(R.string.argument_change_state)
+            .setIcon(R.drawable.ic_settings_orange)
             .setSingleChoiceItems(R.array.argument_option_states, defaultSelection,
                     new DialogInterface.OnClickListener() {
                 @Override
@@ -461,6 +465,7 @@ public class ExamListFragment extends Fragment {
 
         new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.delete_argument_question)
+                .setIcon(R.drawable.ic_delete)
                 .setNegativeButton(R.string.delete_message_cancel, null)
                 .setPositiveButton(R.string.delete_message_confirmation, new DialogInterface.OnClickListener() {
                     @Override
@@ -490,12 +495,10 @@ public class ExamListFragment extends Fragment {
                             }
                         });
 
-
                     }
                 })
                 .create()
                 .show();
-
     }
 
 }

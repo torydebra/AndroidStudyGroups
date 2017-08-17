@@ -25,15 +25,21 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import tori.studygroups.R;
 import tori.studygroups.otherClass.MyUser;
 
 public class SignupActivity extends AppCompatActivity {
+
     private static final String TAG = "BOHMAH";
     private static final int REQUEST_SIGNUP = 0;
     private FirebaseAuth mAuth;
+    private Pattern pattern = Pattern.compile("^[^\\.#\\$\\[\\]]+$");
+
 
     @Bind(R.id.input_username) EditText _usernameText;
     @Bind(R.id.input_email) EditText _emailText;
@@ -86,7 +92,7 @@ public class SignupActivity extends AppCompatActivity {
             return;
         }
 
-        String username = _usernameText.getText().toString();
+        String username = _usernameText.getText().toString().trim();
         username = username.replaceAll("\\s", "");
 
         DatabaseReference dbRefUsernameTaken = FirebaseDatabase.getInstance().getReference("usernameTaken");
@@ -105,9 +111,9 @@ public class SignupActivity extends AppCompatActivity {
                     _signupButton.setEnabled(false);
 
 
-                    String email = _emailText.getText().toString();
-                    String password = _passwordText.getText().toString();
-                    String username = _usernameText.getText().toString();
+                    String email = _emailText.getText().toString().trim();
+                    String password = _passwordText.getText().toString().trim();
+                    String username = _usernameText.getText().toString().trim();
                     username = username.replaceAll("\\s", "");
                     signupFirebase(email, password, username);
                 }
@@ -124,11 +130,6 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     private void signupFirebase(final String email, final String password, final String username) {
-        final ProgressDialog progressDialog = new ProgressDialog(SignupActivity.this,
-                R.style.AppTheme_Dark_Dialog);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Creazione Account...");
-        progressDialog.show();
 
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -202,13 +203,18 @@ public class SignupActivity extends AppCompatActivity {
     public boolean validate() {
         boolean valid = true;
 
-        String username = _usernameText.getText().toString();
-        String email = _emailText.getText().toString();
-        String password = _passwordText.getText().toString();
-        String password2 = _password2Text.getText().toString();
+        String username = _usernameText.getText().toString().trim();
+        Matcher usernameMatcher = pattern.matcher(username);
+        String email = _emailText.getText().toString().trim();
+        String password = _passwordText.getText().toString().trim();
+        String password2 = _password2Text.getText().toString().trim();
 
         if (username.isEmpty() || username.length() < 3) {
             _usernameText.setError("almeno 3 caratteri");
+            _usernameText.requestFocus();
+            valid = false;
+        } else if (! usernameMatcher.matches()) {
+            _usernameText.setError("Username non può contenere . $ # [ ]");
             _usernameText.requestFocus();
             valid = false;
         } else {

@@ -41,7 +41,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import tori.studygroups.R;
-import tori.studygroups.otherClass.EventDB;
+//import tori.studygroups.otherClass.EventDB;
 import tori.studygroups.otherClass.MyEvent;
 
 public class EventFragment extends Fragment {
@@ -57,6 +57,7 @@ public class EventFragment extends Fragment {
     private TextView eventCreatorText;
     private TextView eventDayText;
     private TextView eventLocationText;
+    private TextView eventDescriptionText;
     private Button eventViewPartecipantsButton;
     private Button eventPartecipaButton;
     private boolean eventPartecipaBool;
@@ -83,6 +84,13 @@ public class EventFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_event, container, false);
 
+        if (!isAdded() || getActivity() == null){
+            Log.wtf("MAHHH", "not attached to activity");
+            Intent intent = new Intent(getActivity(), ChannelsActivity.class);
+            startActivity(intent);
+            return rootView;
+
+        }
         setRetainInstance(true);
         setHasOptionsMenu(true);
 
@@ -103,6 +111,7 @@ public class EventFragment extends Fragment {
         try {
             event = new MyEvent(
                     eventDataJson.getString("name"),
+                    eventDataJson.getString("description"),
                     eventDataJson.getString("location"),
                     eventDataJson.getLong("timestampDateEvent"),
                     eventDataJson.getString("day"),
@@ -121,6 +130,7 @@ public class EventFragment extends Fragment {
         Log.d("MAHHHisneritot", event.toJsonString());
 
         eventNameText = (TextView) rootView.findViewById(R.id.event_name_text);
+        eventDescriptionText = (TextView) rootView.findViewById(R.id.event_description_text);
         eventGroupText = (TextView) rootView.findViewById(R.id.event_group_text);
         eventCreatorText = (TextView) rootView.findViewById(R.id.event_creator_text);
         eventDayText = (TextView) rootView.findViewById(R.id.event_day_text);
@@ -129,13 +139,11 @@ public class EventFragment extends Fragment {
         eventViewMaps = (Button) rootView.findViewById(R.id.btn_event_view_maps);
         eventPartecipaButton = (Button) rootView.findViewById(R.id.btn_event_partecipa);
 
-
         try {
             eventId = eventDataJson.getString("eventId");
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
 
         String date = null;
         try {
@@ -156,8 +164,6 @@ public class EventFragment extends Fragment {
         setUpPage();
         return rootView;
     }
-
-
 
 
     private void checkPartecipationFirebase() {
@@ -191,6 +197,16 @@ public class EventFragment extends Fragment {
         try {
             String output = eventDataJson.getString("name").substring(0, 1).toUpperCase() + eventDataJson.getString("name").substring(1);
             eventNameText.setText(output);
+
+            if (eventDataJson.getString("description") != null && ! eventDataJson.getString("description").isEmpty()){
+                String descr = "Informazioni aggiuntive:\n" +
+                        eventDataJson.getString("description").substring(0, 1).toUpperCase() + eventDataJson.getString("description").substring(1);
+                eventDescriptionText.setVisibility(View.VISIBLE);
+                eventDescriptionText.setText(descr);
+            } else {
+                eventDescriptionText.setVisibility(View.GONE);
+            }
+
             eventGroupText.setText("Evento del gruppo " + eventDataJson.getString("channelName"));
             eventCreatorText.setText("Creato da: " + eventDataJson.getString("userName"));
             eventDayText.setText(eventDataJson.getString("day") +
@@ -279,16 +295,16 @@ public class EventFragment extends Fragment {
         eventPartecipaButton.setBackgroundColor(ResourcesCompat.getColor(getResources(), color.holo_red_light, null));
         eventPartecipaBool = true;
 
-        EventDB localDB = new EventDB(getContext());
-        String insertId = localDB.insertEvent(event);
-//        if (insertId != null) {
-//            // Log.d("MAHHHH", "riga inserita in locale");
+//        EventDB localDB = new EventDB(getContext());
+//        String insertId = localDB.insertEvent(event);
+////        if (insertId != null) {
+////            // Log.d("MAHHHH", "riga inserita in locale");
+////        }
+//
+//        ArrayList<MyEvent> events = localDB.getEvents();
+//        for (MyEvent ev : events) {
+//            Log.d("MAHHEVETN", ev.toJsonString());
 //        }
-
-        ArrayList<MyEvent> events = localDB.getEvents();
-        for (MyEvent ev : events) {
-            Log.d("MAHHEVETN", ev.toJsonString());
-        }
 
         new AlertDialog.Builder(getContext())
             .setTitle("Calendario")
@@ -298,12 +314,19 @@ public class EventFragment extends Fragment {
 
                 public void onClick(DialogInterface dialog, int whichButton) {
 
+                String descr;
+                if (event.description == null){
+                    descr = "evento creato con l'app StudyGroups";
+                } else {
+                    descr = "Informazioni aggiuntive:\n" + event.description;
+                }
+
                 Intent intent = new Intent(Intent.ACTION_INSERT)
                     .setData(CalendarContract.Events.CONTENT_URI)
                     .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, event.timestampDateEvent)
                     .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, event.timestampDateEvent + 3*60*60*1000)
                     .putExtra(CalendarContract.Events.TITLE, event.name)
-                    .putExtra(CalendarContract.Events.DESCRIPTION, "evento creato con l'app StudyGroups")
+                    .putExtra(CalendarContract.Events.DESCRIPTION, descr)
                     .putExtra(CalendarContract.Events.ORGANIZER, event.userName)
                     .putExtra(CalendarContract.Attendees.EVENT_ID, event.timestampDateEvent)
                     .putExtra(CalendarContract.Events.EVENT_LOCATION, event.location);
@@ -331,8 +354,8 @@ public class EventFragment extends Fragment {
         eventPartecipaButton.setBackgroundColor(ResourcesCompat.getColor(getResources(), color.holo_green_light, null));
         eventPartecipaBool = false;
 
-        EventDB localDB = new EventDB(getContext());
-        int deleteCount = localDB.deleteEvent(event.eventId);
+//        EventDB localDB = new EventDB(getContext());
+//        int deleteCount = localDB.deleteEvent(event.eventId);
 //        if (deleteCount == 1) {
 //            Log.d("MAHDELEt", "cancellato");
 //        }
@@ -398,14 +421,14 @@ public class EventFragment extends Fragment {
                                 return;
                             }
 
-                            openChannel.getNextMessagesByTimestamp(event.timestampCreated, true, 20,
+                            openChannel.getNextMessagesByTimestamp(event.timestampCreated-10000, true, 20,
                                 false, BaseChannel.MessageTypeFilter.USER, ChatFragment.CUSTOM_TYPE_MESSAGE_TEXT_EVENT,
                                 new BaseChannel.GetMessagesHandler() {
 
                                 @Override
                                 public void onResult(List<BaseMessage> list, SendBirdException e) {
                                     if (e != null) {
-                                        // Error!
+                                        Log.wtf("MAH", "ERROR onresultGETNEXTMESSBYTIMESTAMP");
                                         e.printStackTrace();
                                         return;
                                     }
@@ -426,6 +449,7 @@ public class EventFragment extends Fragment {
                                                 public void onResult(SendBirdException e) {
                                                     if (e != null) {
                                                         // Error!
+                                                        Log.w("MAH", "onResultERROR DELETEMESSAGE: " );
                                                         Toast.makeText(getActivity(), R.string.error_deleting_message, Toast.LENGTH_SHORT).show();
                                                         return;
                                                     }

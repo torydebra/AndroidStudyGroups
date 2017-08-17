@@ -32,6 +32,9 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -39,6 +42,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.sendbird.android.AdminMessage;
 import com.sendbird.android.BaseChannel;
 import com.sendbird.android.BaseMessage;
@@ -47,6 +51,7 @@ import com.sendbird.android.OpenChannel;
 import com.sendbird.android.PreviousMessageListQuery;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
+import com.sendbird.android.User;
 import com.sendbird.android.UserMessage;
 
 import java.io.File;
@@ -56,10 +61,13 @@ import java.util.List;
 
 import tori.studygroups.R;
 import tori.studygroups.exams.ActivityExamList;
+import tori.studygroups.mainActivities.LoginActivity;
+import tori.studygroups.mainActivities.MainActivity;
 import tori.studygroups.otherClass.MyEvent;
 import tori.studygroups.utils.FileUtils;
 import tori.studygroups.utils.MediaPlayerActivity;
 import tori.studygroups.utils.PhotoViewerActivity;
+import tori.studygroups.utils.PreferenceUtils;
 
 import static tori.studygroups.channels.ChannelListFragment.EXTRA_CHANNEL_NAME;
 
@@ -96,12 +104,13 @@ public class ChatFragment extends Fragment {
     DatabaseReference dbRefChannelPrefUser;
     DatabaseReference dbRefUser;
     DatabaseReference dbRefChannelToDevice;
-    List <String> userDeviceList;
 
     private OpenChannel mChannel;
     private String mChannelUrl;
     private String mChannelName;
     private PreviousMessageListQuery mPrevMessageListQuery;
+
+    private FirebaseAuth mAuth;
 
     /**
      * To create an instance of this fragment, a Channel URL should be passed.
@@ -124,7 +133,6 @@ public class ChatFragment extends Fragment {
 
         mChannelUrl = getArguments().getString(ChannelListFragment.EXTRA_CHANNEL_URL);
         mChannelName = getArguments().getString(EXTRA_CHANNEL_NAME);
-
 
         FirebaseAuth mAuth;
         mAuth = FirebaseAuth.getInstance();
@@ -151,14 +159,13 @@ public class ChatFragment extends Fragment {
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_channel_chat);
 
         loadingBarContainer = (LinearLayout) rootView.findViewById(R.id.linlaHeaderProgressMessage);
-
-        checkFavouriteGroup();
-        setUpChatAdapter();
-        setUpRecyclerView();
-
         // Set up chat box
         mMessageSendButton = (Button) rootView.findViewById(R.id.button_channel_chat_send);
         mMessageEditText = (EditText) rootView.findViewById(R.id.edittext_chat_message);
+        mUploadFileButton = (ImageButton) rootView.findViewById(R.id.button_channel_chat_upload);
+        mMessageSendButton.setEnabled(false);
+        mUploadFileButton.setEnabled(false);
+
 
         mMessageSendButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -172,7 +179,11 @@ public class ChatFragment extends Fragment {
             }
         });
 
-        mUploadFileButton = (ImageButton) rootView.findViewById(R.id.button_channel_chat_upload);
+        checkFavouriteGroup();
+        setUpChatAdapter();
+        setUpRecyclerView();
+
+
         mUploadFileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -186,21 +197,6 @@ public class ChatFragment extends Fragment {
     }
 
     @Override
-    public void onActivityCreated (Bundle savedInstanceState){
-        super.onActivityCreated(savedInstanceState);
-        Log.d("MAHHH", "chatFrag onactivitycreated");
-
-    }
-
-    @Override
-    public void onStart(){
-        super.onStart();
-        Log.d("MAH", "chatFrag started");
-
-
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
         Log.d("MAHHH", "chatFrag resumed");
@@ -208,7 +204,7 @@ public class ChatFragment extends Fragment {
         // Set this as true to restart auto-background detection.
         // This means that you will be automatically disconnected from SendBird when your
         // app enters the background.
-        SendBird.setAutoBackgroundDetection(true);
+        SendBird.setAutoBackgroundDetection(false);
 
         SendBird.addConnectionHandler(CONNECTION_HANDLER_ID, new SendBird.ConnectionHandler() {
             @Override
@@ -224,6 +220,9 @@ public class ChatFragment extends Fragment {
             @Override
             public void onReconnectFailed() {
                 Log.d("MAHHH", "OpenChatFragment onReconnectFailed()");
+                mMessageSendButton.setClickable(false);
+                enterChannel(mChannelUrl);
+
             }
         });
 
@@ -282,13 +281,19 @@ public class ChatFragment extends Fragment {
                 sendUserMessage("event", eventCreated.toJsonString(), CUSTOM_TYPE_MESSAGE_TEXT_EVENT);
 
                 if ( data.getBooleanExtra("calendar", false) ){
+                    String descr;
+                    if (eventCreated.description == null || eventCreated.description.isEmpty() ){
+                        descr = "evento creato con l'app StudyGroups";
+                    } else {
+                        descr = "Informazioni aggiuntive:\n" + eventCreated.description;
+                    }
 
                     Intent intent = new Intent(Intent.ACTION_INSERT)
                             .setData(CalendarContract.Events.CONTENT_URI)
                             .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, eventCreated.timestampDateEvent)
                             .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, eventCreated.timestampDateEvent + 3*60*60*1000)
                             .putExtra(CalendarContract.Events.TITLE, eventCreated.name)
-                            .putExtra(CalendarContract.Events.DESCRIPTION, "evento creato con l'app StudyGroups")
+                            .putExtra(CalendarContract.Events.DESCRIPTION, descr)
                             .putExtra(CalendarContract.Events.ORGANIZER, eventCreated.userName)
                             .putExtra(CalendarContract.Attendees.EVENT_ID, eventCreated.timestampDateEvent)
                             .putExtra(CalendarContract.Events.EVENT_LOCATION, eventCreated.location);
@@ -357,6 +362,9 @@ public class ChatFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         Intent intent;
+        if (mChannel == null) {
+            return super.onOptionsItemSelected(item);
+        }
         switch (id){
             case R.id.action_chat_view_participants:
                 intent = new Intent(getActivity(), ChatPartecipantListActivity.class);
@@ -479,8 +487,6 @@ public class ChatFragment extends Fragment {
                 if (getActivity() != null){
                     ActivityCompat.invalidateOptionsMenu(getActivity());
                 }
-
-
             }
 
             @Override
@@ -770,8 +776,9 @@ public class ChatFragment extends Fragment {
                             e.printStackTrace();
                             return;
                         }
-
                         mChannel = openChannel;
+                        mMessageSendButton.setEnabled(true);
+                        mUploadFileButton.setEnabled(true);
                         loadInitialMessageList(30);
 
 
@@ -781,8 +788,12 @@ public class ChatFragment extends Fragment {
         });
     }
 
+
     private void sendUserMessage(String text, String data, String custom_type) {
 
+        if (mChannel == null){
+          return;
+        }
         mChannel.sendUserMessage(text, data, custom_type, new BaseChannel.SendUserMessageHandler() {
             @Override
             public void onSent(UserMessage userMessage, SendBirdException e) {

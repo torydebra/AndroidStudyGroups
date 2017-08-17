@@ -26,38 +26,42 @@ public class EventDB {
     public static final String EVENT_NAME = "name";
     public static final int    EVENT_NAME_COL = 1;
 
+    public static final String EVENT_DESCRIPTION = "description";
+    public static final int    EVENT_DESCRIPTION_COL = 2;
+
     public static final String EVENT_TIMESTAMP_DATE_EVENT = "timestamp_date_event";
-    public static final int    EVENT_TIMESTAMP_DATE_EVENT_COL = 2;
+    public static final int    EVENT_TIMESTAMP_DATE_EVENT_COL = 3;
 
     public static final String EVENT_DAY = "day";
-    public static final int    EVENT_DAY_COL = 3;
+    public static final int    EVENT_DAY_COL = 4;
 
     public static final String EVENT_HOUR = "hour";
-    public static final int    EVENT_HOUR_COL = 4;
+    public static final int    EVENT_HOUR_COL = 5;
 
     public static final String EVENT_LOCATION = "location";
-    public static final int    EVENT_LOCATION_COL = 5;
+    public static final int    EVENT_LOCATION_COL = 6;
 
     public static final String EVENT_USERID = "userId";
-    public static final int    EVENT_USERID_COL = 6;
+    public static final int    EVENT_USERID_COL = 7;
 
     public static final String EVENT_USERNAME = "username";
-    public static final int    EVENT_USERNAME_COL = 7;
+    public static final int    EVENT_USERNAME_COL = 8;
 
     public static final String EVENT_CHANNEL_URL = "channel_url";
-    public static final int    EVENT_CHANNEL_URL_COL = 8;
+    public static final int    EVENT_CHANNEL_URL_COL = 9;
 
     public static final String EVENT_CHANNEL_NAME = "channel_name";
-    public static final int    EVENT_CHANNEL_NAME_COL = 9;
+    public static final int    EVENT_CHANNEL_NAME_COL = 10;
 
     public static final String EVENT_TIMESTAMP_CREATED = "timestamp_created";
-    public static final int    EVENT_TIMESTAMP_CREATED_COL = 10;
+    public static final int    EVENT_TIMESTAMP_CREATED_COL = 11;
 
 
     public static final String CREATE_EVENT_TABLE =
             "CREATE TABLE " + EVENT_TABLE + " (" +
                     EVENT_ID                         + " TEXT PRIMARY KEY, " +
                     EVENT_NAME                       + " TEXT NOT NULL, " +
+                    EVENT_DESCRIPTION                + " TEXT" +
                     EVENT_TIMESTAMP_DATE_EVENT       + " INTEGER NOT NULL, " +
                     EVENT_DAY                        + " TEXT NOT NULL, " +
                     EVENT_HOUR                       + " TEXT NOT NULL, " +
@@ -165,6 +169,7 @@ public class EventDB {
             try {
                 MyEvent event = new MyEvent(
                         cursor.getString(EVENT_NAME_COL),
+                        cursor.getString(EVENT_DESCRIPTION_COL),
                         cursor.getString(EVENT_LOCATION_COL),
                         cursor.getLong(EVENT_TIMESTAMP_DATE_EVENT_COL),
                         cursor.getString(EVENT_DAY_COL),
@@ -186,6 +191,7 @@ public class EventDB {
     public String insertEvent(MyEvent event) {
         ContentValues cv = new ContentValues();
         cv.put(EVENT_NAME, event.name);
+        cv.put(EVENT_DESCRIPTION, event.description);
         cv.put(EVENT_LOCATION,  event.location);
         cv.put(EVENT_TIMESTAMP_DATE_EVENT, event.timestampDateEvent);
         cv.put(EVENT_DAY, event.day);
@@ -208,6 +214,7 @@ public class EventDB {
         ContentValues cv = new ContentValues();
         cv.put(EVENT_ID, event.eventId);
         cv.put(EVENT_NAME, event.name);
+        cv.put(EVENT_DESCRIPTION, event.description);
         cv.put(EVENT_LOCATION,  event.location);
         cv.put(EVENT_TIMESTAMP_DATE_EVENT, event.timestampDateEvent);
         cv.put(EVENT_DAY, event.day);

@@ -327,6 +327,7 @@ class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             fileNameText.setText(message.getName());
             fileSizeText.setText(FileUtils.toReadableFileSize(message.getSize()));
             nicknameText.setText(message.getSender().getNickname());
+            timeText.setText(DateUtils.formatTime(message.getCreatedAt()));
 
             // If image, display thumbnail
             if (message.getType().toLowerCase().startsWith("image")) {

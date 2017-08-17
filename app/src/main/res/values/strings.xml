@@ -50,6 +50,7 @@
     <string name="add_event_location">Luogo</string>
     <string name="add_event_date">Giorno</string>
     <string name="add_event_time">Ora</string>
+    <string name="add_event_description">Informazioni aggiuntive (facoltative)</string>
     <string name="create_event">Crea Evento</string>
     <string name="created_event_text">ha creato un evento</string>
     <string name="view_partecipants">Vedi Partecipanti</string>

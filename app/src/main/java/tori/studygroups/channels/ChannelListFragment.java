@@ -51,8 +51,6 @@ public class ChannelListFragment extends Fragment {
     private ArrayList<String> userPrefChannelList;
 
     private String groupNameSearched;
-
-
     private EditText searchChannelEditText;
 
     private OpenChannelListQuery channelListQuery;
@@ -108,6 +106,8 @@ public class ChannelListFragment extends Fragment {
 
         setUpAdapter();
         setUpRecyclerView();
+        Log.d("MAHHHH", "channllistFrag createdView222222222");
+
 
         if (userPrefChannelList != null){ // pref channels
             searchChannelEditText.setVisibility(View.GONE);
@@ -117,10 +117,50 @@ public class ChannelListFragment extends Fragment {
             setUpCreateButton();
         }
 
-        // Refresh once
-        refreshChannelList(15);
-
         return rootView;
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        Log.d("MAHH", "onResume: resumed");
+
+        if (searchChannelEditText.getText().toString().trim().isEmpty()){
+            Log.d("MAHHH", "vuoto");
+            refreshChannelList(15);
+
+        } else {
+            Log.d("MAHHH", "pieno ");
+            groupNameSearched = searchChannelEditText.getText().toString().trim();
+            channelListQuery = OpenChannel.createOpenChannelListQuery();
+            channelListQuery.setLimit(15);
+            channelListQuery.setNameKeyword(groupNameSearched);
+
+            loadBar.setVisibility(View.VISIBLE);
+
+            channelListQuery.next(new OpenChannelListQuery.OpenChannelListQueryResultHandler() {
+                @Override
+                public void onResult(List<OpenChannel> channels, SendBirdException e) {
+                    if (e != null) {
+                        // Error!
+                        return;
+                    }
+
+                    mChannelListAdapter.setChannelList(channels);
+                    loadBar.setVisibility(View.GONE);
+
+                    if(channels.size() == 0){
+                        channelListRecyclerView.setVisibility(View.GONE);
+                        linearLayoutNoChannel.setVisibility(View.VISIBLE);
+
+                    } else {
+                        linearLayoutNoChannel.setVisibility(View.GONE);
+                        channelListRecyclerView.setVisibility(View.VISIBLE);
+                    }
+
+                }
+            });
+        }
     }
 
     //in ritorno dal create chan activity
@@ -236,9 +276,7 @@ public class ChannelListFragment extends Fragment {
 
                 channelListQuery = OpenChannel.createOpenChannelListQuery();
                 channelListQuery.setLimit(15);
-
-                channelListQuery.setNameKeyword(s.toString());
-
+                channelListQuery.setNameKeyword(groupNameSearched);
                 loadBar.setVisibility(View.VISIBLE);
 
                 channelListQuery.next(new OpenChannelListQuery.OpenChannelListQueryResultHandler() {
@@ -302,7 +340,6 @@ public class ChannelListFragment extends Fragment {
         if (userPrefChannelList != null) {
 
             loadPrefChannels();
-
 
         } else {
             channelListQuery = OpenChannel.createOpenChannelListQuery();
