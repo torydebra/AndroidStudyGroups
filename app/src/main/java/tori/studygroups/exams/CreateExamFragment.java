@@ -256,7 +256,7 @@ public class CreateExamFragment extends Fragment{
                         TextInputEditText editTextArg = (TextInputEditText) rootView.findViewById(ediTextId);
                         String argName = editTextArg.getText().toString().trim().toLowerCase();
                         Matcher matcher = pattern.matcher(argName);
-                        if (!matcher.matches()){
+                        if (! argName.isEmpty() && !matcher.matches()){
                             editTextArg.setError("Nome argomento non può contenere . $ # [ ] ");
                             editTextArg.requestFocus();
                             createExamButton.setEnabled(true);
