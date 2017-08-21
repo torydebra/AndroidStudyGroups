@@ -90,6 +90,7 @@
     <string name="add_exam_argument">Inserisci nome del nuovo argomento
     </string>
     <string name="add_exam_confirmation">Aggiungi argomento</string>
+    <string name="argument_change_state">Cambia stato all\'argomento</string>
 
     <string name="add">Aggiungi</string>
     <string name="change">Cambia</string>
@@ -128,6 +129,12 @@
         <item>Da completare</item>
         <item>In corso</item>
         <item>Completato</item>
+    </string-array>
+
+    <string-array
+        name="chat_message_long_clic_options">
+        <item>Vedi pagina utente</item>
+        <item>Cancella Messaggio</item>
     </string-array>
 
     <string-array

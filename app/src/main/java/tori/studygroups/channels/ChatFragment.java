@@ -32,9 +32,6 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -42,7 +39,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.sendbird.android.AdminMessage;
 import com.sendbird.android.BaseChannel;
 import com.sendbird.android.BaseMessage;
@@ -51,7 +47,6 @@ import com.sendbird.android.OpenChannel;
 import com.sendbird.android.PreviousMessageListQuery;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
-import com.sendbird.android.User;
 import com.sendbird.android.UserMessage;
 
 import java.io.File;
@@ -61,13 +56,10 @@ import java.util.List;
 
 import tori.studygroups.R;
 import tori.studygroups.exams.ActivityExamList;
-import tori.studygroups.mainActivities.LoginActivity;
-import tori.studygroups.mainActivities.MainActivity;
 import tori.studygroups.otherClass.MyEvent;
 import tori.studygroups.utils.FileUtils;
 import tori.studygroups.utils.MediaPlayerActivity;
 import tori.studygroups.utils.PhotoViewerActivity;
-import tori.studygroups.utils.PreferenceUtils;
 
 import static tori.studygroups.channels.ChannelListFragment.EXTRA_CHANNEL_NAME;
 
@@ -311,7 +303,6 @@ public class ChatFragment extends Fragment {
         super.onPause();
         Log.d("MAHHH", "chatFrag paused");
         SendBird.removeChannelHandler(CHANNEL_HANDLER_ID);
-
         SharedPreferences pref = getActivity().getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
         editor.putString(CHAT_OPEN, "true");
@@ -326,16 +317,20 @@ public class ChatFragment extends Fragment {
         super.onDestroyView();
         Log.d("MAHHH", "chatFrag ondestroyedView");
 
-        mChannel.exit(new OpenChannel.OpenChannelExitHandler() {
-            @Override
-            public void onResult(SendBirdException e) {
-                if (e != null) {
-                    // Error!
-                    e.printStackTrace();
-                    return;
+        if (mChannel == null){
+            return;
+        } else {
+            mChannel.exit(new OpenChannel.OpenChannelExitHandler() {
+                @Override
+                public void onResult(SendBirdException e) {
+                    if (e != null) {
+                        // Error!
+                        e.printStackTrace();
+                        return;
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
 
@@ -834,6 +829,7 @@ public class ChatFragment extends Fragment {
 
         if (path.equals("")) {
             Toast.makeText(getActivity(), R.string.error_file_not_storage, Toast.LENGTH_LONG).show();
+            loadingBarContainer.setVisibility(View.GONE);
         } else {
             // Send image with thumbnails in the specified dimensions
             mChannel.sendFileMessage(file, name, mime, size, "", null, thumbnailSizes, new BaseChannel.SendFileMessageHandler() {
@@ -841,7 +837,9 @@ public class ChatFragment extends Fragment {
                 public void onSent(FileMessage fileMessage, SendBirdException e) {
                     if (e != null) {
                         //Toast.makeText(getActivity(), "" + e.getCode() + ":" + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        Toast.makeText(getActivity(), R.string.error_file_not_send, Toast.LENGTH_SHORT).show();
+                        if (getActivity() != null){
+                            Toast.makeText(getActivity(), R.string.error_file_not_send, Toast.LENGTH_SHORT).show();
+                        }
 
                         return;
                     }

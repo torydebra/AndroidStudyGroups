@@ -59,6 +59,8 @@ public class SignupActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         progressDialog = new ProgressDialog(SignupActivity.this,
                 R.style.AppTheme_Dark_Dialog);
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.setCancelable(false);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Creazione utente...");
 
@@ -237,7 +239,11 @@ public class SignupActivity extends AppCompatActivity {
             _passwordText.setError(null);
         }
 
-        if (password2.isEmpty() || password2.length() < 6 || !(password2.equals(password))) {
+        if (password2.isEmpty() || password2.length() < 6) {
+            _password2Text.setError("almeno 6 caratteri");
+            _password2Text.requestFocus();
+            valid = false;
+        } else if (!(password2.equals(password))) {
             _password2Text.setError("Password non combaciano");
             _password2Text.requestFocus();
             valid = false;

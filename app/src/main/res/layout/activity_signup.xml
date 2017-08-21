@@ -93,7 +93,7 @@
             android:background="@android:color/holo_orange_light"
             android:padding="12dp"
             android:text="@string/create_account"
-            android:textSize="30dp" />
+            android:textSize="30sp" />
 
         <TextView
             android:id="@+id/link_login"

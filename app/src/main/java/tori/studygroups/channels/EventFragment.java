@@ -36,13 +36,13 @@ import com.sendbird.android.UserMessage;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
 import tori.studygroups.R;
-//import tori.studygroups.otherClass.EventDB;
 import tori.studygroups.otherClass.MyEvent;
+
+//import tori.studygroups.otherClass.EventDB;
 
 public class EventFragment extends Fragment {
 
@@ -166,28 +166,40 @@ public class EventFragment extends Fragment {
     }
 
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+    }
+
+
     private void checkPartecipationFirebase() {
 
-        dbRefEventPartecipants.child(eventId).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.hasChild(user.getUid())) {
-                    eventPartecipaButton.setText(R.string.partecipa_delete);
-                    eventPartecipaButton.setBackgroundColor(ResourcesCompat.getColor(getResources(), color.holo_red_light, null));
-                    eventPartecipaBool = true;
-                } else {
-                    eventPartecipaButton.setText(R.string.partecipa_confirmation);
-                    eventPartecipaButton.setBackgroundColor(ResourcesCompat.getColor(getResources(), color.holo_green_light, null));
-                    eventPartecipaBool = false;
+        try {
+
+            dbRefEventPartecipants.child(eventId).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.hasChild(user.getUid())) {
+                        eventPartecipaButton.setText(R.string.partecipa_delete);
+                        eventPartecipaButton.setBackgroundColor(ResourcesCompat.getColor(getResources(), color.holo_red_light, null));
+                        eventPartecipaBool = true;
+                    } else {
+                        eventPartecipaButton.setText(R.string.partecipa_confirmation);
+                        eventPartecipaButton.setBackgroundColor(ResourcesCompat.getColor(getResources(), color.holo_green_light, null));
+                        eventPartecipaBool = false;
+                    }
                 }
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-            }
-        });
+                }
+            });
 
+        } catch (IllegalStateException ex){
+            getActivity().onBackPressed();
+        }
 
     }
 
