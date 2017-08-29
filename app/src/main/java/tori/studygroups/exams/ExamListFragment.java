@@ -1,6 +1,8 @@
 package tori.studygroups.exams;
 
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -20,6 +22,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.share.model.SharePhoto;
+import com.facebook.share.model.SharePhotoContent;
+import com.facebook.share.widget.ShareButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -45,6 +50,11 @@ public class ExamListFragment extends Fragment {
     private LinearLayoutManager layoutManager;
     private RecyclerView recyclerView;
     private LinearLayout noExamContainer;
+    private View rootView;
+
+    private ShareButton shareFacebookButton;
+    private Button shareFacebookFakeButton;
+    private int counterClickFacebook = 0;
 
     private ExamAdapter examAdapter;
     private ArrayList<Exam> examList;
@@ -69,7 +79,7 @@ public class ExamListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
 
-        View rootView = inflater.inflate(R.layout.fragment_personal_page, container, false);
+        rootView = inflater.inflate(R.layout.fragment_personal_page, container, false);
 
         setRetainInstance(true);
         setHasOptionsMenu(true);
@@ -85,6 +95,8 @@ public class ExamListFragment extends Fragment {
         noExamContainer = (LinearLayout) rootView.findViewById(R.id.no_exams_find_container);
         createExamButton = (Button) rootView.findViewById(R.id.btn_personal_page_add_exam);
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
+        shareFacebookButton = (ShareButton) rootView.findViewById(R.id.btn_personal_page_share_facebook);
+        shareFacebookFakeButton = (Button) rootView.findViewById(R.id.btn_fake_personal_page_share_facebook);
         layoutManager = new LinearLayoutManager(getContext());
 
         if (userId == null){
@@ -94,7 +106,15 @@ public class ExamListFragment extends Fragment {
             String s = "Pagina personale di " + user.getDisplayName();
             textTitleUser.setText(s);
             createExamButton.setVisibility(View.VISIBLE);
+            shareFacebookFakeButton.setVisibility(View.VISIBLE);
+
+            ViewGroup.MarginLayoutParams marginLayoutParams =
+                    (ViewGroup.MarginLayoutParams) recyclerView.getLayoutParams();
+            marginLayoutParams.setMargins(5, 20, 5, 60);
+            recyclerView.setLayoutParams(marginLayoutParams);
+
             setupCreateExamButton();
+            setupShareButton();
 
 
         } else {
@@ -106,7 +126,16 @@ public class ExamListFragment extends Fragment {
                 String s = "Pagina personale di " + user.getDisplayName();
                 textTitleUser.setText(s);
                 createExamButton.setVisibility(View.VISIBLE);
+                shareFacebookFakeButton.setVisibility(View.VISIBLE);
+
+                ViewGroup.MarginLayoutParams marginLayoutParams =
+                        (ViewGroup.MarginLayoutParams) recyclerView.getLayoutParams();
+                marginLayoutParams.setMargins(5, 20, 5, 60);
+                recyclerView.setLayoutParams(marginLayoutParams);
+
                 setupCreateExamButton();
+                setupShareButton();
+
 
 
             } else {
@@ -119,6 +148,11 @@ public class ExamListFragment extends Fragment {
                         String s = "Pagina personale di " + username;
                         textTitleUser.setText(s);
                         createExamButton.setVisibility(View.GONE);
+                        shareFacebookFakeButton.setVisibility(View.GONE);
+                        ViewGroup.MarginLayoutParams marginLayoutParams =
+                                (ViewGroup.MarginLayoutParams) recyclerView.getLayoutParams();
+                        marginLayoutParams.setMargins(5, 20, 5, 10);
+                        recyclerView.setLayoutParams(marginLayoutParams);
                     }
 
                     @Override
@@ -158,6 +192,64 @@ public class ExamListFragment extends Fragment {
         });
 
     }
+
+    private void setupShareButton() {
+
+        shareFacebookFakeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (counterClickFacebook == 0) {
+                    counterClickFacebook++;
+
+                    PackageManager pm = getContext().getPackageManager();
+                    boolean app_installed = false;
+                    try {
+                        pm.getPackageInfo("com.facebook.katana", PackageManager.GET_ACTIVITIES);
+                        app_installed = true;
+                    }
+                    catch (PackageManager.NameNotFoundException e) {
+                        app_installed = false;
+                    }
+
+                    if (! app_installed) {
+                        try {
+                            pm.getPackageInfo("com.facebook.android", PackageManager.GET_ACTIVITIES);
+                            app_installed = true;
+                        } catch (PackageManager.NameNotFoundException e) {
+                            app_installed = false;
+                        }
+                    }
+
+                    if (app_installed) {
+
+                        rootView.setDrawingCacheEnabled(true);
+                        Bitmap bitmap = Bitmap.createBitmap(rootView.getDrawingCache());
+                        rootView.setDrawingCacheEnabled(false);
+
+                        SharePhoto photo = new SharePhoto.Builder()
+                            .setBitmap(bitmap)
+                            .build();
+                        SharePhotoContent content = new SharePhotoContent.Builder()
+                            .addPhoto(photo)
+                            .build();
+
+                        shareFacebookButton.setShareContent(content);
+                        shareFacebookButton.performClick();
+
+                        counterClickFacebook++;
+
+                    } else {
+                        Toast t = Toast.makeText(getContext(), "Devi avere l'app di Facebook per usare questa funzionalità", Toast.LENGTH_LONG);
+                        t.show();
+                    }
+
+                }
+            }
+        });
+
+    }
+
 
 
     private void getExamsFromFirebase(final View rootView) {
