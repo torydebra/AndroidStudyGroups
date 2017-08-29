@@ -3,6 +3,8 @@ package tori.studygroups.channels;
 import android.R.color;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -20,6 +22,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.share.model.SharePhoto;
+import com.facebook.share.model.SharePhotoContent;
+import com.facebook.share.widget.ShareButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -63,6 +68,14 @@ public class EventFragment extends Fragment {
     private boolean eventPartecipaBool;
     private Button eventViewMaps;
 
+    private ShareButton eventShareFacebookButton;
+    private Button eventShareFacebookFakeButton;
+    //image
+    private Bitmap image;
+    //counter
+    private int counterClickFacebook = 0;
+    private View rootView;
+
     private String eventId;
     private FirebaseUser user;
     private DatabaseReference dbRefEventPartecipants;
@@ -82,7 +95,7 @@ public class EventFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_event, container, false);
+        rootView = inflater.inflate(R.layout.fragment_event, container, false);
 
         if (!isAdded() || getActivity() == null){
             Log.wtf("MAHHH", "not attached to activity");
@@ -138,6 +151,8 @@ public class EventFragment extends Fragment {
         eventViewPartecipantsButton = (Button) rootView.findViewById(R.id.btn_event_view_partecipants);
         eventViewMaps = (Button) rootView.findViewById(R.id.btn_event_view_maps);
         eventPartecipaButton = (Button) rootView.findViewById(R.id.btn_event_partecipa);
+        eventShareFacebookButton = (ShareButton) rootView.findViewById(R.id.btn_event_share_facebook);
+        eventShareFacebookFakeButton = (Button) rootView.findViewById(R.id.btn_fake_event_share_facebook);
 
         try {
             eventId = eventDataJson.getString("eventId");
@@ -183,10 +198,12 @@ public class EventFragment extends Fragment {
                     if (dataSnapshot.hasChild(user.getUid())) {
                         eventPartecipaButton.setText(R.string.partecipa_delete);
                         eventPartecipaButton.setBackgroundColor(ResourcesCompat.getColor(getResources(), color.holo_red_light, null));
+                        eventShareFacebookFakeButton.setVisibility(View.VISIBLE);
                         eventPartecipaBool = true;
                     } else {
                         eventPartecipaButton.setText(R.string.partecipa_confirmation);
                         eventPartecipaButton.setBackgroundColor(ResourcesCompat.getColor(getResources(), color.holo_green_light, null));
+                        eventShareFacebookButton.setVisibility(View.GONE);
                         eventPartecipaBool = false;
                     }
                 }
@@ -290,6 +307,66 @@ public class EventFragment extends Fragment {
 
             }
         });
+
+
+        eventShareFacebookFakeButton.setVisibility(View.VISIBLE);
+
+        eventShareFacebookFakeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Log.wtf("MAHHHH", "CLIC IL FAKE");
+
+                if (counterClickFacebook == 0) {
+                    counterClickFacebook++;
+
+                    PackageManager pm = getContext().getPackageManager();
+                    boolean app_installed = false;
+                    try {
+                        pm.getPackageInfo("com.facebook.katana", PackageManager.GET_ACTIVITIES);
+                        app_installed = true;
+                    }
+                    catch (PackageManager.NameNotFoundException e) {
+                        app_installed = false;
+                    }
+
+                    if (! app_installed) {
+                        try {
+                            pm.getPackageInfo("com.facebook.android", PackageManager.GET_ACTIVITIES);
+                            app_installed = true;
+                        } catch (PackageManager.NameNotFoundException e) {
+                            app_installed = false;
+                        }
+                    }
+
+                    if (app_installed) {
+
+                        rootView.setDrawingCacheEnabled(true);
+                        Bitmap bitmap = Bitmap.createBitmap(rootView.getDrawingCache());
+                        rootView.setDrawingCacheEnabled(false);
+
+                        SharePhoto photo = new SharePhoto.Builder()
+                                .setBitmap(bitmap)
+                                .build();
+                        SharePhotoContent content = new SharePhotoContent.Builder()
+                                .addPhoto(photo)
+                                .build();
+
+                        eventShareFacebookButton.setShareContent(content);
+                        eventShareFacebookButton.performClick();
+
+                        counterClickFacebook++;
+
+                    } else {
+                        Toast t = Toast.makeText(getContext(), "Devi avere l'app di Facebook per usare questa funzionalità", Toast.LENGTH_LONG);
+                        t.show();
+                    }
+
+                }
+            }
+        });
+
+
     }
 
 
@@ -306,6 +383,9 @@ public class EventFragment extends Fragment {
         eventPartecipaButton.setText(R.string.partecipa_delete);
         eventPartecipaButton.setBackgroundColor(ResourcesCompat.getColor(getResources(), color.holo_red_light, null));
         eventPartecipaBool = true;
+
+        eventShareFacebookFakeButton.setVisibility(View.VISIBLE);
+
 
 //        EventDB localDB = new EventDB(getContext());
 //        String insertId = localDB.insertEvent(event);
@@ -365,6 +445,9 @@ public class EventFragment extends Fragment {
         eventPartecipaButton.setText(R.string.partecipa_confirmation);
         eventPartecipaButton.setBackgroundColor(ResourcesCompat.getColor(getResources(), color.holo_green_light, null));
         eventPartecipaBool = false;
+
+        eventShareFacebookFakeButton.setVisibility(View.GONE);
+
 
 //        EventDB localDB = new EventDB(getContext());
 //        int deleteCount = localDB.deleteEvent(event.eventId);

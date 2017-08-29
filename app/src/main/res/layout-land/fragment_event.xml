@@ -1,138 +1,190 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
-
-<TableLayout
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginStart="75dp"
-    android:layout_marginEnd="75dp"
-    android:stretchColumns="*">
+    android:background="#FAFAFA">
 
-    <TableRow>
+    <TableLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="75dp"
+        android:layout_marginStart="75dp"
+        android:stretchColumns="*">
 
-        <TextView
-            android:id="@+id/event_name_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:fontFamily="casual"
-            android:text="NomeEvento"
-            android:textAlignment="center"
-            android:textColor="@color/common_google_signin_btn_text_dark_focused"
-            android:textSize="30sp"
-            android:textStyle="bold"
-            android:layout_span="2"/>
-    </TableRow>
-    <TableRow>
-        <TextView
-            android:id="@+id/event_group_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Evento del gruppo: gruppo"
-            android:textAlignment="center"
-            android:layout_marginTop="15dp"
-            android:textSize="24sp"
-            android:layout_span="2"/>
-    </TableRow>
-    <TableRow>
-        <TextView
-            android:id="@+id/event_creator_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Creato da : nome"
-            android:textAlignment="center"
-            android:layout_marginTop="10dp"
-            android:textSize="20sp"
-            android:layout_span="2"/>
-    </TableRow>
-    <TableRow>
-        <TextView
-            android:id="@+id/event_day_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:text="Il giorno: 1-1-2010 alle ore 10:00"
-            android:textAlignment="center"
-            android:textColor="@color/common_google_signin_btn_text_dark_focused"
-            android:textSize="24sp"
-            android:layout_span="2"/>
+        <TableRow>
+
+            <TextView
+                android:id="@+id/event_name_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_span="2"
+                android:fontFamily="casual"
+                android:text="NomeEvento"
+                android:textAlignment="center"
+                android:textColor="@color/common_google_signin_btn_text_dark_focused"
+                android:textSize="30sp"
+                android:textStyle="bold" />
         </TableRow>
-    <TableRow>
-        <TextView
-            android:id="@+id/event_location_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="30dp"
-            android:layout_marginTop="20dp"
-            android:text="Via boh, Genova, Italia"
-            android:textAlignment="center"
-            android:textColor="@color/common_google_signin_btn_text_light_default"
-            android:textSize="24sp"
-            android:layout_span="2"/>
-    </TableRow>
 
-    <TableRow>
-        <TextView
-            android:id="@+id/event_description_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Descrizione"
-            android:textAlignment="center"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="70dp"
-            android:textColor="@color/common_google_signin_btn_text_dark_focused"
-            android:textSize="24sp"
-            android:layout_span="2"/>
-    </TableRow>
+        <TableRow>
+
+            <TextView
+                android:id="@+id/event_group_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_span="2"
+                android:text="Evento del gruppo: gruppo"
+                android:textAlignment="center"
+                android:textSize="24sp" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/event_creator_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_span="2"
+                android:text="Creato da : nome"
+                android:textAlignment="center"
+                android:textSize="20sp" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/event_day_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:layout_span="2"
+                android:text="Il giorno: 1-1-2010 alle ore 10:00"
+                android:textAlignment="center"
+                android:textColor="@color/common_google_signin_btn_text_dark_focused"
+                android:textSize="24sp" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/event_location_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="30dp"
+                android:layout_marginTop="20dp"
+                android:layout_span="2"
+                android:text="Via boh, Genova, Italia"
+                android:textAlignment="center"
+                android:textColor="@color/common_google_signin_btn_text_light_default"
+                android:textSize="24sp" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/event_description_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="70dp"
+                android:layout_marginTop="20dp"
+                android:layout_span="2"
+                android:text="Descrizione"
+                android:textAlignment="center"
+                android:textColor="@color/common_google_signin_btn_text_dark_focused"
+                android:textSize="24sp" />
+        </TableRow>
 
 
-    <TableRow>
+        <TableRow>
 
-        <android.support.v7.widget.AppCompatButton
-            android:id="@+id/btn_event_view_partecipants"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="50dp"
-            android:background="@android:color/holo_blue_light"
-            android:fontFamily="casual"
-            android:padding="16dp"
-            android:text="@string/view_partecipants"
-            android:textSize="17sp"
-            android:textStyle="bold"
-            android:layout_span="1"/>
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/btn_event_view_partecipants"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="50dp"
+                android:layout_span="1"
+                android:background="@android:color/holo_blue_light"
+                android:fontFamily="casual"
+                android:padding="16dp"
+                android:text="@string/view_partecipants"
+                android:textSize="17sp"
+                android:textStyle="bold" />
 
-        <android.support.v7.widget.AppCompatButton
-            android:id="@+id/btn_event_view_maps"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@android:color/holo_blue_light"
-            android:fontFamily="casual"
-            android:padding="16dp"
-            android:text="@string/view_maps"
-            android:textSize="17sp"
-            android:textStyle="bold"
-            android:layout_span="1"/>
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/btn_event_view_maps"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_span="1"
+                android:background="@android:color/holo_blue_light"
+                android:fontFamily="casual"
+                android:padding="16dp"
+                android:text="@string/view_maps"
+                android:textSize="17sp"
+                android:textStyle="bold" />
 
-    </TableRow>
+        </TableRow>
 
-    <TableRow>
+        <TableRow>
 
-        <android.support.v7.widget.AppCompatButton
-            android:id="@+id/btn_event_partecipa"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:fontFamily="casual"
-            android:padding="12dp"
-            android:text="Cancella Partecipazione"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:layout_span="2" />
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/btn_event_partecipa"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_span="2"
+                android:fontFamily="casual"
+                android:padding="12dp"
+                android:text="Cancella Partecipazione"
+                android:textSize="22sp"
+                android:textStyle="bold" />
 
-    </TableRow>
+        </TableRow>
 
-</TableLayout>
+        <TableRow>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_span="2"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <android.support.v7.widget.AppCompatButton
+                    android:id="@+id/btn_fake_event_share_facebook"
+                    android:drawableStart="@drawable/facebook_icon"
+                    android:drawablePadding="8dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@color/about_facebook_color"
+                    android:fontFamily="casual"
+                    android:padding="12dp"
+                    android:text="@string/event_share_facebook"
+                    android:textColor="@color/white"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+                <com.facebook.share.widget.ShareButton
+                    android:id="@+id/btn_event_share_facebook"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@color/about_facebook_color"
+                    android:fontFamily="casual"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+
+
+        </TableRow>
+
+    </TableLayout>
 </ScrollView>

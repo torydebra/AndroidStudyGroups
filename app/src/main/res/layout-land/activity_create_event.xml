@@ -54,6 +54,17 @@
 
         </android.support.design.widget.TextInputLayout>
 
+
+        <TextView
+            android:id="@+id/link_to_saw_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/link_to_saw"
+            android:textColor="#0645AD"
+            android:layout_marginTop="15dp"
+            android:textAlignment="center"
+            android:textSize="20sp"/>
+
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
