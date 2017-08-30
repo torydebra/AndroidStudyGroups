@@ -89,7 +89,6 @@
             android:layout_above="@+id/btn_personal_page_add_exam"
             android:background="@color/about_facebook_color"
             android:drawablePadding="8dp"
-            android:drawableStart="@drawable/facebook_icon"
             android:fontFamily="casual"
             android:padding="10dp"
             android:text="@string/event_share_facebook"

@@ -5,12 +5,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
@@ -153,6 +155,9 @@ public class EventFragment extends Fragment {
         eventPartecipaButton = (Button) rootView.findViewById(R.id.btn_event_partecipa);
         eventShareFacebookButton = (ShareButton) rootView.findViewById(R.id.btn_event_share_facebook);
         eventShareFacebookFakeButton = (Button) rootView.findViewById(R.id.btn_fake_event_share_facebook);
+
+        Drawable drawable = VectorDrawableCompat.create(getResources(), R.drawable.facebook_icon, getActivity().getTheme());
+        eventShareFacebookFakeButton.setCompoundDrawablesRelativeWithIntrinsicBounds(drawable,null,null,null);
 
         try {
             eventId = eventDataJson.getString("eventId");

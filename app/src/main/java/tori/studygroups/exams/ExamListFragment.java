@@ -3,8 +3,10 @@ package tori.studygroups.exams;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
@@ -98,6 +100,9 @@ public class ExamListFragment extends Fragment {
         shareFacebookButton = (ShareButton) rootView.findViewById(R.id.btn_personal_page_share_facebook);
         shareFacebookFakeButton = (Button) rootView.findViewById(R.id.btn_fake_personal_page_share_facebook);
         layoutManager = new LinearLayoutManager(getContext());
+
+        Drawable drawable = VectorDrawableCompat.create(getResources(), R.drawable.facebook_icon, getActivity().getTheme());
+        shareFacebookFakeButton.setCompoundDrawablesRelativeWithIntrinsicBounds(drawable,null,null,null);
 
         if (userId == null){
 

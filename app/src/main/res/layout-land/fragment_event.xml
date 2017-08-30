@@ -155,9 +155,7 @@
                 android:weightSum="1">
 
                 <android.support.v7.widget.AppCompatButton
-
                     android:id="@+id/btn_fake_event_share_facebook"
-                    android:drawableStart="@drawable/facebook_icon"
                     android:drawablePadding="8dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -168,7 +166,8 @@
                     android:text="@string/event_share_facebook"
                     android:textColor="@color/white"
                     android:textSize="15sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:visibility="gone"/>
 
                 <com.facebook.share.widget.ShareButton
                     android:id="@+id/btn_event_share_facebook"
