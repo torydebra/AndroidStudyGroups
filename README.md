@@ -4,6 +4,7 @@ With StudyGroups you can communicate through chat groups, share files and create
 The Event can be added to your personal device calendar, and you can see the path to the location with google maps.
 With the personal page you can share with others what exams are you studying, to help you find students to study with.  
 
+
 ### Home
 <p align="center"> 
 <img src="https://user-images.githubusercontent.com/26459008/29930248-307c7872-8e6e-11e7-88fd-665d943ba71b.jpg">
@@ -32,4 +33,5 @@ With the personal page you can share with others what exams are you studying, to
 * Sharing thing on Facebook is a “to improve” feature  
 * Only Italian localisation (for now)
 * Mininum android sdk 17 (4.2 JELLY_BEAN_MR1)
+* See Presentation (in Italian) [here](https://github.com/torydebra/AndroidStudyGroups/blob/master/StudyGroups-Presentation.pdf)
 
