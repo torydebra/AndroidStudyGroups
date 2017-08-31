@@ -3,6 +3,7 @@ Android app to help students meet each other.
 With StudyGroups you can communicate through chat groups, share files and create event for studying in a determinate location.  
 The Event can be added to your personal device calendar, and you can see the path to the location with google maps.
 With the personal page you can share with others what exams are you studying, to help you find students to study with.  
+See Presentation (in Italian) [here](https://github.com/torydebra/AndroidStudyGroups/blob/master/StudyGroups-Presentation.pdf)
 
 
 ### Home
@@ -33,5 +34,5 @@ With the personal page you can share with others what exams are you studying, to
 * Sharing thing on Facebook is a “to improve” feature  
 * Only Italian localisation (for now)
 * Mininum android sdk 17 (4.2 JELLY_BEAN_MR1)
-* See Presentation (in Italian) [here](https://github.com/torydebra/AndroidStudyGroups/blob/master/StudyGroups-Presentation.pdf)
+* To try it, import project from android studio
 
