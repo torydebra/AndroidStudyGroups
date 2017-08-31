@@ -1,7 +1,4 @@
 # AndroidStudyGroups
-
-![Home](https://user-images.githubusercontent.com/26459008/29930248-307c7872-8e6e-11e7-88fd-665d943ba71b.jpg)
-
 Android app to help students meet each other.  
 With StudyGroups you can communicate through chat groups, share files and create event for studying in a determinate location.  
 The Event can be added to your personal device calendar, and you can see the path to the location with google maps.
