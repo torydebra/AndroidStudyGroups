@@ -3,7 +3,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:id="@+id/container_personal_page">
+    android:id="@+id/container_personal_page"
+    android:background="#FAFAFA">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -80,6 +81,33 @@
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"
             android:layout_marginTop="20dp" />
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/btn_fake_personal_page_share_facebook"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/btn_personal_page_add_exam"
+            android:background="@color/about_facebook_color"
+            android:drawablePadding="8dp"
+            android:fontFamily="casual"
+            android:padding="10dp"
+            android:text="@string/event_share_facebook"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:visibility="gone"/>
+
+        <com.facebook.share.widget.ShareButton
+            android:id="@+id/btn_personal_page_share_facebook"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@color/about_facebook_color"
+            android:fontFamily="casual"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:visibility="gone"/>
 
 
         <android.support.v7.widget.AppCompatButton

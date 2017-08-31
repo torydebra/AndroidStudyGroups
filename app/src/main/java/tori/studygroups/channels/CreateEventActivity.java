@@ -8,6 +8,7 @@ import android.app.TimePickerDialog;
 import android.app.TimePickerDialog.OnTimeSetListener;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
@@ -39,10 +40,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import tori.studygroups.R;
-//import tori.studygroups.otherClass.EventDB;
 import tori.studygroups.otherClass.MyEvent;
 
 import static tori.studygroups.channels.ChatFragment.EXTRA_CHANNEL_URL;
+
+//import tori.studygroups.otherClass.EventDB;
 
 
 public class CreateEventActivity extends AppCompatActivity {
@@ -60,6 +62,7 @@ public class CreateEventActivity extends AppCompatActivity {
     private EditText descriptionEventText;
     private Button createEventButton;
     private Calendar calendarDateEvent;
+    private TextView linkToSawTextView;
 
     private DatePickerDialog datePickerDialog;
     private TimePickerDialog timePickerDialog;
@@ -96,6 +99,16 @@ public class CreateEventActivity extends AppCompatActivity {
         timeEventText = (TextView) findViewById(R.id.edittext_add_event_time);
         timeEventText.setInputType(InputType.TYPE_NULL);
         createEventButton = (Button) findViewById(R.id.button_create_event);
+        linkToSawTextView = (TextView) findViewById(R.id.link_to_saw_textview);
+
+        linkToSawTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(Intent.ACTION_VIEW,
+                        Uri.parse("https://webdev.dibris.unige.it/~S4119809/SAW2017/map.php"));
+                startActivity(i);
+            }
+        });
 
         dateFormatter = new SimpleDateFormat("EEEE, dd-MMMM-yyyy", Locale.ITALY);
         timeFormatter = new SimpleDateFormat("HH:mm", Locale.ITALY);

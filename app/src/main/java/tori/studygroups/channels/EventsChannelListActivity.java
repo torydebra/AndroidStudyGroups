@@ -18,6 +18,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import tori.studygroups.R;
 import tori.studygroups.mainActivities.AboutActivity;
@@ -43,7 +44,8 @@ public class EventsChannelListActivity extends AppCompatActivity {
            // EventDB localDB = new EventDB(this);
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             DatabaseReference dbRefUserEvents = FirebaseDatabase.getInstance().getReference("userEvents");
-            dbRefUserEvents.child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+
+            dbRefUserEvents.child(user.getUid()).orderByChild("timestampDateEvent").limitToLast(30).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -52,6 +54,7 @@ public class EventsChannelListActivity extends AppCompatActivity {
                         MyEvent event = eventSnapshot.getValue(MyEvent.class);
                         eventList.add(event);
                     }
+                    Collections.reverse(eventList);
 
                     if (savedInstanceState == null) {
                         Fragment fragment = EventListFragment.newInstance(eventList);

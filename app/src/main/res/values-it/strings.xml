@@ -111,6 +111,11 @@
     <string name="confirm">Conferma</string>
     <string name="reset_password">Password reset</string>
 
+    <string name="link_to_saw"><u>Hai bisogno di un posto col wifi? Dai un\'occhiata al nostro altro progetto</u></string>
+    <string name="event_share_facebook">Condividi su Facebook</string>
+    <string name="facebook_app_id">1948446985397467</string>
+
+
 
     <string-array
         name="exam_long_clic_options">
